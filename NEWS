@@ -1,0 +1,46 @@
+wildlifeDI 0.3
+================
+
+May 31, 2016	- This is a temporary release until 1.0
+		- Added FilterTraj function
+		- Added GetTemporalOverlap function
+		- Added traj2sp function
+		- Added new functionality to Prox, to allow for one-way mapping of proximity analysis
+		- Added new 'Line' based analysis to contacts function
+		- Added Benhamou Significance test to DI function
+		- Added local analysis to IAB and DI functions
+
+
+wildlifeDI 0.2
+=================
+
+*Dec. 14, 2014 - Added three new functions to the package. 
+	       - The IAB interaction statistic from Benhamou et al. (2014). 
+	       - checkTO, a function which identifies if and when two telemetry datasets overlap (temporally).
+	       - contacts function, used to map point locations of contacts from telemetry data.  
+
+wildlifeDI 0.1
+=================
+
+* Aug. 14, 2014 - Changed package name from ditools to wildlifeDI for uploading to CRAN.
+
+* May. 19, 2014 - Fixed some issues in the documentation, changed default set-up of Lixn statistic.
+
+* Mar. 12, 2014 - Added new datasets: deer37 and deer38. Containing GPS fixes for a one
+			week interval in March 2005 for two individual deer.
+
+* Oct. 24, 2013 - Fixed an error in GetSimultaneous influencing symmetry with irregular
+			trajectories. 
+
+* Feb. 11, 2013	- Fixed an error in calculation of Shirabe, if you are using this metric please
+			re-run your analyses.
+
+* Dec. 10, 2012 - Formally added the Prox functionality to the toolset
+		- added use of ld(), dl() everywhere to facilitate trajects with bursts
+
+* Nov. 14, 2012 - added as.numeric around denominator in Minta chiINT calculation
+
+* Nov. 13, 2012 - added check for legnth of intersection vectors in Minta
+
+* Nov. 8, 2012 	- added check in Minta to see if HR overlaps, or contains other HR
+             	- Fixed a typo in ChiSquare test in Minta
