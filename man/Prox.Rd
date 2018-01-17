@@ -27,8 +27,8 @@ distance between each simultaneous fix, should be returned.}
 \value{
 If \code{local=FALSE} (the default) Prox returns the numeric value of the Prox index.
 If \code{local=TRUE} Prox returns a dataframe containing the date/times of \emph{all} simultaneous fixes from \code{traj1}, 
-along with the distance between fixes at each time, and the fix IDs from the original \code{ltraj} objects.
-If \code{GetSimultaneous = TRUE} (the default) the Prox considers only the simultaneous fixes, as defined in \code{GetSimultaneous}. If \code{FALSE} Prox considers all the fixes in \code{traj1} relative to \code{traj2}. The latter functionality is useful when the tracking interval of one trajectory (\code{traj1}) is  much shorter than the second trajectory.
+and in the case of \code{GetSimultaneous = FALSE} the time of the fixes that were deemed simultaneous in \code{traj2}.
+If \code{GetSimultaneous = TRUE} (the default) the Prox considers only the simultaneous fixes, as defined in \code{GetSimultaneous}. If \code{FALSE} Prox considers all the fixes in \code{traj1} relative to \code{traj2}. The latter functionality is useful when the time between fixes for one trajectory (\code{traj1}) is  much shorter than the second trajectory.
 }
 \description{
 The function \code{Prox} simply computes the proportion of (simultaneous) fixes that are proximal, based on some spatial

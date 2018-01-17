@@ -5,7 +5,12 @@ Version: 0.3
 Date: 2016-05-31
 Author: Jed Long
 Maintainer: Jed Long <jed.long@st-andrews.ac.uk>
-Description: Dynamic interaction refers to spatial-temporal associations in the movements of two (or more) animals. This package provides tools for calculating a suite of indices used for quantifying dynamic interaction with wildlife telemetry data. For more information on each of the methods employed see the references within. The package draws heavily on the classes and methods developed in the 'adehabitat' packages.
+Description: Dynamic interaction refers to spatial-temporal associations
+    in the movements of two (or more) animals. This package provides tools for
+    calculating a suite of indices used for quantifying dynamic interaction with
+    wildlife telemetry data. For more information on each of the methods employed
+    see the references within. The package draws heavily on the classes and methods
+    developed in the 'adehabitat' packages.
 URL: http://jedalong.github.io/wildlifeDI
 License: GPL-3
 VignetteBuilder: knitr
@@ -16,4 +21,4 @@ Imports:
     sp,
     rgeos,
     adehabitatLT
-RoxygenNote: 5.0.0
+RoxygenNote: 5.0.1
