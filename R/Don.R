@@ -20,6 +20,7 @@
 #' @param tc time threshold for determining simultaneous fixes -- see function: \code{GetSimultaneous}.
 #' @param dc distance tolerance limit (in appropriate units) for defining when 
 #'         two fixes are spatially together.
+#' @param plot logical, whether or not to plot the Doncaster plot. Default = TRUE.
 #'
 #' @return
 #' This function first returns a plot, for distance values ranging from 0 to the maximum
@@ -48,7 +49,7 @@
 #' @export
 #
 # ---- End of roxygen documentation ----
-Don <- function(traj1,traj2,tc=0,dc=50){
+Don <- function(traj1,traj2,tc=0,dc=50,plot=TRUE){
   trajs <- GetSimultaneous(traj1, traj2, tc)
   #convert ltraj objects to dataframes
   tr1 <- ld(trajs[1])
@@ -79,8 +80,11 @@ Don <- function(traj1,traj2,tc=0,dc=50){
   Co <- Co / n
   Ce <- Ce / (n^2)
   
-  plot(pd,Ce,type="l",col="grey50",ylab="probability",xlab="Distance <= (m)")
-  points(pd,Co,pch=20)
+  if (plot){
+    plot(pd,Ce,type="l",col="grey50",ylab="probability",xlab="Distance <= (m)")
+    points(pd,Co,pch=20)
+  }
+
   
   #compute the contingency table and Chi-Squared test.
   con <- matrix(nrow=3,ncol=3,dimnames=list(c("Paired","Non-Paired","Totals"),c("below.crit","above.crit","Totals")))
