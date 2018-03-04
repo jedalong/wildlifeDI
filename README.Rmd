@@ -1,0 +1,72 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "README-"
+)
+```
+
+# wildlifeDI
+
+The wildilfeDI package facilitates the calculation of indices of dynamic interaction for wildilfe telemetry data. There are also functions for more advanced contact analysis. For more information on the methods used within see the documentation but also see:
+
+Long, J.A., Nelson, T.A., Webb, S.L., Gee, K.L. (2014) A critical examination of indices of dynamic interaction for wildlife telemetry studies. Journal of Animal Ecology. 83(5):1216-1233.
+
+## Installation
+
+You can install the latest (under development version) of wildlifeDI from github with:
+
+```{r gh-installation, eval = TRUE, message = FALSE, warning = FALSE}
+# install.packages("devtools")
+devtools::install_github("jedalong/wildlifeDI")
+```
+
+You can also install wildlifeDI from CRAN: 
+
+```{r}
+#install.packages('wildlifeDI')
+```
+
+## Example
+
+A small dataset is provided to demonstrate the functionality of the package.
+
+```{r example}
+library(wildlifeDI)
+data(deer)
+deer
+plot(deer)
+```
+
+Different tests of dynamic interaction can be straightforwardly computed. Most require a distance threshold (dc) to define when two animals are proximal. Similarly, most methods require a time threshold (tc) for when two fixes are `simultaneous'. 
+
+Here we use dc = 50 and tc = 8 mins (8*60).
+
+A few examples are given below:
+
+```{r}
+dc <- 50
+tc <- 8*60
+#Proximity Analysis
+Prox(deer[1],deer[2])
+#Doncaster's test
+Don(deer[1],deer[2],tc=tc,dc=dc,plot=F)
+#Kenward's Coefficient of Sociality
+Cs(deer[1],deer[2],tc=tc)
+#Shirabe's correlation coefficient
+Cr(deer[1],deer[2],tc=tc)
+#Dynamic Interaction index
+DI(deer[1],deer[2],tc=tc)
+#Benhamou's interaction statistic
+IAB(deer[1],deer[2],tc=tc,dc=dc)
+```
+
+For much more detailed information on the package please see the documentation and the vignette.
+
+--- END --- 
