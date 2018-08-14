@@ -10,7 +10,7 @@
 #' @param cs an object of the class \code{ltraj} which should be output from the function \code{conSegment}.
 #' @param contact how to define the point-of-contact. The default is to define it as all fixes in a segment \code{type = 'all'}, alternatively contacts can be defined as a single point along the segment defined as one of: \code{'first','last','minDist','minTime'}, which corresonds to the first fix int he contact segment, the last fix in the contact segment, the fix with the minimum time difference and the fix with the closest contact distance.
 #' @param idcol column id associated with IDs of individuals, default is the 'burst'
-#' @param nrand  number of random fixes to be selected (default = 100, set to 0 for strictly before and after analysis).
+#' @param nrand  number of random fixes to be selected (default = 0).
 #' @param nlag number of lags to compute in the before and after phases of a contact. If lag = 0 then only contacts are used.
 #' @param lag time (in seconds) for defining the lags in before and after periods of a conatact. 
 #' @param gap time (in seconds) for exluding the lags in before and after periods of a contact.  
@@ -27,7 +27,7 @@
 #' @export
 #
 # ---- End of roxygen documentation ----
-conDisplacement <- function(cs,contact='all',idcol='burst',nrand=100,nlag=0,lag=0,gap=0,segid){
+conDisplacement <- function(cs,contact='all',idcol='burst',nrand=0,nlag=0,lag=0,gap=0,segid){
   df <- ld(cs)
   if (missing(segid)){ 
     segid <- unique(df$contact_seg) 
