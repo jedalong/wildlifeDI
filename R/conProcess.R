@@ -78,7 +78,6 @@ conProcess <- function(mtraj1,mtraj2,dc=0,tc=0,idcol1='burst',idcol2){
         #add contact rowid
         if (length(indc1) != length(indc2)) {print(c(i1,i2))}
         df$contact_rowid[indc1] <- mapply(con,df$contact_rowid[indc1],indc2)
-        print(i)
       }
     }
     return(df)
