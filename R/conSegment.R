@@ -24,8 +24,8 @@
 #
 # ---- End of roxygen documentation ----
 #function to group contacts into interaction 'segments'.
-conSegment <- function(ca,sc=0,idcol='burst'){
-  df <- ld(ca)
+conSegment <- function(traj,sc=0,idcol='burst'){
+  df <- ld(traj)
   df$contact_seg <- 0
   df$contact_seg[which(df$contacts > 0)] <- 1
   
