@@ -39,7 +39,8 @@
 #' 
 #' @author Jed Long
 #'
-#' @import sp rgeos adehabitatLT
+#' @import sp rgeos adehabitatLT stats graphics
+#
 #' @docType package
 #' @name wildlifeDI-package
 NULL

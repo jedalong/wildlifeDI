@@ -2,21 +2,21 @@
 % Please edit documentation in R/conContext.R
 \name{conContext}
 \alias{conContext}
-\title{Examine context associated with contact segments}
+\title{Examine context associated with contact phases}
 \usage{
-conContext(cs, var = "dist", contact = "all", idcol = "burst",
-  nrand = 100, nlag = 0, lag = 0, gap = 0, segid)
+conContext(ltraj, var = "dist", contact = "all", idcol = "burst",
+  nrand = 0, nlag = 0, lag = 0, gap = 0, phaid)
 }
 \arguments{
-\item{cs}{an object of the class \code{ltraj} which should be output from the function \code{conSegment}.}
+\item{ltraj}{an object of the class \code{ltraj} which should be output from the function \code{conPhase}.}
 
 \item{var}{name(s) (as character) of columns (possibly from \code{infolocs}) to keep for contextual analysis.}
 
-\item{contact}{how to define the point-of-contact. The default is to define it as all fixes in a segment \code{type = 'all'}, alternatively contacts can be defined as a single point along the segment defined as one of: \code{'first','last','minDist','minTime'}, which corresonds to the first fix int he contact segment, the last fix in the contact segment, the fix with the minimum time difference and the fix with the closest contact distance.}
+\item{contact}{how to define the point-of-contact. The default is to define it as all fixes in a phase \code{type = 'all'}, alternatively contacts can be defined as a single point along the phase defined as one of: \code{'first','last','minDist','minTime'}, which corresonds to the first fix int he contact phase, the last fix in the contact phase, the fix with the minimum time difference and the fix with the closest contact distance.}
 
 \item{idcol}{column id associated with IDs of individuals, default is the 'burst'.}
 
-\item{nrand}{number of random fixes to be selected (default = 100, set to 0 for strictly before and after analysis).}
+\item{nrand}{number of random fixes to be selected (default = 0).}
 
 \item{nlag}{number of lags to compute in the before and after phases of a contact. If lag = 0 then only contacts are used.}
 
@@ -24,20 +24,19 @@ conContext(cs, var = "dist", contact = "all", idcol = "burst",
 
 \item{gap}{time (in seconds) for exluding the lags in before and after periods of a contact.}
 
-\item{segid}{(optional) id(s) of the contact segment upon which to examine (default is all).}
+\item{phaid}{(optional) id(s) of the contact phase upon which to examine (default is all).}
 }
 \value{
-A dataframe that can be used to examine behaviour/context before, during, and after contact segments.
+A dataframe that can be used to examine behaviour/context before, during, and after contact phases.
 }
 \description{
-Extracts the variables associated with \code{var} before, during, and after contact segments, based on some specified time-lag.
+Extracts the variables associated with \code{var} before, during, and after contact phases, based on some specified time-lag.
 }
 \details{
-This function is used following the \code{conSegment} function.
+This function is used following the \code{conphase} function. One should choose how to define the contact point (i.e., the parameter \code{contact}) depending on the research question. In most typical cases (with regular interval tracking data) the lag time should be set to the tracking interval and the gap should be set to 1/2 the tracking interval.
 }
 \seealso{
-contacts, conSegment
+conPhase
 }
 \keyword{Analysis}
 \keyword{Contact}
-

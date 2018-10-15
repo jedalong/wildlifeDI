@@ -33,4 +33,3 @@ spts <- checkTO(deer37, deer38)
 GetSimultaneous, GetTemporalOverlap
 }
 \keyword{processing}
-

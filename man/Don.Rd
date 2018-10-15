@@ -4,7 +4,7 @@
 \alias{Don}
 \title{Doncaster's measure of dynamic interaction}
 \usage{
-Don(traj1, traj2, tc = 0, dc = 50)
+Don(traj1, traj2, tc = 0, dc = 50, plot = TRUE)
 }
 \arguments{
 \item{traj1}{an object of the class \code{ltraj} which contains the time-stamped
@@ -18,6 +18,8 @@ help(ltraj)}.}
 
 \item{dc}{distance tolerance limit (in appropriate units) for defining when 
 two fixes are spatially together.}
+
+\item{plot}{logical, whether or not to plot the Doncaster plot. Default = TRUE.}
 }
 \value{
 This function first returns a plot, for distance values ranging from 0 to the maximum
@@ -56,4 +58,3 @@ data. \emph{Journal of Theoretical Biology}, \bold{143}: 431-443.
 GetSimultaneous
 }
 \keyword{indices}
-

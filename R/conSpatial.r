@@ -24,16 +24,6 @@
 #'
 #' @keywords Contact Analysis
 #' @seealso conProcess, conPhase
-#' @examples
-#' data(deer)
-#' deer37 <- deer[1]
-#' deer38 <- deer[2]
-#' #tc = 7.5 minutes, dc = 50 meters
-#' spts <- contacts(deer37, deer38, tc=7.5*60, dc=50)
-#' slin <- contacts(deer37, deer38, tc=7.5*60, dc=50, type='l')
-#' #plot(spts)
-#' #plot(slin,add=TRUE)
-#' 
 #' @export
 #
 
@@ -46,14 +36,14 @@ conSpatial <- function(ltraj,type='p',def='all',proj4string=CRS(as.character(NA)
     } else if (def=='last'){
       i1 <- ind[which.max(df$date[ind])]
     } else if (def=='minTime'){
-      sub <- subset(df,contact_pha == phase)
+      sub <- df[df$contact_pha == phase,]
       sub$id <- as.character(sub$id)
       sub$burst <- as.character(sub$burst)
       sub <- dl(sub)
       dfpairs <- conPairs(sub)
       i1 <- ind[dfpairs$contact_orig_rowid[which.min(dfpairs$contact_dt)]]
     } else if (def=='minDist'){
-      sub <- subset(df,contact_pha == phase)
+      sub <- df[df$contact_pha == phase,]
       sub$id <- as.character(sub$id)
       sub$burst <- as.character(sub$burst)
       sub <- dl(sub)
@@ -67,9 +57,9 @@ conSpatial <- function(ltraj,type='p',def='all',proj4string=CRS(as.character(NA)
   if (type ==  'p'){
     #convert ltraj object to dataframe
     if (def =='all'){
-      dfs <- subset(df,contacts==1)
+      dfs <- df[df$contacts==1,]
     } else if (def == 'phase'){
-      dfs <- subset(df, !is.na(contact_pha))
+      dfs <- df[!is.na(df$contact_pha),]
     } else {
       phaid <- unique(df$contact_pha[!is.na(df$contact_pha)])
       #Get the contacts, and optionally the BefAft Phases
@@ -78,7 +68,7 @@ conSpatial <- function(ltraj,type='p',def='all',proj4string=CRS(as.character(NA)
     }
     spo <- SpatialPointsDataFrame(dfs[,1:2],data=dfs,proj4string=proj4string)
   } else if (type=='l'){
-    df2 <- subset(df,!is.na(contact_pha))
+    df2 <- df[!is.na(df$contact_pha),]
     df2$id<- as.character(df2$id)
     df2$burst <- as.character(df2$burst)
     df2$oid <- df2$id

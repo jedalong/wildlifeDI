@@ -57,4 +57,3 @@ Bauman, P.J. (1998) The Wind Cave National Park elk herd: home ranges, seasonal 
 GetSimultaneous, Prox, HAI
 }
 \keyword{indices}
-

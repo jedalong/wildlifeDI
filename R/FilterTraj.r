@@ -62,7 +62,7 @@ FilterTraj <- function(traj, type='attribute',filter=NA){
     if (class(filter) %in% c('SpatialPolygonsDataFrame','SpatialPolygons')){check <- TRUE} else {stop('Parameter Error: filter is not a SpatialPolygons* object.')}
     tr1.sp <- SpatialPointsDataFrame(SpatialPoints(tr1[,1:2]),data=tr1)
     tr1.int <- tr1.sp[gWithin(tr1.sp,filter,byid=TRUE)[1,],]  # Better way to do this?
-    tr1 <- slot(tr1.int,'data')
+    tr1 <- tr1.int@data
   } else if (type == 'temporal'){
     if (class(filter)[1] %in% c('POSIXct','POSIXlt')){check <- TRUE} else {stop('Parameter Error: filter is not a POSIX object.')}
     if (length(filter) != 2){stop('Parameter Error: filter is not a POSIX list length=2.')}

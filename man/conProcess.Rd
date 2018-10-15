@@ -24,7 +24,7 @@ This function returns the object \code{mtraj1} with three additional fields:
 contact - the number of contacts associated with each given fix.
 contact_id - the id(s) of the individual(s) associated with those contacts.
 contact_d - the distance (in the same units as \code{mtraj1}) at which the contacts occur.
-Note that if more than one contact occurs at a given time, the contact_id and contact_d fields will be a concatenated list of the contact IDs and distances. See \code{ProcessContacts}.
+Note that if more than one contact occurs at a given time, the contact_id and contact_d fields will be a concatenated list of the contact IDs and distances.
 }
 \description{
 This function performs basic contact analysis between individuals in a group of tracked animals, or between two different groups of tracked animals.
@@ -33,8 +33,7 @@ This function performs basic contact analysis between individuals in a group of 
 This function can be used to identify the nature of contacts in space and time between individuals in one or two groups.
 }
 \seealso{
-GetSimultaneous, dcPlot, conSegment, conSummary
+GetSimultaneous, dcPlot, conPhase, conSummary
 }
 \keyword{Analysis}
 \keyword{Contact}
-

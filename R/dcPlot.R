@@ -22,9 +22,7 @@
 #'
 # @references
 #'
-#' @keywords Contact Analysis
 #' @seealso GetSimultaneous, conProcess, Prox, Don, IAB
-#' @examples
 #' @export
 #
 # ---- End of roxygen documentation ----

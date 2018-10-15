@@ -24,7 +24,6 @@
 #'
 #' @keywords Contact Analysis
 #' @seealso conPhase
-#' @examples
 #' @export
 #
 # ---- End of roxygen documentation ----

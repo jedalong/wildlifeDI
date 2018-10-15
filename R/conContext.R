@@ -26,7 +26,8 @@
 #'
 #' @keywords Contact Analysis
 #' @seealso conPhase
-#' @examples
+# @examples
+#' 
 #' @export
 #
 # ---- End of roxygen documentation ----
@@ -45,14 +46,14 @@ conContext <- function(ltraj,var='dist',contact='all',idcol='burst',nrand=0,nlag
     } else if (def=='last'){
       i1 <- ind[which.max(df$date[ind])]
     } else if (def=='minTime'){
-      sub <- subset(df,contact_pha == phase)
+      sub <- df[df$contact_pha == phase,]
       sub$id <- as.character(sub$id)
       sub$burst <- as.character(sub$burst)
       sub <- dl(sub)
       dfpairs <- conPairs(sub)
       i1 <- ind[dfpairs$contact_orig_rowid[which.min(dfpairs$contact_dt)]]
     } else if (def=='minDist'){
-      sub <- subset(df,contact_pha == phase)
+      sub <- df[df$contact_pha == phase,]
       sub$id <- as.character(sub$id)
       sub$burst <- as.character(sub$burst)
       sub <- dl(sub)

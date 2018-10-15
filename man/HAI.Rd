@@ -64,4 +64,3 @@ interaction in eastern coyotes: The influence of pair types and fragmentation.
 GetSimultaneous, Ca
 }
 \keyword{indices}
-

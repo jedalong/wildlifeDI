@@ -30,11 +30,8 @@ If \code{histplot = FALSE} a dataframe containing all the pairwise and simulatan
 This function is an exploratory tool to examine the pairwise distances between individuals within a large telemetry dataset.
 }
 \details{
-The dcPlot function can be used to study the frequency distribution of pairwise distances bewteen individual in a large telemetry dataset. It can be applied to a single group (if \code{mtraj2} is ignored) or two-groups of indidividuals. The code attempts to find natural breaks (local minima) in the frequency histogram using an approach based on the \code{peaks} function attributed to B. Ripley (see \url{https://stackoverflow.com/questions/6324354/add-a-curve-that-fits-the-peaks-from-a-plot-in-r}. This tool is meant to be used for exploratory data analysis.
+The dcPlot function can be used to study the frequency distribution of pairwise distances bewteen individual in a large telemetry dataset. It can be applied to a single group (if \code{mtraj2} is ignored) or two-groups of indidividuals. The code attempts to find natural breaks (local minima) in the frequency histogram using an approach based on the \code{peaks} function attributed to B. Ripley (see \url{https://stackoverflow.com/questions/6324354/add-a-curve-that-fits-the-peaks-from-a-plot-in-r} ). This tool is meant to be used for exploratory data analysis.
 }
 \seealso{
-GetSimultaneous, contacts, Prox, Don, Iab
+GetSimultaneous, conProcess, Prox, Don, IAB
 }
-\keyword{Analysis}
-\keyword{Contact}
-

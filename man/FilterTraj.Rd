@@ -62,4 +62,3 @@ x <- FilterTraj(deer37,type='attribute',filter=q)
 GetTemporalOverlap
 }
 \keyword{processing}
-

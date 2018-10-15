@@ -11,6 +11,7 @@
 
 #' @param ltraj an object of the class \code{ltraj} which is output from the funciton \code{conProcess}.
 #' @param pc time (in seconds) to allow for which to combine contact events (see details). 
+#' @param idcol column used to identify indivduals (default is the burst)
 #'
 #' @return
 #' An \code{ltraj} object with new column \code{contact_pha}.
@@ -19,7 +20,6 @@
 #'
 #' @keywords Contact Analysis
 #' @seealso conProcess, conSpatial, conTemporal, conSummary
-#' @examples
 #' @export
 #
 # ---- End of roxygen documentation ----

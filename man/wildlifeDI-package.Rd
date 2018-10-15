@@ -32,9 +32,6 @@ When citing this package please cite the paper Long et al. (2014)
 The functions in \code{wildlifeDI} utilize the \code{ltraj} objects from the package \code{adehabitat} 
 (Calenge 2006). For more information on objects of this type see \code{help(ltraj)}.
 }
-\author{
-Jed Long
-}
 \references{
 Calenge, C. (2006) The package "adehabitat" for the R software: A tool for hte analysis of space and habitat use by animals. \emph{Ecological Modelling}, \bold{197}: 516-519.
 
@@ -42,4 +39,6 @@ Long, J.A., Nelson, T.A., Webb, S.L., Gee, K.L. (2014) A critical examination of
 
 (see individual functions for other references)
 }
-
+\author{
+Jed Long
+}

@@ -55,4 +55,3 @@ on home ranges and social affiliations of female white-tailed deer.
 GetSimultaneous, contacts
 }
 \keyword{indices}
-

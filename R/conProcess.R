@@ -25,7 +25,6 @@
 #'
 #' @keywords Contact Analysis
 #' @seealso GetSimultaneous, dcPlot, conPhase, conSummary
-#' @examples
 #' @export
 #
 # ---- End of roxygen documentation ----

@@ -111,4 +111,3 @@ Minta, S.C. (1992) Tests of spatial and temporal interaction among animals.
 GetSimultaneous
 }
 \keyword{indices}
-

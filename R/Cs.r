@@ -45,6 +45,7 @@
 #'  goshawks, \emph{Accipiter gentilis: II}. Sex differences in sociality and nest-switching.
 #'  \emph{Animal Behaviour}. \bold{46}, 371--378.
 #'
+#'
 #' @keywords indices
 #' @seealso GetSimultaneous
 #' @examples

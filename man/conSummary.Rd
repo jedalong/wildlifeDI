@@ -2,32 +2,31 @@
 % Please edit documentation in R/conSummary.R
 \name{conSummary}
 \alias{conSummary}
-\title{Summarize contacts and segments}
+\title{Summarize contacts and phases}
 \usage{
-conSummary(cs)
+conSummary(ltraj)
 }
 \arguments{
-\item{cs}{an object of the class \code{ltraj} which should be output from the function \code{conSegment}.}
+\item{ltraj}{an object of the class \code{ltraj} which should be output from the function \code{conPhase}.}
 }
 \value{
-A dataframe that can be used to summarize contact segments.
+A dataframe that can be used to summarize contact phases.
 }
 \description{
 Computes some basic summary statistics from a contact analysis.
 }
 \details{
-This function is used following the \code{conSegment} function. It computes the following summary statistics from the contact analysis:
+This function is used following the \code{conPhase} function. It computes the following summary statistics from the contact analysis:
 - total number of fixes in the dataset
 - total number of fixes deemed a contact
-- number of contact segments
-- longest segment duration
-- mean segment duration
-- median segment duration
-- no. of segments where the duration is only one fix (i.e., instantaneous contacts)
+- number of contact phases
+- longest phase duration
+- mean phase duration
+- median phase duration
+- no. of phase where the duration is only one fix (i.e., instantaneous contacts)
 }
 \seealso{
-contacts, conSegment
+conPhase
 }
 \keyword{Analysis}
 \keyword{Contact}
-

@@ -55,4 +55,3 @@ Long, J.A., Nelson, T.A. 2013. Measuring dynamic interaction in movement data. \
 GetSimultaneous, Cr, IAB
 }
 \keyword{indices}
-

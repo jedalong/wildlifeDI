@@ -40,4 +40,3 @@ Long, J.A., Nelson, T.A., Webb, S.L., Gee, K.L. (2014) A critical examination
  \bold{2010}, 1-12.
 }
 \keyword{datasets}
-

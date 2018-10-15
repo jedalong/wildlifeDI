@@ -42,4 +42,3 @@ deer38 <- trajs[2]
 as.ltraj
 }
 \keyword{processing}
-

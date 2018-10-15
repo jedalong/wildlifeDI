@@ -54,4 +54,3 @@ Benhamou, S., Valeix, M., Chamaille-Jammes, S., Macdonald, D., Loveridge, A.J. (
 GetSimultaneous, DI, Prox
 }
 \keyword{indices}
-

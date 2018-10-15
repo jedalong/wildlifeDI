@@ -47,4 +47,3 @@ Miller, HJ, Frank, AU, and Goodchild, M. eds. GIScience 2006, LNCS 4197. Berlin:
 GetSimultaneous, DI
 }
 \keyword{indices}
-
