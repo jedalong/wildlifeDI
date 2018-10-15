@@ -19,12 +19,12 @@
 #' contact - the number of contacts associated with each given fix.
 #' contact_id - the id(s) of the individual(s) associated with those contacts.
 #' contact_d - the distance (in the same units as \code{mtraj1}) at which the contacts occur.
-#' Note that if more than one contact occurs at a given time, the contact_id and contact_d fields will be a concatenated list of the contact IDs and distances. See \code{ProcessContacts}.
+#' Note that if more than one contact occurs at a given time, the contact_id and contact_d fields will be a concatenated list of the contact IDs and distances.
 #'
 # @references
 #'
 #' @keywords Contact Analysis
-#' @seealso GetSimultaneous, dcPlot, conSegment, conSummary
+#' @seealso GetSimultaneous, dcPlot, conPhase, conSummary
 #' @examples
 #' @export
 #
