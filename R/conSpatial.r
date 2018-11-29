@@ -17,7 +17,6 @@
 #' @param ltraj an object of the class \code{ltraj} which should be output from the function \code{conPhase}.
 #' @param type one of ('p' - the default or 'l'). Whether to generate contacts as a \code{SpatialPointsDataFrame} or phases as a \code{SpatialLinesDataFrame}, points are the default, but lines can be useful for plotting and exploratory analysis.
 #' @param def if type = 'p' one of ('all','phase','first','last','minDist','minTime') which defines how contacts are to be mapped using all or part of a contact phase. (see Details) 
-#' @param proj4string a string object containing the projection information to be passed included in the output \code{Spatial*DataFrame} object. For more information see the \code{CRS-class} in the packages \code{sp} and \code{rgdal}. Default is \code{NA}.
 #' 
 #' @return
 #' A \code{SpatialPointsDataFrame} or \code{SpatialLinesDataFrame} containing the locations/paths of the contacts. The time of the contact is stored in the attributes of the \code{SpatialPointsDataFrame} object, along with the actual distance between fixes. The \code{SpatialLinesDataFrame} contains attributes of the time of contact, and the min, max, and mean distance apart along a line segment.
@@ -27,7 +26,7 @@
 #' @export
 #
 
-conSpatial <- function(ltraj,type='p',def='all',proj4string=CRS(as.character(NA))){
+conSpatial <- function(ltraj,type='p',def='all'){
   #Function to extract minTime and minDist from phases.
   funPhase <- function(phase, df, def){
     ind <- which(df$contact_pha == phase)
@@ -75,7 +74,7 @@ conSpatial <- function(ltraj,type='p',def='all',proj4string=CRS(as.character(NA)
     df2$id <- df2$contact_pha
     df2$burst <- df2$contact_pha
     
-    t2 <- dl(df2,proj4string=proj4string)
+    t2 <- dl(df2,proj4string=attr(ltraj,'proj4string'))
     spo <- ltraj2sldf(t2)
     names(spo@data) <- c('id','contact_pha')
   }

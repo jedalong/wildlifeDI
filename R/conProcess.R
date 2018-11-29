@@ -153,7 +153,7 @@ conProcess <- function(mtraj1,mtraj2,dc=0,tc=0,idcol1='burst',idcol2){
     df <- twoGroup(mtraj1,mtraj2,dc,tc,idcol1,idcol2)
   }
   
-  mtraj1 <- dl(df)
-  return(mtraj1)
+  outtraj <- dl(df,proj4string = attr(mtraj1,'proj4string'))
+  return(outtraj)
 }
 

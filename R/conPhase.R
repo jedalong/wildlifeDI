@@ -66,5 +66,7 @@ conPhase <- function(ltraj,pc=0,idcol='burst'){
   }
   
   df$contact_pha[which(df$contact_pha == 0)] <- NA
-  return(dl(df))
+  
+  outtraj <- dl(df,proj4string=attr(ltraj,'proj4string'))
+  return(outtraj)
 }
