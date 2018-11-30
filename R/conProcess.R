@@ -7,18 +7,18 @@
 #' @details
 #' This function can be used to identify the nature of contacts in space and time between individuals in one or two groups.
 
-#' @param mtraj1 an object of the class \code{ltraj} which contains the time-stamped movement fixes of the first group of individuals. Each individual should be stored with a unique 'id'. (see \code{?as.ltraj})
-#' @param mtraj2 (optional) same as \code{mtraj1}, but for the second group of individuals.
-#' @param tc time threshold for determining simultaneous fixes -- see function: \code{GetSimultaneous}.
+#' @param mtraj1 an object of the class ltraj which contains the time-stamped movement fixes of the first group of individuals. Each individual should be stored with a unique 'id'. (see ?as.ltraj)
+#' @param mtraj2 (optional) same as mtraj1, but for the second group of individuals.
+#' @param tc time threshold for determining simultaneous fixes -- see function: GetSimultaneous.
 #' @param dc distance tolerance limit (in appropriate units) for defining when two fixes are spatially together.
 #' @param idcol1 column id associated with IDs of the first group of individuals, default is the 'burst'.
 #' @param idcol2 (optional) column id associated with IDs of the second group of individuals.
 #'
 #' @return
-#' This function returns the object \code{mtraj1} with three additional fields:
+#' This function returns the object mtraj1 with three additional fields:
 #' contact - the number of contacts associated with each given fix.
 #' contact_id - the id(s) of the individual(s) associated with those contacts.
-#' contact_d - the distance (in the same units as \code{mtraj1}) at which the contacts occur.
+#' contact_d - the distance (in the same units as mtraj1) at which the contacts occur.
 #' Note that if more than one contact occurs at a given time, the contact_id and contact_d fields will be a concatenated list of the contact IDs and distances.
 #'
 # @references
