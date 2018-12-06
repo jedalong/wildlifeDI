@@ -27,6 +27,8 @@
 #
 
 conSpatial <- function(ltraj,type='p',def='all'){
+  
+  proj4string <- attr(ltraj,'proj4string')
   #Function to extract minTime and minDist from phases.
   funPhase <- function(phase, df, def){
     ind <- which(df$contact_pha == phase)
@@ -74,7 +76,7 @@ conSpatial <- function(ltraj,type='p',def='all'){
     df2$id <- df2$contact_pha
     df2$burst <- df2$contact_pha
     
-    t2 <- dl(df2,proj4string=attr(ltraj,'proj4string'))
+    t2 <- dl(df2,proj4string=proj4string)
     spo <- ltraj2sldf(t2)
     names(spo@data) <- c('id','contact_pha')
   }
