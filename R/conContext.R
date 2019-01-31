@@ -100,7 +100,7 @@ conContext <- function(ltraj,var='dist',contact='all',idcol='burst',nrand=0,nlag
     ccon <- data.frame(df.sub[indpha,cols])
     #names(ccon) <- var
     ccon$dt_con <- 0
-    ccon$phase <- 'Con'
+    ccon$dt_lev <- 'Con'
     outdf <- ccon
     
     
@@ -114,15 +114,15 @@ conContext <- function(ltraj,var='dist',contact='all',idcol='burst',nrand=0,nlag
         ct1 <- difftime(df.sub$date[i1],df.sub$date)
         ibef <- which(ct1 > l1 & ct1 < l2)
         cbef <- data.frame(df.sub[ibef,cols]) 
-        cbef$dt_con <- as.numeric(ct1[ibef])
-        cbef$phase <- rep(paste('B',l,sep=''),length(ibef))
+        cbef$dt_con <- as.numeric(-ct1[ibef])
+        cbef$dt_lev <- rep(paste('B',l,sep=''),length(ibef))
         
         #Get after fixes
         ct2 <- difftime(df.sub$date[i2],df.sub$date)
         iaft <- which(ct2 < -l1 & ct2 > -l2)
         caft <- data.frame(df.sub[iaft,cols])
         caft$dt_con <- as.numeric(-ct2[iaft])
-        caft$phase <- rep(paste('A',l,sep=''),length(iaft))
+        caft$dt_lev <- rep(paste('A',l,sep=''),length(iaft))
         
         #append the rows
         outdf <- rbind(outdf,cbef,caft)
@@ -136,7 +136,6 @@ conContext <- function(ltraj,var='dist',contact='all',idcol='burst',nrand=0,nlag
   
   #Get the contacts, and optionally the BefAft Phases
   dff <- do.call(rbind, lapply(phaid,fun.BefAft,df=df,var=var,nlag=nlag,lag=lag,gap=gap,idcol=idcol,contact=contact))
-  #dff$phase <- factor(dff$phase,c('Bef','Con','Aft'))  #just for ordering later on
   
   #Get Random fixes if required
   if (nrand > 0){
@@ -145,7 +144,7 @@ conContext <- function(ltraj,var='dist',contact='all',idcol='burst',nrand=0,nlag
     ind2 <- sample(ind2, nrand)
     rand <- data.frame(df[ind2,c('date',var)])
     rand$dt_con <- NA
-    rand$phase <- 'Rnd'
+    rand$dt_lev <- 'Rnd'
     rand$phaid <- NA
     rand$ID <- df[ind2,idcol]
     dff <- rbind(dff,rand)
@@ -162,6 +161,6 @@ conContext <- function(ltraj,var='dist',contact='all',idcol='burst',nrand=0,nlag
   }
   if (nrand > 0) {lev <- c(lev,'Rnd')}
   
-  dff$phase <- factor(dff$phase,levels=lev)
+  dff$dt_lev <- factor(dff$dt_lev,levels=lev)
   return(dff)
 }
