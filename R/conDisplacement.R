@@ -21,54 +21,46 @@
 #' @export
 #
 # ---- End of roxygen documentation ----
-conDisplacement <- function(ltraj,def='all',idcol='burst'){
-  df <- ld(ltraj)
-  df$displacement <- 0
+conDisplacement2 <- function(ltraj,def='all',idcol='burst'){
   
-  #Compute displacement for each individual
-  ind_displacement <- function(id,idcol, df, def){
-    ind <- which(df[,idcol] == id)
-    df <- df[ind,]
-    n <- dim(df)[1]
-    if (def == 'first') {
-      cid <- which(!duplicated(df$contact_pha))
-      cid <- cid[which(!is.na(df$contact_pha[cid]))] # remove NA
-    } else if (def == 'last') {
-      cid <- which(!duplicated(rev(df$contact_pha)))
-      cid <- cid[which(!is.na(rev(df$contact_pha)[cid]))] # remove NA
-      cid <- rev(1:n)[cid]
-    } else if (def == 'minDist'){
-      cid <- NULL
-      cpdf <- conPairs(ltraj)
-      for (i in 1:max(cpdf$contact_pha)){
-        cpdf_sub <- subset(cpdf, contact_pha == i)
-        cid <- c(cid, cpdf_sub$contact_orig_rowid[which.min(cpdf_sub$contact_d)])
-      }
+  #Get the Fix ID of every Contact based on 'DEF'
+  cpdf <- conPairs(ltraj)
+  cid <- NULL
+  for (p in 1:max(cpdf$contact_pha)){
+    cpdf_sub <- subset(cpdf, contact_pha == p)
+    if (def == 'first'){
+      cid <- c(cid, cpdf_sub$contact_orig_rowid[which.min(cpdf_sub$date)])
+    } else if (def == 'last'){
+      cid <- c(cid, cpdf_sub$contact_orig_rowid[which.max(cpdf_sub$date)])
     } else if (def == 'minTime'){
-      cid <- NULL
-      cpdf <- conPairs(ltraj)
-      for (i in 1:max(cpdf$contact_pha)){
-        cpdf_sub <- subset(cpdf, contact_pha == i)
-        cid <- c(cid, cpdf_sub$contact_orig_rowid[which.min(cpdf_sub$contact_dt)])
-      }
+      cid <- c(cid, cpdf_sub$contact_orig_rowid[which.min(cpdf_sub$contact_dt)])
+    } else if (def == 'minDist') {
+      cid <- c(cid, cpdf_sub$contact_orig_rowid[which.min(cpdf_sub$contact_d)])
     } else {
-      cid <- which(df$contacts > 0)
+      cid <- c(cid,unique(cpdf_sub$contact_orig_rowid))
     }
-    
-    disp <- rep(0,n)
-    if (length(cid) > 0){
-      for (i in 1:n){
-        j <- cid[which.min(abs(difftime(df$date[cid],df$date[i],units='secs')))]
-        disp[i] <- sqrt( (df$x[i]-df$x[j])^2 + (df$y[i]-df$y[j])^2 )
-      }
-    }
-    return(disp)
   }
   
-  ids <- levels(df[,idcol])
-  for (id in ids){
-    df$displacement[which(df[,idcol]==id)] <- ind_displacement(id,idcol,df,def)
-  }  
+  # Set up displacement analysis
+  df <- ld(ltraj)
+  df$displacement <- 0
+  n <- dim(dfi)[1]
+  
+  #Peform Displacement individually for every Animal.
+  anid <- unique(df[,idcol])
+  for (ani in anid){
+    ind <- which(df[,idcol]==ani)
+    cid_ani <- cid[which(cid %in% ind)]
+    if (length(cid_ani) == 0) {
+      #animal has no contacts so displacement is NA
+      df$displacement[ind] <- NA
+    } else {
+      for (i in ind){
+        j <- cid_ani[which.min(abs(df$date[i]-df$date[cid_ani]))]
+        df$displacement[i] <-sqrt((df$x[i]-df$x[j])^2+(df$y[i]-df$y[j])^2)
+      }
+    }
+  }
 
   outtraj <- dl(df,proj4string=attr(ltraj,'proj4string'))
   return(outtraj)
