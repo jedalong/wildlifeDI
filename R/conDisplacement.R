@@ -21,7 +21,7 @@
 #' @export
 #
 # ---- End of roxygen documentation ----
-conDisplacement2 <- function(ltraj,def='all',idcol='burst'){
+conDisplacement <- function(ltraj,def='all',idcol='burst'){
   
   #Get the Fix ID of every Contact based on 'DEF'
   cpdf <- conPairs(ltraj)
