@@ -1,7 +1,7 @@
 Package: wildlifeDI
 Title: Calculate Indices of Dynamic Interaction for Wildlife Telemetry Data
 Version: 0.4
-Authors@R: person("Jed", "Long", email="jed.long@st-andrews.ac.uk", role=c("aut","cre"))
+Authors@R: person("Jed", "Long", email="jed.long@uwo.ca", role=c("aut","cre"))
 Description: Dynamic interaction refers to spatial-temporal associations
     in the movements of two (or more) animals. This package provides tools for
     calculating a suite of indices used for quantifying dynamic interaction with

@@ -25,17 +25,10 @@
 #' }
 #' The package \code{wildlifeDI} also provides useful functionality for identifying which fixes are temporally simultaneous, required for many of the above methods, using the function \code{GetSimultaneous}, along with other functions for exploring spatial-temporal interactions patterns in wildlife telemetry data.
 #' \cr \cr
-#' When citing this package please cite the paper Long et al. (2014)
+#' When citing this package please use see citation ('wildlifeDI), also please cite the appropriate papers associated with individual methods being used.
 #' 
-#' The functions in \code{wildlifeDI} utilize the \code{ltraj} objects from the package \code{adehabitat} 
-#' (Calenge 2006). For more information on objects of this type see \code{help(ltraj)}.
+#' The functions in \code{wildlifeDI} utilize the \code{ltraj} objects from the package \code{adehabitat}. For more information on objects of this type see \code{help(ltraj)}.
 #'
-#' @references
-#' Calenge, C. (2006) The package "adehabitat" for the R software: A tool for hte analysis of space and habitat use by animals. \emph{Ecological Modelling}, \bold{197}: 516-519.
-#' 
-#' Long, J.A., Nelson, T.A., Webb, S.L., Gee, K.L. (2014) A critical examination of indices of dynamic interaction for wildlife telemetry data. \emph{Journal of Animal Ecology}, \bold{83}: 1216:1233.
-#' 
-#' (see individual functions for other references)
 #' 
 #' @author Jed Long
 #'

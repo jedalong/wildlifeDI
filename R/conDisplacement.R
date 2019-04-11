@@ -18,6 +18,16 @@
 #'
 #' @keywords Contact Analysis
 #' @seealso conPhase, conContext
+#' 
+#' @examples 
+#' \dontrun{
+#' data(does)
+#' doecons <- conProcess(does,tc=15*60,dc=50)
+#' doephas <- conPhase(doecons,pc=60*60)
+#' disp_f <- conDisplacement(doephas,def='first')
+#' disp_l <- conDisplacement(doephas,def='last')
+#' }
+#' 
 #' @export
 #
 # ---- End of roxygen documentation ----

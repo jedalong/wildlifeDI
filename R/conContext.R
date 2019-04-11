@@ -11,7 +11,7 @@
 
 #' @param ltraj an object of the class \code{ltraj} which should be output from the function \code{conPhase}.
 #' @param var name(s) (as character) of columns (possibly from \code{infolocs}) to keep for contextual analysis.
-#' @param contact how to define the point-of-contact. The default is to define it as all fixes in a phase \code{type = 'all'}, alternatively contacts can be defined as a single point along the phase defined as one of: \code{'first','last','minDist','minTime'}, which corresonds to the first fix int he contact phase, the last fix in the contact phase, the fix with the minimum time difference and the fix with the closest contact distance.
+#' @param def how to define the point-of-contact. The default is to define it as all fixes in a phase \code{def = 'all'}, alternatively contacts can be defined as a single point along the phase defined as one of: \code{'first','last','minDist','minTime'}, which corresonds to the first fix int he contact phase, the last fix in the contact phase, the fix with the minimum time difference and the fix with the closest contact distance.
 #' @param idcol column id associated with IDs of individuals, default is the 'burst'.
 #' @param nrand  number of random fixes to be selected (default = 0).
 #' @param nlag number of lags to compute in the before and after phases of a contact. If lag = 0 then only contacts are used.
@@ -26,12 +26,20 @@
 #'
 #' @keywords Contact Analysis
 #' @seealso conPhase
-# @examples
+#' @examples
+#' 
+#' \dontrun{
+#' data(does)
+#' doecons <- conProcess(does,tc=15*60,dc=50)
+#' doephas <- conPhase(doecons,pc=60*60)
+#' cc <- conContext(var='dist',def='first',nlag=3,lag=30*60,gap=15*60)
+#' head(cc)
+#' }
 #' 
 #' @export
 #
 # ---- End of roxygen documentation ----
-conContext <- function(ltraj,var='dist',contact='all',idcol='burst',nrand=0,nlag=0,lag=0,gap=0,phaid){
+conContext <- function(ltraj,var='dist',def='all',idcol='burst',nrand=0,nlag=0,lag=0,gap=0,phaid){
   df <- ld(ltraj)
   if (missing(phaid)){ 
     phaid <- unique(df$contact_pha) 

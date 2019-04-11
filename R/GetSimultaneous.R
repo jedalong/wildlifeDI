@@ -24,7 +24,7 @@
 # @references
 #'
 #' @keywords processing
-#' @seealso as.ltraj
+#' @seealso GetTO
 #' @examples
 #' data(deer)
 #' deer37 <- deer[1]

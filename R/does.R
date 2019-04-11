@@ -1,6 +1,6 @@
 #' GPS tracking data of female white-tailed deer
 #'
-#' GPS telemetry data for X does during month of X in 2011. 
+#' GPS telemetry data for 8 does during month of May in 2011. 
 #' 
 #' The doe data are stored as a single \code{'ltraj'} object; each burst represents an individual. 
 #'

@@ -25,6 +25,13 @@
 #'
 #' @keywords Contact Analysis
 #' @seealso GetSimultaneous, dcPlot, conPhase, conSummary
+#' 
+#' @examples 
+#' \dontrun{
+#' data(does)
+#' doecons <- conProcess(does,tc=15*60,dc=50)
+#' }
+#' 
 #' @export
 #
 # ---- End of roxygen documentation ----

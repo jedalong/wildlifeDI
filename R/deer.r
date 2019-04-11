@@ -30,6 +30,7 @@
 #'  }
 #' @name deer
 #' @examples
+#' 
 #' data(deer)
 #' deer37 <- deer[1]
 #' deer38 <- deer[2]

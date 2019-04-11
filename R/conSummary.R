@@ -24,6 +24,14 @@
 #'
 #' @keywords Contact Analysis
 #' @seealso conPhase
+#' 
+#' @examples 
+#' \dontrun{
+#' data(does)
+#' doecons <- conProcess(does,tc=15*60,dc=50)
+#' doephas <- conPhase(doecons,pc=60*60)
+#' conSummary(doephas)
+#' }
 #' @export
 #
 # ---- End of roxygen documentation ----

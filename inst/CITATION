@@ -1,0 +1,12 @@
+
+bibentry(bibtype = 'article',
+    title = "{A critical examination of indices of dynamic interaction for wildlife telemetry data}",
+    journal = "{Journal of Animal Ecology}",
+    volume = "83"",
+    pages = "1216-1233",
+    year = "2014"",
+    author = c(person('Jed','Long'),
+               person('Trisalyn','Nelson'),
+               person('Stephen','Webb'),
+               person('Ken','Gee'))
+  )

@@ -23,6 +23,13 @@
 # @references
 #'
 #' @seealso GetSimultaneous, conProcess, Prox, Don, IAB
+#' @examples
+#' 
+#' \dontrun{
+#' data(does)
+#' dcPlot(does,tc=15*60,dmax=1000)
+#' }
+#' 
 #' @export
 #
 # ---- End of roxygen documentation ----

@@ -30,9 +30,12 @@
 #' 
 #' #Spatial Filter 
 #' #----NOT RUN----
-#' #library(adhabitatHR)
-#' #oz <- mcp(SpatialPoints(cbind(ld(deer38)$x,ld(deer38)$y)))
-#' #x <- FilterTraj(deer37,type='spatial',filter=oz)
+#' \dontrun{
+#' library(adhabitatHR)
+#' oz <- mcp(SpatialPoints(cbind(ld(deer38)$x,ld(deer38)$y)))
+#' x <- FilterTraj(deer37,type='spatial',filter=oz)
+#' }
+#' #
 #' #---------------
 #' 
 #' #Temporal Filter
