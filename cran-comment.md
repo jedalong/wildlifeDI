@@ -1,8 +1,8 @@
 ## Test environments
 
-* local Windows intsall, R 3.5.3
-* ubuntu 12.04 (on travis-ci), R 3.1.2
-* win-builder (devel and release)
+* local Windows install, R 3.5.3
+* ubuntu 14.04.5 (on travis-ci), R 3.5.3
+* win-builder (devel)
 
 ## R CMD check results
 
@@ -10,9 +10,7 @@ There were no ERRORs or WARNINGs.
 
 There was 1 NOTE:
 
-* checking dependencies in R code ... NOTE
-  Namespace in Imports field not imported from: 'R6'
-
+* Maintainer name change
   R6 is a build-time dependency.
 
 ## Downstream dependencies

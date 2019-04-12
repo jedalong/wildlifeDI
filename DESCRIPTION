@@ -1,7 +1,12 @@
 Package: wildlifeDI
+Type: Package
 Title: Calculate Indices of Dynamic Interaction for Wildlife Tracking Data
 Version: 0.3
-Authors@R: person("Jed", "Long", email="jed.long@uwo.ca", role=c("aut","cre"))
+Authors@R: person(given="Jed", 
+                  family="Long",
+                  role=c("aut","cre"),
+                  email="jed.long@uwo.ca", 
+                  comment = c(ORCID = "0000-0002-2815-0399"))
 Description: Dynamic interaction refers to spatial-temporal associations
     in the movements of two (or more) animals. This package provides tools for
     calculating a suite of indices used for quantifying dynamic interaction with
