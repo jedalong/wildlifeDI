@@ -23,14 +23,13 @@ Long, J.A., Nelson, T.A., Webb, S.L., Gee, K.L. (2014) A critical examination of
 You can install the latest (under development version) of wildlifeDI from github with:
 
 ```{r gh-installation, eval = TRUE, message = FALSE, warning = FALSE}
-# install.packages("devtools")
 devtools::install_github("jedalong/wildlifeDI")
 ```
 
-You can also install wildlifeDI from CRAN: 
+The version that can currently be downloaded from CRAN is wildlifeDI v0.3: 
 
-```{r}
-#install.packages('wildlifeDI')
+```{r eval=FALSE}
+install.packages('wildlifeDI')
 ```
 
 ## Example
@@ -41,7 +40,6 @@ A small dataset is provided to demonstrate the functionality of the package.
 library(wildlifeDI)
 data(deer)
 deer
-plot(deer)
 ```
 
 Different tests of dynamic interaction can be straightforwardly computed. Most require a distance threshold (dc) to define when two animals are proximal. Similarly, most methods require a time threshold (tc) for when two fixes are `simultaneous'. 

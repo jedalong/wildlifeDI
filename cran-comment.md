@@ -10,8 +10,15 @@ There were no ERRORs or WARNINGs.
 
 There was 1 NOTE:
 
-* Maintainer name change
-  R6 is a build-time dependency.
+checking CRAN incoming feasibility ... NOTE
+Maintainer: 'Jed Long <jed.long@uwo.ca>'
+
+New maintainer:
+  Jed Long <jed.long@uwo.ca>
+Old maintainer(s):
+  Jed Long <jed.long@st-andrews.ac.uk>
+
+* New email address due to a position change.
 
 ## Downstream dependencies
 

@@ -1,40 +1,33 @@
----
-output: github_document
----
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
-
-
-# wildlifeDI
+wildlifeDI
+==========
 
 The wildilfeDI package facilitates the calculation of indices of dynamic interaction for wildilfe telemetry data. There are also functions for more advanced contact analysis. For more information on the methods used within see the documentation but also see:
 
 Long, J.A., Nelson, T.A., Webb, S.L., Gee, K.L. (2014) A critical examination of indices of dynamic interaction for wildlife telemetry studies. Journal of Animal Ecology. 83(5):1216-1233.
 
-## Installation
+Installation
+------------
 
 You can install the latest (under development version) of wildlifeDI from github with:
 
-
-```r
-# install.packages("devtools")
+``` r
 devtools::install_github("jedalong/wildlifeDI")
 ```
 
-You can also install wildlifeDI from CRAN: 
+The version that can currently be downloaded from CRAN is wildlifeDI v0.3:
 
-
-```r
-#install.packages('wildlifeDI')
+``` r
+install.packages('wildlifeDI')
 ```
 
-## Example
+Example
+-------
 
 A small dataset is provided to demonstrate the functionality of the package.
 
-
-```r
+``` r
 library(wildlifeDI)
 data(deer)
 deer
@@ -47,25 +40,21 @@ deer
 #> 
 #> Characteristics of the bursts:
 #>   id burst nb.reloc NAs          date.begin            date.end
-#> 1 37    37      551   0 2005-03-08 00:03:00 2005-03-13 23:47:00
-#> 2 38    38      567   0 2005-03-08 00:02:00 2005-03-13 23:47:00
+#> 1 37    37      551   0 2005-03-07 19:03:00 2005-03-13 18:47:00
+#> 2 38    38      567   0 2005-03-07 19:02:00 2005-03-13 18:47:00
 #> 
 #> 
 #>  infolocs provided. The following variables are available:
 #> [1] "pkey"
-plot(deer)
 ```
 
-![plot of chunk example](README-example-1.png)
+Different tests of dynamic interaction can be straightforwardly computed. Most require a distance threshold (dc) to define when two animals are proximal. Similarly, most methods require a time threshold (tc) for when two fixes are \`simultaneous'.
 
-Different tests of dynamic interaction can be straightforwardly computed. Most require a distance threshold (dc) to define when two animals are proximal. Similarly, most methods require a time threshold (tc) for when two fixes are `simultaneous'. 
-
-Here we use dc = 50 and tc = 8 mins (8*60).
+Here we use dc = 50 and tc = 8 mins (8\*60).
 
 A few examples are given below:
 
-
-```r
+``` r
 dc <- 50
 tc <- 8*60
 #Proximity Analysis
@@ -133,4 +122,4 @@ IAB(deer[1],deer[2],tc=tc,dc=dc)
 
 For much more detailed information on the package please see the documentation and the vignette.
 
---- END --- 
+--- END ---
