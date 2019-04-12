@@ -1,4 +1,3 @@
-#new function for processing contacts from ContactAnalysis
 # ---- roxygen documentation ----
 #
 #' @title Examine context associated with contact phases
@@ -24,7 +23,7 @@
 #'
 # @references
 #'
-#' @keywords Contact Analysis
+#' @keywords contacts
 #' @seealso conPhase
 #' @examples
 #' 
@@ -72,7 +71,7 @@ conContext <- function(ltraj,var='dist',def='all',idcol='burst',nrand=0,nlag=0,l
   }
   
   #Before After analysis
-  fun.BefAft <- function(phaid,df,var,nlag,lag,gap,idcol,contact){
+  fun.BefAft <- function(phaid,df,var,nlag,lag,gap,idcol,def){
     #subset data to only get individual associated with contact
     df.sub <- subset(df,get(idcol) == df[which(df$contact_pha == phaid),idcol][1])
     
@@ -81,17 +80,17 @@ conContext <- function(ltraj,var='dist',def='all',idcol='burst',nrand=0,nlag=0,l
     pha <- df.sub[ind,]
     
     #Get start and end times of contact phase depending on how contacts are defined
-    if (contact=='first'){
+    if (def=='first'){
       i1 <- i2 <- ind[which.min(pha$date)]    
-    } else if (contact=='last'){
+    } else if (def=='last'){
       i1 <- i2 <- ind[which.max(pha$date)]
-    } else if (contact=='minTime'){
+    } else if (def=='minTime'){
       pha$id <- as.character(pha$id)
       pha$burst <- as.character(pha$burst)
       pha <- dl(pha)
       dfpairs <- conPairs(pha)
       i1 <- i2 <- ind[dfpairs$contact_orig_rowid[which.min(dfpairs$contact_dt)]]
-    } else if (contact=='minDist'){
+    } else if (def=='minDist'){
       pha$id <- as.character(pha$id)
       pha$burst <- as.character(pha$burst)
       pha <- dl(pha)
@@ -143,7 +142,7 @@ conContext <- function(ltraj,var='dist',def='all',idcol='burst',nrand=0,nlag=0,l
   }
   
   #Get the contacts, and optionally the BefAft Phases
-  dff <- do.call(rbind, lapply(phaid,fun.BefAft,df=df,var=var,nlag=nlag,lag=lag,gap=gap,idcol=idcol,contact=contact))
+  dff <- do.call(rbind, lapply(phaid,fun.BefAft,df=df,var=var,nlag=nlag,lag=lag,gap=gap,idcol=idcol,def=def))
   
   #Get Random fixes if required
   if (nrand > 0){

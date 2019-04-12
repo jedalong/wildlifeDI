@@ -7,23 +7,23 @@
 conProcess(mtraj1, mtraj2, dc = 0, tc = 0, idcol1 = "burst", idcol2)
 }
 \arguments{
-\item{mtraj1}{an object of the class \code{ltraj} which contains the time-stamped movement fixes of the first group of individuals. Each individual should be stored with a unique 'id'. (see \code{?as.ltraj})}
+\item{mtraj1}{an object of the class ltraj which contains the time-stamped movement fixes of the first group of individuals. Each individual should be stored with a unique 'id'. (see ?as.ltraj)}
 
-\item{mtraj2}{(optional) same as \code{mtraj1}, but for the second group of individuals.}
+\item{mtraj2}{(optional) same as mtraj1, but for the second group of individuals.}
 
 \item{dc}{distance tolerance limit (in appropriate units) for defining when two fixes are spatially together.}
 
-\item{tc}{time threshold for determining simultaneous fixes -- see function: \code{GetSimultaneous}.}
+\item{tc}{time threshold for determining simultaneous fixes -- see function: GetSimultaneous.}
 
 \item{idcol1}{column id associated with IDs of the first group of individuals, default is the 'burst'.}
 
 \item{idcol2}{(optional) column id associated with IDs of the second group of individuals.}
 }
 \value{
-This function returns the object \code{mtraj1} with three additional fields:
+This function returns the object mtraj1 with three additional fields:
 contact - the number of contacts associated with each given fix.
 contact_id - the id(s) of the individual(s) associated with those contacts.
-contact_d - the distance (in the same units as \code{mtraj1}) at which the contacts occur.
+contact_d - the distance (in the same units as mtraj1) at which the contacts occur.
 Note that if more than one contact occurs at a given time, the contact_id and contact_d fields will be a concatenated list of the contact IDs and distances.
 }
 \description{
@@ -32,8 +32,14 @@ This function performs basic contact analysis between individuals in a group of 
 \details{
 This function can be used to identify the nature of contacts in space and time between individuals in one or two groups.
 }
+\examples{
+\dontrun{
+data(does)
+doecons <- conProcess(does,tc=15*60,dc=50)
+}
+
+}
 \seealso{
 GetSimultaneous, dcPlot, conPhase, conSummary
 }
-\keyword{Analysis}
-\keyword{Contact}
+\keyword{contacts}

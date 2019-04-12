@@ -8,11 +8,12 @@
 #' @keywords datasets
 #' @format An \code{ltraj} object with where bursts represent different individual deer. 
 #' 
-#' @reference Long, JA, Webb, SL, Harju, S, Gee, KL. (in prep) Methods for performing contact analysis from high frequency tracking data: the WildlifeDI R package. Under Review.
+#' @references 
+#' Long, JA, Webb, SL, Harju, S, Gee, KL. (in prep) Methods for performing contact analysis from high frequency tracking data: the WildlifeDI R package. Under Review.
 #' 
-#' @name does
+#' @name mockhunt
 #' @examples
 #' data(mockhunt)
-#' head(mochunt)
+#' head(mockhunt)
 #-----------------------------------
 NULL

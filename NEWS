@@ -1,12 +1,10 @@
 wildlifeDI 0.3
 ================
 
-May 31, 2016	- This is a temporary release until 1.0
-		- Added FilterTraj function
-		- Added GetTemporalOverlap function
-		- Added traj2sp function
+*April 12, 2019	- This is a bunch of new functions to go along with a new paper under preparation
+		- Added whole suite of contact analysis functions
+		- Added GetTO function
 		- Added new functionality to Prox, to allow for one-way mapping of proximity analysis
-		- Added new 'Line' based analysis to contacts function
 		- Added Benhamou Significance test to DI function
 		- Added local analysis to IAB and DI functions
 

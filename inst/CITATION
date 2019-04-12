@@ -1,12 +1,20 @@
+citHeader("To cite wildlifeDI in publications use:")
+citFooter("Please also cite other authors methods as appropriate (see the references within).")
+citEntry(entry = "Article",
+  title        = "A critical examination of indices of dynamic interaction for wildlife telemetry data",
+  author       = personList(as.person('Jed Long'), 
+                            as.person('Trisalyn Nelson'), 
+                            as.person('Stephen Webb'), 
+                            as.person('Kenneth Gee')),
+  journal      = "Journal of Animal Ecology",
+  year         = "2014",
+  volume       = "83",
+  pages        = "1216--1233",
+  url          = "https://besjournals.onlinelibrary.wiley.com/doi/pdf/10.1111/1365-2656.12198",
 
-bibentry(bibtype = 'article',
-    title = "{A critical examination of indices of dynamic interaction for wildlife telemetry data}",
-    journal = "{Journal of Animal Ecology}",
-    volume = "83"",
-    pages = "1216-1233",
-    year = "2014"",
-    author = c(person('Jed','Long'),
-               person('Trisalyn','Nelson'),
-               person('Stephen','Webb'),
-               person('Ken','Gee'))
-  )
+  textVersion  =
+  paste("Long, JA, Nelson, TA, Webb, SL, Gee, KL (2014).",
+        "A critical examination of indices of dynamic interaction.",
+        "for wildlife telemetry studies. Journal of Animal",
+        "Ecology, 83, 1216-1233.")
+)

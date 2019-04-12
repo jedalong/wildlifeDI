@@ -4,8 +4,8 @@
 \alias{dcPlot}
 \title{Contact distance plot}
 \usage{
-dcPlot(mtraj1, mtraj2, tc = 0, idcol1 = "burst", idcol2, histplot = TRUE,
-  dmax)
+dcPlot(mtraj1, mtraj2, tc = 0, idcol1 = "burst", idcol2,
+  histplot = TRUE, dmax)
 }
 \arguments{
 \item{mtraj1}{an object of the class \code{ltraj} which contains the time-stamped movement fixes of the first group of individuals. Each individual should be stored with a unique 'id'. (see \code{?as.ltraj})}
@@ -31,6 +31,14 @@ This function is an exploratory tool to examine the pairwise distances between i
 }
 \details{
 The dcPlot function can be used to study the frequency distribution of pairwise distances bewteen individual in a large telemetry dataset. It can be applied to a single group (if \code{mtraj2} is ignored) or two-groups of indidividuals. The code attempts to find natural breaks (local minima) in the frequency histogram using an approach based on the \code{peaks} function attributed to B. Ripley (see \url{https://stackoverflow.com/questions/6324354/add-a-curve-that-fits-the-peaks-from-a-plot-in-r} ). This tool is meant to be used for exploratory data analysis.
+}
+\examples{
+
+\dontrun{
+data(does)
+dcPlot(does,tc=15*60,dmax=1000)
+}
+
 }
 \seealso{
 GetSimultaneous, conProcess, Prox, Don, IAB

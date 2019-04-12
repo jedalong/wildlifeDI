@@ -23,7 +23,7 @@
 #'
 # @references
 #'
-#' @keywords Contact Analysis
+#' @keywords contacts
 #' @seealso GetSimultaneous, dcPlot, conPhase, conSummary
 #' 
 #' @examples 

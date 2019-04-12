@@ -16,7 +16,7 @@
 #'
 # @references
 #'
-#' @keywords Contact Analysis
+#' @keywords contacts
 #' @seealso conPhase, conContext
 #' 
 #' @examples 
@@ -37,7 +37,7 @@ conDisplacement <- function(ltraj,def='all',idcol='burst'){
   cpdf <- conPairs(ltraj)
   cid <- NULL
   for (p in 1:max(cpdf$contact_pha)){
-    cpdf_sub <- subset(cpdf, contact_pha == p)
+    cpdf_sub <- cpdf[cpdf$contact_pha == p,]
     if (def == 'first'){
       cid <- c(cid, cpdf_sub$contact_orig_rowid[which.min(cpdf_sub$date)])
     } else if (def == 'last'){
@@ -54,7 +54,7 @@ conDisplacement <- function(ltraj,def='all',idcol='burst'){
   # Set up displacement analysis
   df <- ld(ltraj)
   df$displacement <- 0
-  n <- dim(dfi)[1]
+  n <- dim(df)[1]
   
   #Peform Displacement individually for every Animal.
   anid <- unique(df[,idcol])

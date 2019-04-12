@@ -22,8 +22,15 @@ Computes phases where contacts occur based on a temporal tolerance.
 \details{
 This function is used following the \code{conProcess} function to arrange contacts into phases where continuous contact occurs (based on the user-defined time threshold \code{pc}. The idea is that we can consider a phase to be a continuous contact event (based on \code{dc} see \code{conProcess}) as long as the contact is only interrupted for no more than \code{pc} time units.
 }
+\examples{
+\dontrun{
+data(does)
+doecons <- conProcess(does,tc=15*60,dc=50)
+doephas <- conPhase(doecons,pc=60*60)
+}
+
+}
 \seealso{
 conProcess, conSpatial, conTemporal, conSummary
 }
-\keyword{Analysis}
-\keyword{Contact}
+\keyword{contacts}

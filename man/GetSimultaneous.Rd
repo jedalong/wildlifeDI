@@ -39,6 +39,6 @@ deer38 <- trajs[2]
 
 }
 \seealso{
-as.ltraj
+GetTO
 }
 \keyword{processing}

@@ -26,7 +26,7 @@
 #' data(deer)
 #' deer37 <- deer[1]
 #' deer38 <- deer[2]
-#' trajs <- GetTemporalOverlap(deer37, deer38)
+#' trajs <- GetTO(deer37, deer38)
 #' deer37 <- trajs[1]
 #' deer38 <- trajs[2]
 #' 

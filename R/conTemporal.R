@@ -16,7 +16,7 @@
 #'
 # @references
 #'
-#' @keywords Contact Analysis
+#' @keywords contacts
 #' @seealso conPhase
 #' 
 #' @examples 

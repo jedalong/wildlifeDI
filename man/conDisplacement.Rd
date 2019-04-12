@@ -4,37 +4,35 @@
 \alias{conDisplacement}
 \title{Calculate net displacement from contacts}
 \usage{
-conDisplacement(ltraj, contact = "all", idcol = "burst", nrand = 0,
-  nlag = 0, lag = 0, gap = 0, phaid)
+conDisplacement(ltraj, def = "all", idcol = "burst")
 }
 \arguments{
 \item{ltraj}{an object of the class \code{ltraj} which should be output from the function \code{conPhase}.}
 
-\item{contact}{how to define the point-of-contact. The default is to define it as all fixes in a phase \code{type = 'all'}, alternatively contacts can be defined as a single point along the phase defined as one of: \code{'first','last','minDist','minTime'}, which corresonds to the first fix int he contact phase, the last fix in the contact phase, the fix with the minimum time difference and the fix with the closest contact distance.}
+\item{def}{how to define the point-of-contact. The default is to define it as all fixes in a phase \code{type = 'all'}, alternatively contacts can be defined as a single point along the phase defined as one of: \code{'first','last','minDist','minTime'}, which corresonds to the first fix int he contact phase, the last fix in the contact phase, the fix with the minimum time difference and the fix with the closest contact distance.}
 
 \item{idcol}{column id associated with IDs of individuals, default is the 'burst'}
-
-\item{nrand}{number of random fixes to be selected (default = 0) CURRENTLY IGNORED.}
-
-\item{nlag}{number of lags to compute in the before and after phases of a contact. If lag = 0 then only contacts are used.}
-
-\item{lag}{time (in seconds) for defining the lags in before and after periods of a conatact.}
-
-\item{gap}{time (in seconds) for exluding the lags in before and after periods of a contact.}
-
-\item{phaid}{(optional) id(s) of the contact phase upon which to examine (default is all).}
 }
 \value{
-A dataframe that can be used to summarize contact phases.
+An ltraj object with a new 'displacement' column in infolocs.
 }
 \description{
 Calcualte the net-displacement (distance) of fixes before and after a contact from that contact point.
 }
 \details{
-This function is used to compute the net displacement away from contacts by an animal before and after a contact phase. Net displacement represents an important contextual variable, related to the mobility of the individual, to investigate during contact analysis.
+This function is used to compute the net displacement away from contacts by an animal before and after a contact phase. Net displacement represents an important contextual variable, related to the mobility of the individual.
+}
+\examples{
+\dontrun{
+data(does)
+doecons <- conProcess(does,tc=15*60,dc=50)
+doephas <- conPhase(doecons,pc=60*60)
+disp_f <- conDisplacement(doephas,def='first')
+disp_l <- conDisplacement(doephas,def='last')
+}
+
 }
 \seealso{
 conPhase, conContext
 }
-\keyword{Analysis}
-\keyword{Contact}
+\keyword{contacts}

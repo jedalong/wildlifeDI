@@ -4,8 +4,7 @@
 \alias{conSpatial}
 \title{Mapping wildlife contacts}
 \usage{
-conSpatial(ltraj, type = "p", def = "all",
-  proj4string = CRS(as.character(NA)))
+conSpatial(ltraj, type = "p", def = "all")
 }
 \arguments{
 \item{ltraj}{an object of the class \code{ltraj} which should be output from the function \code{conPhase}.}
@@ -13,8 +12,6 @@ conSpatial(ltraj, type = "p", def = "all",
 \item{type}{one of ('p' - the default or 'l'). Whether to generate contacts as a \code{SpatialPointsDataFrame} or phases as a \code{SpatialLinesDataFrame}, points are the default, but lines can be useful for plotting and exploratory analysis.}
 
 \item{def}{if type = 'p' one of ('all','phase','first','last','minDist','minTime') which defines how contacts are to be mapped using all or part of a contact phase. (see Details)}
-
-\item{proj4string}{a string object containing the projection information to be passed included in the output \code{Spatial*DataFrame} object. For more information see the \code{CRS-class} in the packages \code{sp} and \code{rgdal}. Default is \code{NA}.}
 }
 \value{
 A \code{SpatialPointsDataFrame} or \code{SpatialLinesDataFrame} containing the locations/paths of the contacts. The time of the contact is stored in the attributes of the \code{SpatialPointsDataFrame} object, along with the actual distance between fixes. The \code{SpatialLinesDataFrame} contains attributes of the time of contact, and the min, max, and mean distance apart along a line segment.
@@ -31,8 +28,20 @@ The function \code{conSpatial} can be used to map where contacts occur on the la
  \cr v) \code{def = 'minDist'} the location fix of each phase which has the minimal contact distance is returned;
  \cr vi) \code{def = 'minTime'} the location fix of each phase with the minimal time difference with contact fixes is returned;
 }
+\examples{
+
+\dontrun{
+data(does)
+doecons <- conProcess(does,tc=15*60,dc=50)
+doephas <- conPhase(doecons,pc=60*60)
+pts <- conSpatial(doephas)
+plot(pts)
+lns <- conSpatial(doephas,type='l')
+plot(lns, add=TRUE)
+}
+
+}
 \seealso{
 conProcess, conPhase
 }
-\keyword{Analysis}
-\keyword{Contact}
+\keyword{contacts}

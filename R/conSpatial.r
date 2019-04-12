@@ -21,19 +21,19 @@
 #' @return
 #' A \code{SpatialPointsDataFrame} or \code{SpatialLinesDataFrame} containing the locations/paths of the contacts. The time of the contact is stored in the attributes of the \code{SpatialPointsDataFrame} object, along with the actual distance between fixes. The \code{SpatialLinesDataFrame} contains attributes of the time of contact, and the min, max, and mean distance apart along a line segment.
 #'
-#' @keywords Contact Analysis
+#' @keywords contacts
+#' 
 #' @seealso conProcess, conPhase
 #' 
 #' @examples 
 #' 
-#' #' \dontrun{
+#' \dontrun{
 #' data(does)
 #' doecons <- conProcess(does,tc=15*60,dc=50)
 #' doephas <- conPhase(doecons,pc=60*60)
-#' 
 #' pts <- conSpatial(doephas)
-#' lns <- conSpatial(doephas,type='l')
 #' plot(pts)
+#' lns <- conSpatial(doephas,type='l')
 #' plot(lns, add=TRUE)
 #' }
 #' 

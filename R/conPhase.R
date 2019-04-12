@@ -18,7 +18,7 @@
 #'
 # @references
 #'
-#' @keywords Contact Analysis
+#' @keywords contacts
 #' @seealso conProcess, conSpatial, conTemporal, conSummary
 #' @examples
 #' \dontrun{

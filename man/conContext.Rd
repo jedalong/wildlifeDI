@@ -4,7 +4,7 @@
 \alias{conContext}
 \title{Examine context associated with contact phases}
 \usage{
-conContext(ltraj, var = "dist", contact = "all", idcol = "burst",
+conContext(ltraj, var = "dist", def = "all", idcol = "burst",
   nrand = 0, nlag = 0, lag = 0, gap = 0, phaid)
 }
 \arguments{
@@ -12,7 +12,7 @@ conContext(ltraj, var = "dist", contact = "all", idcol = "burst",
 
 \item{var}{name(s) (as character) of columns (possibly from \code{infolocs}) to keep for contextual analysis.}
 
-\item{contact}{how to define the point-of-contact. The default is to define it as all fixes in a phase \code{type = 'all'}, alternatively contacts can be defined as a single point along the phase defined as one of: \code{'first','last','minDist','minTime'}, which corresonds to the first fix int he contact phase, the last fix in the contact phase, the fix with the minimum time difference and the fix with the closest contact distance.}
+\item{def}{how to define the point-of-contact. The default is to define it as all fixes in a phase \code{def = 'all'}, alternatively contacts can be defined as a single point along the phase defined as one of: \code{'first','last','minDist','minTime'}, which corresonds to the first fix int he contact phase, the last fix in the contact phase, the fix with the minimum time difference and the fix with the closest contact distance.}
 
 \item{idcol}{column id associated with IDs of individuals, default is the 'burst'.}
 
@@ -35,8 +35,18 @@ Extracts the variables associated with \code{var} before, during, and after cont
 \details{
 This function is used following the \code{conphase} function. One should choose how to define the contact point (i.e., the parameter \code{contact}) depending on the research question. In most typical cases (with regular interval tracking data) the lag time should be set to the tracking interval and the gap should be set to 1/2 the tracking interval.
 }
+\examples{
+
+\dontrun{
+data(does)
+doecons <- conProcess(does,tc=15*60,dc=50)
+doephas <- conPhase(doecons,pc=60*60)
+cc <- conContext(var='dist',def='first',nlag=3,lag=30*60,gap=15*60)
+head(cc)
+}
+
+}
 \seealso{
 conPhase
 }
-\keyword{Analysis}
-\keyword{Contact}
+\keyword{contacts}

@@ -25,8 +25,15 @@ This function is used following the \code{conPhase} function. It computes the fo
 - median phase duration
 - no. of phase where the duration is only one fix (i.e., instantaneous contacts)
 }
+\examples{
+\dontrun{
+data(does)
+doecons <- conProcess(does,tc=15*60,dc=50)
+doephas <- conPhase(doecons,pc=60*60)
+conSummary(doephas)
+}
+}
 \seealso{
 conPhase
 }
-\keyword{Analysis}
-\keyword{Contact}
+\keyword{contacts}

@@ -21,6 +21,7 @@ For more information on these data  how the deer data was collected or for citat
 Webb \emph{et al.} (2009, 2010).
 }
 \examples{
+
 data(deer)
 deer37 <- deer[1]
 deer38 <- deer[2]

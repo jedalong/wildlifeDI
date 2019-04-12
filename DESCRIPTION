@@ -1,13 +1,14 @@
 Package: wildlifeDI
-Title: Calculate Indices of Dynamic Interaction for Wildlife Telemetry Data
-Version: 0.4
+Title: Calculate Indices of Dynamic Interaction for Wildlife Tracking Data
+Version: 0.3
 Authors@R: person("Jed", "Long", email="jed.long@uwo.ca", role=c("aut","cre"))
 Description: Dynamic interaction refers to spatial-temporal associations
     in the movements of two (or more) animals. This package provides tools for
     calculating a suite of indices used for quantifying dynamic interaction with
     wildlife telemetry data. For more information on each of the methods employed
-    see the references within. The package draws heavily on the classes and methods
-    developed in the 'adehabitat' packages.
+    see the references within. The package (as of version 0.3) also has new tools for
+    automating contact analysis in large tracking datasets. The package draws 
+    heavily on the classes and methods developed in the 'adehabitat' packages.
 URL: https://github.com/jedalong/wildlifeDI
 Depends: R (>= 3.1.0)
 License: GPL-3
@@ -21,4 +22,5 @@ Imports:
     adehabitatLT,
     stats,
     graphics
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
+Encoding: UTF-8

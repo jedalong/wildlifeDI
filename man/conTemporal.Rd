@@ -20,8 +20,16 @@ Create a summary dataframe of the timing and and duration of contact phases.
 \details{
 This function is used to calculate the start and end times of contact phases, and their duration following use of the \code{conPhase} function.
 }
+\examples{
+\dontrun{
+data(does)
+doecons <- conProcess(does,tc=15*60,dc=50)
+doephas <- conPhase(doecons,pc=60*60)
+conTemporal(doephas)
+}
+
+}
 \seealso{
 conPhase
 }
-\keyword{Analysis}
-\keyword{Contact}
+\keyword{contacts}
