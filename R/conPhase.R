@@ -9,9 +9,9 @@
 #' @details
 #' This function is used following the \code{conProcess} function to arrange contacts into phases where continuous contact occurs (based on the user-defined time threshold \code{pc}. The idea is that we can consider a phase to be a continuous contact event (based on \code{dc} see \code{conProcess}) as long as the contact is only interrupted for no more than \code{pc} time units.
 
-#' @param ltraj an object of the class \code{ltraj} which is output from the funciton \code{conProcess}.
+#' @param ltraj an object of the class \code{ltraj} which is output from the function \code{conProcess}.
 #' @param pc time (in seconds) to allow for which to combine contact events (see details). 
-#' @param idcol column used to identify indivduals (default is the burst)
+#' @param idcol column used to identify individuals (default is the burst)
 #'
 #' @return
 #' An \code{ltraj} object with new column \code{contact_pha}.

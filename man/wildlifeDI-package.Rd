@@ -11,7 +11,7 @@ Dynamic interaction refers to spatial-temporal associations in the movements of 
 The package \code{wildlifeDI} allows users to compute a number of currently available indices of dynamic 
 interaction useful for wildlife telemetry studies. The currently available methods include:
 \itemize{
-   \item{Prox - Proximity analyiss (Bertrand et al. 1996)}
+   \item{Prox - Proximity analysis (Bertrand et al. 1996)}
    \item{Ca - Coefficient of Association (Bauman 1998)}
    \item{Don - Doncaster's measure of dynamic interaction (Doncaster 1990)}
    \item{Lixn - Minta's measures of spatial-temporal interaction (Minta 1992)}

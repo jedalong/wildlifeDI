@@ -7,7 +7,7 @@
 conTemporal(traj, units = "auto")
 }
 \arguments{
-\item{traj}{an object of the class \code{ltraj} which is output from the funciton \code{conPhase}.}
+\item{traj}{an object of the class \code{ltraj} which is output from the function \code{conPhase}.}
 
 \item{units}{units of duration e.g., \code{'mins'} (see \code{difftime}).}
 }

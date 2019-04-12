@@ -24,13 +24,13 @@ dcPlot(mtraj1, mtraj2, tc = 0, idcol1 = "burst", idcol2,
 }
 \value{
 If \code{histplot = TRUE} a list of the natural breaks (local minima) identified from the frequency histogram and a plot of the frequency histogram.
-If \code{histplot = FALSE} a dataframe containing all the pairwise and simulataneous distances between all individuals in the trajectory dataset.
+If \code{histplot = FALSE} a dataframe containing all the pairwise and simultaneous distances between all individuals in the trajectory dataset.
 }
 \description{
 This function is an exploratory tool to examine the pairwise distances between individuals within a large telemetry dataset.
 }
 \details{
-The dcPlot function can be used to study the frequency distribution of pairwise distances bewteen individual in a large telemetry dataset. It can be applied to a single group (if \code{mtraj2} is ignored) or two-groups of indidividuals. The code attempts to find natural breaks (local minima) in the frequency histogram using an approach based on the \code{peaks} function attributed to B. Ripley (see \url{https://stackoverflow.com/questions/6324354/add-a-curve-that-fits-the-peaks-from-a-plot-in-r} ). This tool is meant to be used for exploratory data analysis.
+The dcPlot function can be used to study the frequency distribution of pairwise distances between individual in a large telemetry dataset. It can be applied to a single group (if \code{mtraj2} is ignored) or two-groups of individuals. The code attempts to find natural breaks (local minima) in the frequency histogram using an approach based on the \code{peaks} function attributed to B. Ripley (see \url{https://stackoverflow.com/questions/6324354/add-a-curve-that-fits-the-peaks-from-a-plot-in-r} ). This tool is meant to be used for exploratory data analysis.
 }
 \examples{
 

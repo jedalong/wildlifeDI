@@ -15,7 +15,7 @@ ltraj} object. For more information on objects of this type see \code{help(ltraj
 
 \item{tc}{time threshold for determining simultaneous fixes -- see function: \code{GetSimultaneous}.}
 
-\item{dc}{critical distance where the IAB function will show maximium slope -- see Benhamou et al. (2014) 
+\item{dc}{critical distance where the IAB function will show maximum slope -- see Benhamou et al. (2014) 
 for more advice on selecting this parameter.}
 
 \item{local}{logical value indicating whether a dataframe (\code{local = TRUE}) containing the IAB 
@@ -36,7 +36,7 @@ described in the paper, but also a local level output, to explore the IAB statis
 \details{
 The function \code{IAB} can be used to test for direct interaction in wildlife telemetry data and affords a novel significance testing procedure that takes into account the serially correlated structure of telemetry data. Specifically, it computes an index analogous to the Bhattacharyya coefficient between the potential influence domains of two animals. Like the other indices, IAB is dependent on the selection of an appropriate value for \code{dc} (which is termed \eqn{\Delta}{Delta} in the article). The \code{dc} parameter here is not a threshold distance, but rather the distance at which the function shows maximum slope (see Benhamou et al. 2014). 
 
-The significance testing procuedure uses a wrapped shifting method in order to maintain the serially correlated structure of the data. At each shift, a sample value of IAB (termed MAB) is computed in order to generate a distribution of values to test against (for more information see Benhamou et al. 2014). Here a local version of this statistical testing procedure is implemented by taking \code{rand} samples of the \eqn{(n^2 - n} permutations of unpaired fixes. The p-values are computed following Benhamou et al. (2014), z-scores are calculated based on the mean and standard deviation of this hypothetical distribution.
+The significance testing procedure uses a wrapped shifting method in order to maintain the serially correlated structure of the data. At each shift, a sample value of IAB (termed MAB) is computed in order to generate a distribution of values to test against (for more information see Benhamou et al. 2014). Here a local version of this statistical testing procedure is implemented by taking \code{rand} samples of the \eqn{(n^2 - n} permutations of unpaired fixes. The p-values are computed following Benhamou et al. (2014), z-scores are calculated based on the mean and standard deviation of this hypothetical distribution.
 }
 \examples{
 data(deer)

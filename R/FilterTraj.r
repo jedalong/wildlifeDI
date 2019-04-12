@@ -22,7 +22,7 @@
 #' A \code{ltraj} object with only those fixes satisfying the \code{filter} criteria.  
 #'
 #' @keywords processing
-#' @seealso GetTemporalOverlap
+#' @seealso GetTO
 #' @examples
 #' data(deer)
 #' deer37 <- deer[1]

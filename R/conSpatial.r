@@ -3,10 +3,10 @@
 #' @title Mapping wildlife contacts
 #'
 #' @description
-#' The function \code{contacts} is a simple function for mapping where wildlife contacts occur on the landscape with wildilfe telemetry data. 
+#' The function \code{contacts} is a simple function for mapping where wildlife contacts occur on the landscape with wildlife telemetry data. 
 #' 
 #' @details
-#' The function \code{conSpatial} can be used to map where contacts occur on the lansdcape, contacts being defined spatially based on a distance threshold \code{dc} and temporally based on the time threshold \code{tc} -- see the function \code{getsimultaneous}. The location of the contact can be calculated in a number of ways, and represented as points for each contact, or as line grouped by the contact phases. Which contacts to map can be defined in a number of ways using the \code{def} parameter: \cr
+#' The function \code{conSpatial} can be used to map where contacts occur on the landscape, contacts being defined spatially based on a distance threshold \code{dc} and temporally based on the time threshold \code{tc} -- see the function \code{getsimultaneous}. The location of the contact can be calculated in a number of ways, and represented as points for each contact, or as line grouped by the contact phases. Which contacts to map can be defined in a number of ways using the \code{def} parameter: \cr
 #'  \cr i) \code{def = 'all'} (the default) all fixes where column \code{contacts = 1} are returned in the Spatial* object;
 #'  \cr ii) \code{def = 'phase'} all fixes which are part of a phase are returned, note the number of points when \code{def = 'phase'} should be greater than or equal to that when \code{def = 'all'} because of how phases are defined;
 #'  \cr iii) \code{def = 'first'} the first location fix of each phase is returned;

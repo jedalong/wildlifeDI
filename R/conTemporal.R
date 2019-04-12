@@ -8,7 +8,7 @@
 #' @details
 #' This function is used to calculate the start and end times of contact phases, and their duration following use of the \code{conPhase} function.
 
-#' @param traj an object of the class \code{ltraj} which is output from the funciton \code{conPhase}.
+#' @param traj an object of the class \code{ltraj} which is output from the function \code{conPhase}.
 #' @param units units of duration e.g., \code{'mins'} (see \code{difftime}). 
 #'
 #' @return

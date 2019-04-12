@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 
 # wildlifeDI
 
-The wildilfeDI package facilitates the calculation of indices of dynamic interaction for wildilfe telemetry data. There are also functions for more advanced contact analysis. For more information on the methods used within see the documentation but also see:
+The wildlifeDI package facilitates the calculation of indices of dynamic interaction for wildlife telemetry data. There are also functions for more advanced contact analysis. For more information on the methods used within see the documentation but also see:
 
 Long, J.A., Nelson, T.A., Webb, S.L., Gee, K.L. (2014) A critical examination of indices of dynamic interaction for wildlife telemetry studies. Journal of Animal Ecology. 83(5):1216-1233.
 
@@ -42,7 +42,7 @@ data(deer)
 deer
 ```
 
-Different tests of dynamic interaction can be straightforwardly computed. Most require a distance threshold (dc) to define when two animals are proximal. Similarly, most methods require a time threshold (tc) for when two fixes are `simultaneous'. 
+Different tests of dynamic interaction can be straightforwardly computed. Most require a distance threshold (dc) to define when two animals are proximal. Similarly, most methods require a time threshold (tc) to define when two fixes are simultaneous. 
 
 Here we use dc = 50 and tc = 8 mins (8*60).
 

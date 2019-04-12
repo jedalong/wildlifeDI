@@ -42,7 +42,7 @@ deer
 
 As you can see, there are two individuals contained in this dataset, which are named based on their ids: `id = 37` and `id = 38`. The deer data represent the movement of these two individual deer over a one week period, with GPS fixes attempted at a 15 minute interval. 
 
-In order to utilize the tools, each individuals movement trajectory needs to be stored asa seperate `ltraj` object, which is simple to do. Here we simply extract the 1st and 2nd bursts in order to extract seperate `ltraj` objects for each individual.
+In order to utilize the tools, each individuals movement trajectory needs to be stored as a separate `ltraj` object, which is simple to do. Here we simply extract the 1st and 2nd bursts in order to extract separate `ltraj` objects for each individual.
 
 ```{r}
 deer37 <- deer[1]
@@ -52,7 +52,7 @@ deer38
 ```
 
 ## Checking for temporal overlap
-Before embarking on analysis of dynamic interaction, it is worthwhile to check whether two telemetry datasets overlap temporally. This can be easily done using the `checkTO` funciton. The function tells us first if the two datasets overlap temporally (a necessary condition for spatial-temporal interaction), then it gives us the timings of the start and end of the overlap period.
+Before embarking on analysis of dynamic interaction, it is worthwhile to check whether two telemetry datasets overlap temporally. This can be easily done using the `checkTO` function. The function tells us first if the two datasets overlap temporally (a necessary condition for spatial-temporal interaction), then it gives us the timings of the start and end of the overlap period.
 
 ```{r}
 checkTO(deer37,deer38)
@@ -61,7 +61,7 @@ checkTO(deer37,deer38)
 Here we can clearly see that the two deer overlap for essentially the whole period, as these data were hand picked for this purpose. However, this will not always be the case, and thus `checkTO` can be a useful function for identifying if, and when, two telemetry datasets overlap temporally.
 
 ## Static interaction analysis
-Static interaction can be defined broadly as the spatial overlap of two individual home ranges, or more recently, as the volume of intersection between two individual utilization distributions (Macdonald et al. 1980, Millspaugh et al. 2004). It is often useful to examine static interaction to investigate the potential for dynamic interactions to exist. Here we investigate the simpler case of proportion of home range overlap, to test for the potential fordynamic interaction between `deer37` and `deer38`. The proportion of overlap is calculated simply as:
+Static interaction can be defined broadly as the spatial overlap of two individual home ranges, or more recently, as the volume of intersection between two individual utilization distributions (Macdonald et al. 1980, Millspaugh et al. 2004). It is often useful to examine static interaction to investigate the potential for dynamic interactions to exist. Here we investigate the simpler case of proportion of home range overlap, to test for the potential for dynamic interaction between `deer37` and `deer38`. The proportion of overlap is calculated simply as:
 $$
 \text{SI} = \frac{HR_\alpha \cap HR_\beta}{HR_\alpha \cup HR_\beta}
 $$
@@ -95,7 +95,7 @@ gArea(gIntersection(hr37,hr38))/gArea(gUnion(hr37,hr38))
 Here we can see there is substantial overlap in home ranges between these two individuals, and thus some would suggest that this may be evidence of likely dynamic interaction, which is what we will explore further. NOTE: The home ranges we have computed here (saved as the objects `hr37` and `hr38`) will be used in later analysis.
 
 ## Obtaining Simultaneous Fixes - T$_{\alpha\beta}$
-Measurement of dynamic interaction often requires the identification of those fixes that are deemed to be simultaneous in time (T$_{\alpha\beta}$) based on some time tolerance threshold - $t_c$. As this is rarely the case in real datasets, the function `GetSimultaneous` was deveoped to extract simultaneous fixes from two movement datasets. The tolerance parameter ($t_c$) can be used to allow the times to deviate slightly and still be considered simultaneous. Note that that `ltraj` objects, despite displaying date-time formats, measure times in seconds and thus the $t_c$ argument is given in seconds. The documentation for the `GetSimultaneous` function tells us to pass in two trajectories, and a `tc` argument. In this example we will use 7.5 minutes as $t_c$, which is 1/2 the sampling interval (which is generally a good starting point) of 15 minutes. This means that any two fixes that are within 7.5 minutes of eachother are deemed simultaneous. The result of the `GetSimultaneous` function is a list with two `ltraj` objects which can be extracted.
+Measurement of dynamic interaction often requires the identification of those fixes that are deemed to be simultaneous in time (T$_{\alpha\beta}$) based on some time tolerance threshold - $t_c$. As this is rarely the case in real datasets, the function `GetSimultaneous` was developed to extract simultaneous fixes from two movement datasets. The tolerance parameter ($t_c$) can be used to allow the times to deviate slightly and still be considered simultaneous. Note that that `ltraj` objects, despite displaying date-time formats, measure times in seconds and thus the $t_c$ argument is given in seconds. The documentation for the `GetSimultaneous` function tells us to pass in two trajectories, and a `tc` argument. In this example we will use 7.5 minutes as $t_c$, which is 1/2 the sampling interval (which is generally a good starting point) of 15 minutes. This means that any two fixes that are within 7.5 minutes of each-other are deemed simultaneous. The result of the `GetSimultaneous` function is a list with two `ltraj` objects which can be extracted.
 
 ```{r}
 deers <- GetSimultaneous(deer37,deer38,tc=7.5*60)
@@ -110,7 +110,7 @@ As you can now see, these trajectories have an equal number (`nb.reloc = 546`) o
 # Measuring Dynamic Interaction
 
 ## Global Analysis
-Here I have defined dynamic interaction analysis as being one of either *global* or *local*. Some global statistics have a local alternative so will be discussed in both sections. Global analysis generates a single output statistic for the entire dataset (i.e., pair of individuals), while local analysis generates an output statistic at every single point in the dataset, defined here as simultaneou fixes.
+Here I have defined dynamic interaction analysis as being one of either *global* or *local*. Some global statistics have a local alternative so will be discussed in both sections. Global analysis generates a single output statistic for the entire dataset (i.e., pair of individuals), while local analysis generates an output statistic at every single point in the dataset, defined here as simultaneous fixes.
 
 ### Prox - Proximity analysis
 Proximity analysis (see Bertrand et al. 1996) can be a useful, simple way to examine attraction in wildlife telemetry studies. Of interest is determining the proportion of the T$_{\alpha\beta}$ (simultaneous fixes) that are ST$_{\alpha\beta}$ (simultaneous and proximal fixes) based on the given distance threshold $d_c$. It is simply calculated as:
@@ -128,7 +128,7 @@ Prox(deer37, deer38, tc=7.5*60, dc=50)
 *Interpretation:*
 Here the Prox statistic is 0.4139, an indication that there is definitely attraction by this pair. A Prox value of 0.4139 means that $41.39\%$ of the simultaneous fixes were within the defined distance threshold $d_c$ (50 m) of each other. 
 
-### Ca - Coefficent of association 
+### Ca - Coefficient of association 
 The coefficient of association (Ca; Cole 1949, Bauman 1998) statistic measures the proportion of fixes that are ST$_{\alpha\beta}$ based on the given distance threshold $d_c$. It is simply calculated as:
 $$
 \text{Ca} = \frac{2AB}{A+B}
@@ -160,7 +160,7 @@ The graph of the count of observed (black dots) vs. expected (grey line) fix dis
 
 
 ### Lixn - Test for spatial and temporal interaction
-Minta (1992) introduced three statistics (L$_{AA}$, L$_{BB}$, and L$_{ixn}$) for examing spatial and temporal interactions between animals. All three of the statistics require the delineation of a 'shared-area' between the two animals. If home ranges can be estimated, the shared-area can be defined as the spatial intersection between the individual home ranges, defined *a priori*. In this case, the L$_{ixn}$ statistic is computed using the `"spatial"` method. With the `"spatial"` method home ranges are divided (through a spatial intersection) into three areas: belonging to $\alpha$ only, belonging to $\beta$ only, and shared by $\alpha$ and $\beta$ (also termed the overlap zone). If home ranges cannot be estimated, but some overlap zone is known, L$_{ixn}$ can still be computed. In this case, one should use the `"frequency"` method. The known overlap zone  may be some area known to be associated with both individuals (e.g., a natural reserve site, or an important feeding ground). Note: with modern telemetry datasets, home ranges are easily estimated using one of a host of methods, and thus the `"spatial"` method is usually the appropriate choice with `Lixn`.
+Minta (1992) introduced three statistics (L$_{AA}$, L$_{BB}$, and L$_{ixn}$) for examining spatial and temporal interactions between animals. All three of the statistics require the delineation of a 'shared-area' between the two animals. If home ranges can be estimated, the shared-area can be defined as the spatial intersection between the individual home ranges, defined *a priori*. In this case, the L$_{ixn}$ statistic is computed using the `"spatial"` method. With the `"spatial"` method home ranges are divided (through a spatial intersection) into three areas: belonging to $\alpha$ only, belonging to $\beta$ only, and shared by $\alpha$ and $\beta$ (also termed the overlap zone). If home ranges cannot be estimated, but some overlap zone is known, L$_{ixn}$ can still be computed. In this case, one should use the `"frequency"` method. The known overlap zone  may be some area known to be associated with both individuals (e.g., a natural reserve site, or an important feeding ground). Note: with modern telemetry datasets, home ranges are easily estimated using one of a host of methods, and thus the `"spatial"` method is usually the appropriate choice with `Lixn`.
 
 The first two statistics computed (L$_{AA}$ and L$_{BB}$), represent spatial interaction statistics. They examine how each individual utilizes the shared area. The number of fixes contained in each area (i.e., $\alpha$'s area, $\beta$'s area and the shared area), are tested against expectations representing the probability of finding the animal in a given area derived from either the overlap areal percentages (`method = "spatial"`) or based on the proportions of all fixes contained in each area (`method = "frequency"`). For more information on the formulation of each calculation see Minta (1992). Essentially, L$_{AA}$ (respectively L$_{BB}$) tests how each individual uses their independent and shared home range areas. When L$_{AA}$ $\simeq 0$, $\alpha$ uses the shared area randomly, while L$_{AA} > 0$ indicates spatial attraction to the shared area, and L$_{AA} < 0$ indicates spatial avoidance of the shared area. L$_{BB}$ is interpreted identically with respect to $\beta$.
 
@@ -168,7 +168,7 @@ Using the same expectation probabilities derived for use with L$_{AA}$ and L$_{B
 
 The Minta (1992) statistics (L$_{AA}$, L$_{BB}$, and L$_{ixn}$) are all drawn from observed and expected values taken from a 2x2 contingency table. Thus, a $\chi^2$ test with 1 d.f. can be used to make statistical inferences on the (L$_{AA}$, L$_{BB}$, and L$_{ixn}$) values.
 
-As with previous methods, the user is required to submit a value for $t_c$ to be passed to the function `GetSimultaneous` internally. If `method="spatial"` the user is required to imput the home-ranges, stored as a `SpatialPolygons*` object for each individual. If `method="frequency"` the user is required to pass in the overlap zone (`OZ`), stored as a `SpatialPolygons*` object. Here we use the home ranges, previously calculated in section 2.1 (i.e., the objects hr37 and hr38), which will be passed into the `Lixn` function. Along with the L$_{AA}$, L$_{BB}$, and L$_{ixn}$ statistics and their associated *p*-values, the function returns contingency tables for the expected probabilities, observed values, and odds depicting the simultaneous and solitary use of the shared area by each individual. 
+As with previous methods, the user is required to submit a value for $t_c$ to be passed to the function `GetSimultaneous` internally. If `method="spatial"` the user is required to input the home-ranges, stored as a `SpatialPolygons*` object for each individual. If `method="frequency"` the user is required to pass in the overlap zone (`OZ`), stored as a `SpatialPolygons*` object. Here we use the home ranges, previously calculated in section 2.1 (i.e., the objects hr37 and hr38), which will be passed into the `Lixn` function. Along with the L$_{AA}$, L$_{BB}$, and L$_{ixn}$ statistics and their associated *p*-values, the function returns contingency tables for the expected probabilities, observed values, and odds depicting the simultaneous and solitary use of the shared area by each individual. 
 
 ```{r}
 Lixn(deer37, deer38, method='spatial', tc=7.5*60, 
@@ -227,7 +227,7 @@ $$
 \text{IAB}(t) = exp\left[ -0.5(D_{AB}(t)/\Delta)^2 \right]
 $$
 
-where $D_{AB}$ is the distance between two simultaneous ($T_{\alpha\beta}$) telemetry fixes. Instead of using a critical distance threshold, the IAB statistic uses a parameter ($\Delta$) that represents the point maximum slope of the distance effect function which measures the potential influence domain between the two animals. In the R function $\Delta$ is simply the `dc` parameter. Further, a novel simulation procedure is proposed for generating the expectation against which a statistical test is based. That is, a wrapped shifting method is used to maintain the serial correllation structure implicit to the movement data. At each shift, a sample statistic (termed MAB) is computed to generate the distribution of values for the test statistic. 
+where $D_{AB}$ is the distance between two simultaneous ($T_{\alpha\beta}$) telemetry fixes. Instead of using a critical distance threshold, the IAB statistic uses a parameter ($\Delta$) that represents the point maximum slope of the distance effect function which measures the potential influence domain between the two animals. In the R function $\Delta$ is simply the `dc` parameter. Further, a novel simulation procedure is proposed for generating the expectation against which a statistical test is based. That is, a wrapped shifting method is used to maintain the serial correlation structure implicit to the movement data. At each shift, a sample statistic (termed MAB) is computed to generate the distribution of values for the test statistic. 
 
 ```{r}
 IAB(deer37, deer38, dc=50, tc=7.5*60)
@@ -246,7 +246,7 @@ Cr(deer37, deer38, tc=7.5*60)
 ```
 
 *interpretation:*
-A Cr value of 0.3706 indicates that there is some evidence for cohesive behaviour. Specifically, we interpret Cr like a correlation coefficient. It is difficult to know in this case if the slightly positive Cr value suggests that the two deer movements are correlated, but based on the result from Prox, we would expect this behaviour to occurr from Thursday to Sunday. 
+A Cr value of 0.3706 indicates that there is some evidence for cohesive behaviour. Specifically, we interpret Cr like a correlation coefficient. It is difficult to know in this case if the slightly positive Cr value suggests that the two deer movements are correlated, but based on the result from Prox, we would expect this behaviour to occur from Thursday to Sunday. 
 
 ### DI - Dynamic interaction index
 The global dynamic interaction index (DI) proposed by Long and Nelson (2013) is similar to the Cr statistic in that it uses path based analysis. The DI index attempts to measure cohesiveness in two independent components of movement: direction (often termed azimuth) and speed (generally measured using segment displacements). The DI index includes two main differences from the Cr statistic in its formulation; 1) DI does not depend on the respective path mean vectors, and 2) DI can disentangle the independent effects of correlation in direction and speed. 
@@ -296,7 +296,7 @@ plot(df$date, df$Iab,type='l')
 ```
 
 *Interpretation:*
-The local IAB analysis further corroborates the timing of interactive behavoiur observed using the local Prox analysis and the local di statistic. Here we can see that the strongest interactions occur from midday Thursday until Sunday morning. The shape of the local IAB graph is the opposite of that observed with Prox.
+The local IAB analysis further corroborates the timing of interactive behaviour observed using the local Prox analysis and the local di statistic. Here we can see that the strongest interactions occur from midday Thursday until Sunday morning. The shape of the local IAB graph is the opposite of that observed with Prox.
 
 ### Dynamic Interaction index
 Further, the DI statistic provides a spatially and temporally local alternative (di) that can be computed for each pair of simultaneous movement segments. The di index affords the ability to investigate the spatial and temporal dynamics of dynamic interaction behaviour, through plots of di through time, or maps of di. Thus, the local version -- di can be said to measure the *dynamics* of dynamic interaction behaviour. Note, similar to the Cr statistic, DI and di do not consider the distance separating the two individuals, and it is up to the analyst to determine if the necessary conditions exist for interactive behaviour. If option `local = TRUE` the function returns a dataframe with columns corresponding to the local measures (`di`, `di.theta`, and `di.d` -- and time- and/or distance-based weights if set to `TRUE`). For more detailed information see the documentation, but see also Long and Nelson (2013).Much like with Prox, in order to further examine local level dynamics in the cohesiveness of movement, a time-series plot of di can be used to identify temporal trends in cohesive movement behaviour.
@@ -329,7 +329,7 @@ for (i in (w+1):(n-1-w)){
 plot(di.df$date, di.df$smooth,type="l")
 ```
 
-From the smoothed time-series plot we can again see a similar pattern as with Prox, wherby cohesive movement behaviour is strongest between mid-day Thursday into early Sunday morning. Within this period there are variations in the cohesive movement behaviour, perhaps related to the diurnal cyclical behaviour associated with deer movements. In situations where periods of cohesive movement are interspersed with random movement, the time-series plot of di (and/or smoothed di) can provide useful insight as to when and/or where this behaviour occurs.
+From the smoothed time-series plot we can again see a similar pattern as with Prox, whereby cohesive movement behaviour is strongest between mid-day Thursday into early Sunday morning. Within this period there are variations in the cohesive movement behaviour, perhaps related to the diurnal cyclical behaviour associated with deer movements. In situations where periods of cohesive movement are interspersed with random movement, the time-series plot of di (and/or smoothed di) can provide useful insight as to when and/or where this behaviour occurs.
 
 # Summary
 In this vignette I have demonstrated how the various methods implemented in the package `wildlifeDI` can be used to investigate interactive behaviour in wildlife telemetry data. Many of these methods draw on functionality for deriving spatially proximal and temporally simultaneous fixes that are dependent on the critical thresholds $d_c$ and $t_c$. Thus, care must be taken to ensure the selection of these thresholds as biologically relevant and appropriate with ones dataset (e.g., related to the sampling interval). In this document I have attempted not to argue for or against the use of any of the statistics in different situations. Also, if you are aware of another method for measuring dynamic interaction behaviour feel free to contact me and I will do my best to implement  it as I see fit. Finally, thanks for taking the time to utilize these tools and I would appreciate any feedback and/or bugs identified.
@@ -359,7 +359,7 @@ Knox, E.G. (1964) The detection of space-time interactions. *Journal of the Roya
 
 Long, J.A., Nelson, T.A. (2013) Measuring dynamic interaction in movement data. *Transactions in GIS*.  17(1): 62-77.
 
-Long, J.A., Nelson, T.A., Webb, S.L., Gee, K. (2014) A critical examination of incdices of dynamic interaction for wildlife telemetry studies. *Journal of Animal Ecology*, 83(5): 1216-1233.
+Long, J.A., Nelson, T.A., Webb, S.L., Gee, K. (2014) A critical examination of indices of dynamic interaction for wildlife telemetry studies. *Journal of Animal Ecology*, 83(5): 1216-1233.
 
 Macdonald, D.W., Ball, F.G., and Hough, N.G. (1980) The evaluation of home range size and configuration using radio tracking data. In *A Handbook on Biotelemetry and Radio Tracking*, Amlaner, C.J. and Macdonald, D.W. (Eds.); Pergamon Press: Oxford; 405-424.
 

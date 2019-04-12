@@ -12,7 +12,7 @@ conContext(ltraj, var = "dist", def = "all", idcol = "burst",
 
 \item{var}{name(s) (as character) of columns (possibly from \code{infolocs}) to keep for contextual analysis.}
 
-\item{def}{how to define the point-of-contact. The default is to define it as all fixes in a phase \code{def = 'all'}, alternatively contacts can be defined as a single point along the phase defined as one of: \code{'first','last','minDist','minTime'}, which corresonds to the first fix int he contact phase, the last fix in the contact phase, the fix with the minimum time difference and the fix with the closest contact distance.}
+\item{def}{how to define the point-of-contact. The default is to define it as all fixes in a phase \code{def = 'all'}, alternatively contacts can be defined as a single point along the phase defined as one of: \code{'first','last','minDist','minTime'}, which corresponds to the first fix int he contact phase, the last fix in the contact phase, the fix with the minimum time difference and the fix with the closest contact distance.}
 
 \item{idcol}{column id associated with IDs of individuals, default is the 'burst'.}
 
@@ -20,9 +20,9 @@ conContext(ltraj, var = "dist", def = "all", idcol = "burst",
 
 \item{nlag}{number of lags to compute in the before and after phases of a contact. If lag = 0 then only contacts are used.}
 
-\item{lag}{time (in seconds) for defining the lags in before and after periods of a conatact.}
+\item{lag}{time (in seconds) for defining the lags in before and after periods of a contact.}
 
-\item{gap}{time (in seconds) for exluding the lags in before and after periods of a contact.}
+\item{gap}{time (in seconds) for excluding the lags in before and after periods of a contact.}
 
 \item{phaid}{(optional) id(s) of the contact phase upon which to examine (default is all).}
 }

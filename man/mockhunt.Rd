@@ -16,6 +16,6 @@ data(mockhunt)
 head(mockhunt)
 }
 \references{
-Long, JA, Webb, SL, Harju, S, Gee, KL. (in prep) Methods for performing contact analysis from high frequency tracking data: the WildlifeDI R package. Under Review.
+Long, JA, Webb, SL, Harju, S, Gee, KL. (in prep) Methods for performing contact analysis from high frequency tracking data: the wildlifeDI R package. Under Review.
 }
 \keyword{datasets}

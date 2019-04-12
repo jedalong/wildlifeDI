@@ -17,7 +17,7 @@
 #' A \code{list} of with three pieces of information, whether the two trajectories overlap (\code{$TO}) a logical vector, the beginning (\code{$TOstart}), and end (\code{$TOend}) of the overlap period, stored as \code{POSIX} objects.  
 #'
 #' @keywords processing
-#' @seealso GetSimultaneous, GetTemporalOverlap
+#' @seealso GetSimultaneous, GetTO
 #' @examples
 #' data(deer)
 #' deer37 <- deer[1]

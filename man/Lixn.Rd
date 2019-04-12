@@ -34,7 +34,7 @@ This function returns a list of objects representing the calculated values from 
 Minta statistic and associated \emph{p}-values from the Chi-squared test.
 \itemize{
 \item pTable -- contingency table showing marginal probabilities of expected use 
-   based on the selecton of the \code{method} parameter.
+   based on the selection of the \code{method} parameter.
 \item nTable -- contingency table showing observed frequency of use of the shared 
 area based on simultaneous fixes.
 \item oTable -- the odds for each cell in the contingency table.
@@ -52,7 +52,7 @@ the methods outlined by Minta (1992).
 }
 \details{
 The function \code{Lixn} can be used to calculate the Minta (1992) measures of dynamic
-interaction between two animals. The Minta statistic tests how the two animals simultaneiously utilize
+interaction between two animals. The Minta statistic tests how the two animals simultaneously utilize
 an area shared between the two individuals. Three coefficients are produced \eqn{L_{AA}}, \eqn{L_{BB}}, 
 and \eqn{L_{ixn}}. Each of these statistics are based on a contingency table that compares the observed 
 frequency of those fixes that are simultaneous and within/outside the shared area to expectations based on 

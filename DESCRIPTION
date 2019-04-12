@@ -1,7 +1,7 @@
 Package: wildlifeDI
 Type: Package
 Title: Calculate Indices of Dynamic Interaction for Wildlife Tracking Data
-Version: 0.3
+Version: 0.3.0
 Authors@R: person(given="Jed", 
                   family="Long",
                   role=c("aut","cre"),
