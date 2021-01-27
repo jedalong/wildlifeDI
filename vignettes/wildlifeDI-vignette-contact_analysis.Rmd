@@ -80,7 +80,7 @@ doepair$dom <- as.POSIXlt(doepair$date)$mday
 hist(doepair$dom,breaks=0:30)
 ```
 
-We can see a clear cluster of contacts occurring near the end of the month, this is likely assocciated with parturition cycles, and the onset of denning behaviour.
+We can see a clear cluster of contacts occurring near the end of the month, this is likely associated with parturition cycles, and the onset of denning behaviour.
 
 ```{r}
 hist(doepair$hod,breaks=0:24) #Figure 2b
@@ -100,13 +100,13 @@ hist(as.numeric(doetemp$duration)) #figure 2d
 
 ### Mapping Contacts
 
-Using the conSpatial function and the parameter choices we can easily make maps of contacts. First, lets plot the distribution of all contact points on top of the distribution of all GPS fixes.
+Using the conSpatial function and the parameter choices we can easily make maps of contacts. First plot the distribution of all contact points on top of the distribution of all GPS fixes.
 
 ```{r message=FALSE}
-spall <- ltraj2spdf(does)                         # Turn all fixes into spatial points
-sp1 <- conSpatial(doephas,type='p')               # Get points of all contacts
+spall <- ltraj2sf(does)                         # Turn all fixes into spatial points
+sp1 <- conSpatial(doephas,type='point')               # Get points of all contacts
 #Figure 3a
-plot(spall,col='grey')
+plot(spall['contact_pha')
 plot(sp1,add=T)
 ```
 
@@ -129,7 +129,7 @@ Finally, lets map the contact phases as lines.
 
 ```{r ,message=FALSE, warning=FALSE}
 #Figure 3c
-sp3 <- conSpatial(doephas,type='l')
+sp3 <- conSpatial(doephas,type='line')
 plot(spall,col='grey')
 plot(sp1,add=T)
 plot(sp3,add=T,col='red')
