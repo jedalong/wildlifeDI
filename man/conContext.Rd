@@ -4,8 +4,17 @@
 \alias{conContext}
 \title{Examine context associated with contact phases}
 \usage{
-conContext(ltraj, var = "dist", def = "all", idcol = "burst",
-  nrand = 0, nlag = 0, lag = 0, gap = 0, phaid)
+conContext(
+  ltraj,
+  var = "dist",
+  def = "all",
+  idcol = "burst",
+  nrand = 0,
+  nlag = 0,
+  lag = 0,
+  gap = 0,
+  phaid
+)
 }
 \arguments{
 \item{ltraj}{an object of the class \code{ltraj} which should be output from the function \code{conPhase}.}

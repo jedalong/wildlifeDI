@@ -4,8 +4,7 @@
 \alias{Prox}
 \title{Proximity Index}
 \usage{
-Prox(traj1, traj2, tc = 0, dc = 50, local = FALSE,
-  GetSimultaneous = TRUE)
+Prox(traj1, traj2, tc = 0, dc = 50, local = FALSE, GetSimultaneous = TRUE)
 }
 \arguments{
 \item{traj1}{an object of the class \code{ltraj} which contains the time-stamped

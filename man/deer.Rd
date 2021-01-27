@@ -4,11 +4,13 @@
 \name{deer}
 \alias{deer}
 \title{GPS tracking data of two male deer}
-\format{An \code{ltraj} object with two bursts, representing the two different individual deer:
+\format{
+An \code{ltraj} object with two bursts, representing the two different individual deer:
 \itemize{
  \item Deer no. 37 containing 551 fixes.
  \item Deer no. 38 containing 567 fixes.
- }}
+ }
+}
 \description{
 GPS telemetry data for two male deer during a one-week period in March 2005. The 
 two deer form a male bachelor group, making them an interesting case study for studying dynamic 

@@ -19,8 +19,7 @@
 #'    ltraj} object. For more information on objects of this type see \code{
 #'    help(ltraj)}.
 #' @param traj2 same as \code{traj1}.
-#' @param OZ spatial polygon associated with the home range (or some other form of) spatial overlap between 
-#'    \code{traj1} and \code{traj2}. Required to be an object that coerces to class \code{SpatialPolygons}.
+#' @param OZ spatial polygon sf object associated with the home range (or some other form of) spatial overlap between \code{traj1} and \code{traj2}. Required to be an \code{sp} polygon object.
 #' @param tc time threshold for determining simultaneous fixes -- see function: \code{GetSimultaneous}.
 #' @param dc distance tolerance limit (in appropriate units) for defining when 
 #'         two fixes are spatially together.

@@ -26,8 +26,8 @@
 #' The functions in \code{wildlifeDI} utilize the \code{ltraj} objects from the package \code{adehabitat}. For more information on objects of this type see \code{help(ltraj)}.
 #'
 #' @author Jed Long
-#'
-#' @import sp rgeos adehabitatLT stats graphics
+#' 
+#' @import adehabitatLT sf sp stats graphics rgeos
 #
 #' @docType package
 #' @name wildlifeDI-package

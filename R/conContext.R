@@ -39,28 +39,28 @@
 #
 # ---- End of roxygen documentation ----
 conContext <- function(ltraj,var='dist',def='all',idcol='burst',nrand=0,nlag=0,lag=0,gap=0,phaid){
-  df <- ld(ltraj)
+  dfr <- ld(ltraj)
   if (missing(phaid)){ 
-    phaid <- unique(df$contact_pha) 
+    phaid <- unique(dfr$contact_pha) 
     phaid <- phaid[!is.na(phaid)]
   }
   
   #Function to extract minTime and minDist from phases.
-  funPhase <- function(phase, df, def){
+  funPhase <- function(phase, dfr, def){
     ind <- which(df$contact_pha == phase)
     if (def=='first'){
-      i1 <- ind[which.min(df$date[ind])]    
+      i1 <- ind[which.min(dfr$date[ind])]    
     } else if (def=='last'){
-      i1 <- ind[which.max(df$date[ind])]
+      i1 <- ind[which.max(dfr$date[ind])]
     } else if (def=='minTime'){
-      sub <- df[df$contact_pha == phase,]
+      sub <- dfr[dfr$contact_pha == phase,]
       sub$id <- as.character(sub$id)
       sub$burst <- as.character(sub$burst)
       sub <- dl(sub)
       dfpairs <- conPairs(sub)
       i1 <- ind[dfpairs$contact_orig_rowid[which.min(dfpairs$contact_dt)]]
     } else if (def=='minDist'){
-      sub <- df[df$contact_pha == phase,]
+      sub <- dfr[dfr$contact_pha == phase,]
       sub$id <- as.character(sub$id)
       sub$burst <- as.character(sub$burst)
       sub <- dl(sub)
@@ -71,9 +71,9 @@ conContext <- function(ltraj,var='dist',def='all',idcol='burst',nrand=0,nlag=0,l
   }
   
   #Before After analysis
-  fun.BefAft <- function(phaid,df,var,nlag,lag,gap,idcol,def){
+  fun.BefAft <- function(phaid,dfr,var,nlag,lag,gap,idcol,def){
     #subset data to only get individual associated with contact
-    df.sub <- subset(df,get(idcol) == df[which(df$contact_pha == phaid),idcol][1])
+    df.sub <- subset(dfr,get(idcol) == df[which(df$contact_pha == phaid),idcol][1])
     
     #get only the phase
     ind <- which(df.sub$contact_pha == phaid)
@@ -142,18 +142,18 @@ conContext <- function(ltraj,var='dist',def='all',idcol='burst',nrand=0,nlag=0,l
   }
   
   #Get the contacts, and optionally the BefAft Phases
-  dff <- do.call(rbind, lapply(phaid,fun.BefAft,df=df,var=var,nlag=nlag,lag=lag,gap=gap,idcol=idcol,def=def))
+  dff <- do.call(rbind, lapply(phaid,fun.BefAft,dfr=dfr,var=var,nlag=nlag,lag=lag,gap=gap,idcol=idcol,def=def))
   
   #Get Random fixes if required
   if (nrand > 0){
     #Get Random fixes that are not 'contacts'
     ind2 <- which(df$contacts == 0)
     ind2 <- sample(ind2, nrand)
-    rand <- data.frame(df[ind2,c('date',var)])
+    rand <- data.frame(dfr[ind2,c('date',var)])
     rand$dt_con <- NA
     rand$dt_lev <- 'Rnd'
     rand$phaid <- NA
-    rand$ID <- df[ind2,idcol]
+    rand$ID <- dfr[ind2,idcol]
     dff <- rbind(dff,rand)
   }
   

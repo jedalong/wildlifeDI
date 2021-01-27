@@ -32,17 +32,17 @@
 # ---- End of roxygen documentation ----
 #function to group contacts into interaction 'phases'.
 conPhase <- function(ltraj,pc=0,idcol='burst'){
-  df <- ld(ltraj)
-  df$contact_pha <- 0
-  df$contact_pha[which(df$contacts > 0)] <- 1
+  dfr <- ld(ltraj)
+  dfr$contact_pha <- 0
+  dfr$contact_pha[which(dfr$contacts > 0)] <- 1
   
   pha.id <- 1
   
-  ids <- unique(df[,idcol])
+  ids <- unique(dfr[,idcol])
   for (i in ids){
-    ind <- which(df[,idcol]==i)
+    ind <- which(dfr[,idcol]==i)
     ##identify clusters of 'contacts'
-    x <- df[ind,]
+    x <- dfr[ind,]
     run <- rle(x$contact_pha)
     len <- run$lengths
     val <- run$values
@@ -69,11 +69,11 @@ conPhase <- function(ltraj,pc=0,idcol='burst'){
     pha.id2 <- pha.id+length(which(val>0))-1
     val[which(val>0)] <- seq(pha.id,pha.id2)
     pha.id <- pha.id2 + 1
-    df$contact_pha[ind] <- rep(val,len)
+    dfr$contact_pha[ind] <- rep(val,len)
   }
   
-  df$contact_pha[which(df$contact_pha == 0)] <- NA
+  dfr$contact_pha[which(dfr$contact_pha == 0)] <- NA
   
-  outtraj <- dl(df,proj4string=attr(ltraj,'proj4string'))
+  outtraj <- dl(dfr,proj4string=attr(ltraj,'proj4string'))
   return(outtraj)
 }

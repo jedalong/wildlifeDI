@@ -4,24 +4,24 @@
 \alias{conSpatial}
 \title{Mapping wildlife contacts}
 \usage{
-conSpatial(ltraj, type = "p", def = "all")
+conSpatial(ltraj, type = "point", def = "all")
 }
 \arguments{
 \item{ltraj}{an object of the class \code{ltraj} which should be output from the function \code{conPhase}.}
 
-\item{type}{one of ('p' - the default or 'l'). Whether to generate contacts as a \code{SpatialPointsDataFrame} or phases as a \code{SpatialLinesDataFrame}, points are the default, but lines can be useful for plotting and exploratory analysis.}
+\item{type}{one of ('point' - the default or 'line'). Whether to generate contacts as points or phases as lines, points are the default, but lines can be useful for plotting and exploratory analysis. NOTE: if type = 'line' only those contact phases with at least two contact points are returned. So it is useful to use this in combination with contact points.}
 
-\item{def}{if type = 'p' one of ('all','phase','first','last','minDist','minTime') which defines how contacts are to be mapped using all or part of a contact phase. (see Details)}
+\item{def}{if type = 'point' one of ('all','phase','first','last','minDist','minTime') which defines how contacts are to be mapped using all or part of a contact phase. (see Details)}
 }
 \value{
-A \code{SpatialPointsDataFrame} or \code{SpatialLinesDataFrame} containing the locations/paths of the contacts. The time of the contact is stored in the attributes of the \code{SpatialPointsDataFrame} object, along with the actual distance between fixes. The \code{SpatialLinesDataFrame} contains attributes of the time of contact, and the min, max, and mean distance apart along a line segment.
+An \code{sf} object containing the locations/paths of the contacts. The time of the contact is stored in the attributes of the output object, along with the actual distance between fixes. The lines object contains attributes of the time of contact, and the min, max, and mean distance apart along a line segment.
 }
 \description{
-The function \code{contacts} is a simple function for mapping where wildlife contacts occur on the landscape with wildlife telemetry data.
+The function \code{conSpatial} is a simple function for mapping where wildlife contacts occur on the landscape with wildlife telemetry data.
 }
 \details{
-The function \code{conSpatial} can be used to map where contacts occur on the landscape, contacts being defined spatially based on a distance threshold \code{dc} and temporally based on the time threshold \code{tc} -- see the function \code{getsimultaneous}. The location of the contact can be calculated in a number of ways, and represented as points for each contact, or as line grouped by the contact phases. Which contacts to map can be defined in a number of ways using the \code{def} parameter: \cr
- \cr i) \code{def = 'all'} (the default) all fixes where column \code{contacts = 1} are returned in the Spatial* object;
+The function \code{conSpatial} can be used to map where contacts occur on the landscape, contacts being defined spatially based on a distance threshold \code{dc} and temporally based on the time threshold \code{tc} -- see the function \code{GetSimultaneous}. The location of the contact can be calculated in a number of ways, and represented as points for each contact, or as line grouped by the contact phases. Which contacts to map can be defined in a number of ways using the \code{def} parameter: \cr
+ \cr i) \code{def = 'all'} (the default) all fixes where column \code{contacts = 1} are returned in the sf object;
  \cr ii) \code{def = 'phase'} all fixes which are part of a phase are returned, note the number of points when \code{def = 'phase'} should be greater than or equal to that when \code{def = 'all'} because of how phases are defined;
  \cr iii) \code{def = 'first'} the first location fix of each phase is returned;
  \cr iv) \code{def = 'last'} the last location fix of each phase is returned;
@@ -35,9 +35,9 @@ data(does)
 doecons <- conProcess(does,tc=15*60,dc=50)
 doephas <- conPhase(doecons,pc=60*60)
 pts <- conSpatial(doephas)
-plot(pts)
-lns <- conSpatial(doephas,type='l')
-plot(lns, add=TRUE)
+plot(pts['contact_pha'])
+lns <- conSpatial(doephas,type='line')
+plot(lns['contact_pha'])
 }
 
 }

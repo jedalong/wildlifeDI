@@ -54,9 +54,9 @@ IAB <- function(traj1,traj2,tc=0,dc=50,local=FALSE,rand=99){
   n <- nrow(tr1)
   #Calculate the observed distances
   fIAB <- function(tr1,tr2,dc){
-    df <- data.frame(date=tr1$date,Dab=sqrt((tr1$x - tr2$x)^2 + (tr1$y - tr2$y)^2))
-    df$Iab <- exp((-1/2)*(df$Dab/dc)^2)
-    return(df)
+    dfr <- data.frame(date=tr1$date,Dab=sqrt((tr1$x - tr2$x)^2 + (tr1$y - tr2$y)^2))
+    dfr$Iab <- exp((-1/2)*(dfr$Dab/dc)^2)
+    return(dfr)
   }
   IAB.df <- fIAB(tr1,tr2,dc=dc)
   

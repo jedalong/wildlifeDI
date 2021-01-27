@@ -3,11 +3,11 @@
 #' @title Mapping wildlife contacts
 #'
 #' @description
-#' The function \code{contacts} is a simple function for mapping where wildlife contacts occur on the landscape with wildlife telemetry data. 
+#' The function \code{conSpatial} is a simple function for mapping where wildlife contacts occur on the landscape with wildlife telemetry data. 
 #' 
 #' @details
-#' The function \code{conSpatial} can be used to map where contacts occur on the landscape, contacts being defined spatially based on a distance threshold \code{dc} and temporally based on the time threshold \code{tc} -- see the function \code{getsimultaneous}. The location of the contact can be calculated in a number of ways, and represented as points for each contact, or as line grouped by the contact phases. Which contacts to map can be defined in a number of ways using the \code{def} parameter: \cr
-#'  \cr i) \code{def = 'all'} (the default) all fixes where column \code{contacts = 1} are returned in the Spatial* object;
+#' The function \code{conSpatial} can be used to map where contacts occur on the landscape, contacts being defined spatially based on a distance threshold \code{dc} and temporally based on the time threshold \code{tc} -- see the function \code{GetSimultaneous}. The location of the contact can be calculated in a number of ways, and represented as points for each contact, or as line grouped by the contact phases. Which contacts to map can be defined in a number of ways using the \code{def} parameter: \cr
+#'  \cr i) \code{def = 'all'} (the default) all fixes where column \code{contacts = 1} are returned in the sf object;
 #'  \cr ii) \code{def = 'phase'} all fixes which are part of a phase are returned, note the number of points when \code{def = 'phase'} should be greater than or equal to that when \code{def = 'all'} because of how phases are defined;
 #'  \cr iii) \code{def = 'first'} the first location fix of each phase is returned;
 #'  \cr iv) \code{def = 'last'} the last location fix of each phase is returned;
@@ -15,11 +15,11 @@
 #'  \cr vi) \code{def = 'minTime'} the location fix of each phase with the minimal time difference with contact fixes is returned;
 #'
 #' @param ltraj an object of the class \code{ltraj} which should be output from the function \code{conPhase}.
-#' @param type one of ('p' - the default or 'l'). Whether to generate contacts as a \code{SpatialPointsDataFrame} or phases as a \code{SpatialLinesDataFrame}, points are the default, but lines can be useful for plotting and exploratory analysis.
-#' @param def if type = 'p' one of ('all','phase','first','last','minDist','minTime') which defines how contacts are to be mapped using all or part of a contact phase. (see Details) 
+#' @param type one of ('point' - the default or 'line'). Whether to generate contacts as points or phases as lines, points are the default, but lines can be useful for plotting and exploratory analysis. NOTE: if type = 'line' only those contact phases with at least two contact points are returned. So it is useful to use this in combination with contact points.
+#' @param def if type = 'point' one of ('all','phase','first','last','minDist','minTime') which defines how contacts are to be mapped using all or part of a contact phase. (see Details) 
 #' 
 #' @return
-#' A \code{SpatialPointsDataFrame} or \code{SpatialLinesDataFrame} containing the locations/paths of the contacts. The time of the contact is stored in the attributes of the \code{SpatialPointsDataFrame} object, along with the actual distance between fixes. The \code{SpatialLinesDataFrame} contains attributes of the time of contact, and the min, max, and mean distance apart along a line segment.
+#' An \code{sf} object containing the locations/paths of the contacts. The time of the contact is stored in the attributes of the output object, along with the actual distance between fixes. The lines object contains attributes of the time of contact, and the min, max, and mean distance apart along a line segment.
 #'
 #' @keywords contacts
 #' 
@@ -32,33 +32,36 @@
 #' doecons <- conProcess(does,tc=15*60,dc=50)
 #' doephas <- conPhase(doecons,pc=60*60)
 #' pts <- conSpatial(doephas)
-#' plot(pts)
-#' lns <- conSpatial(doephas,type='l')
-#' plot(lns, add=TRUE)
+#' plot(pts['contact_pha'])
+#' lns <- conSpatial(doephas,type='line')
+#' plot(lns['contact_pha'])
 #' }
 #' 
 #' @export
+# @importFrom dplyr group_by
+# @importFrom dplyr summarise
 #
 
-conSpatial <- function(ltraj,type='p',def='all'){
+conSpatial <- function(ltraj,type='point',def='all'){
   
-  proj4string <- attr(ltraj,'proj4string')
+  prj4string <- attr(ltraj,'proj4string')
+  contact_pha = NULL #fix global variable issue in package
   #Function to extract minTime and minDist from phases.
-  funPhase <- function(phase, df, def){
-    ind <- which(df$contact_pha == phase)
+  funPhase <- function(phase, dfr, def){
+    ind <- which(dfr$contact_pha == phase)
     if (def=='first'){
-      i1 <- ind[which.min(df$date[ind])]    
+      i1 <- ind[which.min(dfr$date[ind])]    
     } else if (def=='last'){
-      i1 <- ind[which.max(df$date[ind])]
+      i1 <- ind[which.max(dfr$date[ind])]
     } else if (def=='minTime'){
-      sub <- df[df$contact_pha == phase,]
+      sub <- dfr[dfr$contact_pha == phase,]
       sub$id <- as.character(sub$id)
       sub$burst <- as.character(sub$burst)
       sub <- dl(sub)
       dfpairs <- conPairs(sub)
       i1 <- ind[dfpairs$contact_orig_rowid[which.min(dfpairs$contact_dt)]]
     } else if (def=='minDist'){
-      sub <- df[df$contact_pha == phase,]
+      sub <- dfr[dfr$contact_pha == phase,]
       sub$id <- as.character(sub$id)
       sub$burst <- as.character(sub$burst)
       sub <- dl(sub)
@@ -68,33 +71,37 @@ conSpatial <- function(ltraj,type='p',def='all'){
     return(i1)
   }
   
-  df <- ld(ltraj)
-  if (type ==  'p'){
-    #convert ltraj object to dataframe
-    if (def =='all'){
-      dfs <- df[df$contacts==1,]
-    } else if (def == 'phase'){
-      dfs <- df[!is.na(df$contact_pha),]
-    } else {
-      phaid <- unique(df$contact_pha[!is.na(df$contact_pha)])
-      #Get the contacts, and optionally the BefAft Phases
-      indo <- sapply(phaid,funPhase,df=df,def=def)
-      dfs <- df[indo,]
-    }
-    spo <- SpatialPointsDataFrame(dfs[,1:2],data=dfs,proj4string=proj4string)
-  } else if (type=='l'){
-    df2 <- df[!is.na(df$contact_pha),]
-    df2$id<- as.character(df2$id)
-    df2$burst <- as.character(df2$burst)
-    df2$oid <- df2$id
-    df2$id <- df2$contact_pha
-    df2$burst <- df2$contact_pha
-    
-    t2 <- dl(df2,proj4string=proj4string)
-    spo <- ltraj2sldf(t2)
-    names(spo@data) <- c('id','contact_pha')
+  dfr <- ld(ltraj)
+  #convert ltraj object to dataframe
+  if (type== 'line'){
+    dfs <- dfr[dfr$contacts==1,]
+  } else if (def =='all'){
+    dfs <- dfr[dfr$contacts==1,]
+  } else if (def == 'phase'){
+    dfs <- dfr[!is.na(dfr$contact_pha),]
+  } else {
+    phaid <- unique(dfr$contact_pha[!is.na(dfr$contact_pha)])
+    #Get the contacts, and optionally the BefAft Phases
+    indo <- sapply(phaid,funPhase,dfr=dfr,def=def)
+    dfs <- dfr[indo,]
   }
-  return(spo)
+  #spo <- SpatialPointsDataFrame(dfs[,1:2],data=dfs,proj4string=proj4string)
+  spo = st_as_sf(dfs,coords=c('x','y'),crs=prj4string)
+  
+  if (type ==  'point'){
+    return(spo)
+  } else if (type=='line'){
+    g = dplyr::group_by(spo,contact_pha)
+    s = dplyr::summarise(g, 
+                  id = min(id),
+                  phase_begin = min(date),
+                  phase_end = max(date),
+                  npt = dplyr::n(),
+                  do_union=FALSE)
+    s2 = s[s$npt > 1,]
+    spl = st_cast(s2,"LINESTRING")
+    return(spl)
+  }
 }
 
 

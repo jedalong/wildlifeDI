@@ -9,7 +9,7 @@ FilterTraj(traj, type = "attribute", filter = NA)
 \arguments{
 \item{traj}{an object of the class \code{ltraj} which contains the time-stamped movement fixes of the object. Note this object must be a \code{type II ltraj} object. For more information on objects of this type see \code{help(ltraj)}.}
 
-\item{type}{The type of filter to apply (one of 'attribute','spatial','temporal','tod').}
+\item{type}{The type of filter to apply (one of 'attribute',temporal','tod').}
 
 \item{filter}{The filter criteria (see details).}
 }
@@ -20,8 +20,7 @@ A \code{ltraj} object with only those fixes satisfying the \code{filter} criteri
 The function \code{FilterTraj} is a function for extracting portions of a trajectory based on some filter criteria.
 }
 \details{
-The function \code{FilterTraj} can be used to extract a portion of a trajectory based on a spatial area (i.e., a \code{SpatialPolygons} object) or based on temporal criteria (such as time-of-day or a temporal window) or based on attributes of the trajectory. In the case of attribute filtering, the criteria can be any of the default attributes of an \code{ltraj} object, or based on additional attributes stored alongside the trajectory. The \code{filter} parameter is a flexible way to define the criteria for filtering. The \code{filter} object can be one of: \cr
-- \code{SpatialPolygons*} objects for spatial filtering;\cr
+The function \code{FilterTraj} can be used to extract a portion of a trajectory based on temporal criteria (such as time-of-day or a temporal window) or based on attributes of the trajectory. In the case of attribute filtering, the criteria can be any of the default attributes of an \code{ltraj} object, or based on additional attributes stored alongside the trajectory. The \code{filter} parameter is a flexible way to define the criteria for filtering. The \code{filter} object can be one of: \cr
 - \code{POSIX} class objects (list of length=2) for filtering based on some temporal window (see examples);\cr
 - \code{character} object (list of length=2) for filtering based on time-of-day (see examples);\cr
 - \code{character} object containing the attribute filter criteria as a logical expression (see examples and \code{?subset}).\cr
@@ -33,15 +32,6 @@ data(deer)
 deer37 <- deer[1]
 deer38 <- deer[2]
 
-#Spatial Filter 
-#----NOT RUN----
-\dontrun{
-library(adhabitatHR)
-oz <- mcp(SpatialPoints(cbind(ld(deer38)$x,ld(deer38)$y)))
-x <- FilterTraj(deer37,type='spatial',filter=oz)
-}
-#
-#---------------
 
 #Temporal Filter
 t1 <- as.POSIXct(strptime('2005-03-09 00:00:00', format= '\%Y-\%m-\%d \%H:\%M:\%S'))

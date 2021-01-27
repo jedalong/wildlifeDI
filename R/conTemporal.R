@@ -32,13 +32,13 @@
 # ---- End of roxygen documentation ----
 
 conTemporal <- function(traj,units='auto'){
-  df <- ld(traj)
-  df <- df[df$contacts>0,]
+  dfr <- ld(traj)
+  dfr <- dfr[dfr$contacts>0,]
   phas <- unique(df$contact_pha)
   outdf <- data.frame(contact_pha = phas, start_time = df$date[1], end_time = df$date[1])
 
   for (i in 1:length(phas)){
-    temp <- df[df$contact_pha==phas[i],]
+    temp <- dfr[dfr$contact_pha==phas[i],]
     outdf$start_time[i] <- as.POSIXct(min(temp$date,na.rm=TRUE)) 
     outdf$end_time[i] <- as.POSIXct(max(temp$date,na.rm=TRUE)) 
     

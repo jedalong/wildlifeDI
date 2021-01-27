@@ -4,8 +4,7 @@
 \alias{dcPlot}
 \title{Contact distance plot}
 \usage{
-dcPlot(mtraj1, mtraj2, tc = 0, idcol1 = "burst", idcol2,
-  histplot = TRUE, dmax)
+dcPlot(mtraj1, mtraj2, tc = 0, idcol1 = "burst", idcol2, histplot = TRUE, dmax)
 }
 \arguments{
 \item{mtraj1}{an object of the class \code{ltraj} which contains the time-stamped movement fixes of the first group of individuals. Each individual should be stored with a unique 'id'. (see \code{?as.ltraj})}

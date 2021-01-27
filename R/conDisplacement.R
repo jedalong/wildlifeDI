@@ -31,6 +31,8 @@
 #' @export
 #
 # ---- End of roxygen documentation ----
+
+#ASSUMES PROJECTED COORDINATES
 conDisplacement <- function(ltraj,def='all',idcol='burst'){
   
   #Get the Fix ID of every Contact based on 'DEF'
@@ -52,26 +54,26 @@ conDisplacement <- function(ltraj,def='all',idcol='burst'){
   }
   
   # Set up displacement analysis
-  df <- ld(ltraj)
-  df$displacement <- 0
-  n <- dim(df)[1]
+  dfr <- ld(ltraj)
+  dfr$displacement <- 0
+  n <- dim(dfr)[1]
   
   #Peform Displacement individually for every Animal.
-  anid <- unique(df[,idcol])
+  anid <- unique(dfr[,idcol])
   for (ani in anid){
-    ind <- which(df[,idcol]==ani)
+    ind <- which(dfr[,idcol]==ani)
     cid_ani <- cid[which(cid %in% ind)]
     if (length(cid_ani) == 0) {
       #animal has no contacts so displacement is NA
-      df$displacement[ind] <- NA
+      dfr$displacement[ind] <- NA
     } else {
       for (i in ind){
-        j <- cid_ani[which.min(abs(df$date[i]-df$date[cid_ani]))]
-        df$displacement[i] <-sqrt((df$x[i]-df$x[j])^2+(df$y[i]-df$y[j])^2)
+        j <- cid_ani[which.min(abs(dfr$date[i]-dfr$date[cid_ani]))]
+        df$displacement[i] <-sqrt((dfr$x[i]-dfr$x[j])^2+(dfr$y[i]-dfr$y[j])^2)
       }
     }
   }
 
-  outtraj <- dl(df,proj4string=attr(ltraj,'proj4string'))
+  outtraj <- dl(dfr,proj4string=attr(ltraj,'proj4string'))
   return(outtraj)
 }

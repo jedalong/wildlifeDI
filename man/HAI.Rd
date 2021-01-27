@@ -14,8 +14,7 @@ help(ltraj)}.}
 
 \item{traj2}{same as \code{traj1}.}
 
-\item{OZ}{spatial polygon associated with the home range (or some other form of) spatial overlap between 
-\code{traj1} and \code{traj2}. Required to be an object that coerces to class \code{SpatialPolygons}.}
+\item{OZ}{spatial polygon sf object associated with the home range (or some other form of) spatial overlap between \code{traj1} and \code{traj2}. Required to be an \code{sp} polygon object.}
 
 \item{tc}{time threshold for determining simultaneous fixes -- see function: \code{GetSimultaneous}.}
 

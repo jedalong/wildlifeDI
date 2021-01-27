@@ -4,7 +4,9 @@
 \name{mockhunt}
 \alias{mockhunt}
 \title{Processed data on contacts between mock-hunters and white-tailed bucks}
-\format{An \code{ltraj} object with where bursts represent different individual deer.}
+\format{
+An \code{ltraj} object with where bursts represent different individual deer.
+}
 \description{
 Data output from the function conContext showing contact events between mock-hunters and male white-tailed deer during the hunting seasons of 2008 and 2009 in Oklahoma.
 }

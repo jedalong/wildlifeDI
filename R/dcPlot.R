@@ -37,9 +37,9 @@ dcPlot <- function(mtraj1,mtraj2,tc=0,idcol1='burst',idcol2,histplot=TRUE,dmax){
   #Process contact analysis for all pairs of individuals in one group
   oneGroup <- function(mtraj1,tc,idcol1){
     #no mtraj2 specified, get all unique pairs of individuals
-    df <- ld(mtraj1)
-    col1 <- which(names(df)==idcol1)
-    id1 <- as.character(unique(df[,col1]))
+    dfr <- ld(mtraj1)
+    col1 <- which(names(dfr)==idcol1)
+    id1 <- as.character(unique(dfr[,col1]))
     #Get all the unique combinations between one group
     pairs <- expand.grid(id1,id1,stringsAsFactors=F)
     pairs <- pairs[-which(pairs$Var1 == pairs$Var2),]
@@ -50,10 +50,10 @@ dcPlot <- function(mtraj1,mtraj2,tc=0,idcol1='burst',idcol2,histplot=TRUE,dmax){
     for (i in 1:(dim(pairs)[1])){
       i1 <- pairs$Var1[i]
       i2 <- pairs$Var2[i]
-      ind1 <- which(df[,col1] == i1)
-      ind2 <- which(df[,col1] == i2)
-      tr1 <- dl(df[ind1,1:10])
-      tr2 <- dl(df[ind2,1:10])  
+      ind1 <- which(dfr[,col1] == i1)
+      ind2 <- which(dfr[,col1] == i2)
+      tr1 <- dl(dfr[ind1,1:10])
+      tr2 <- dl(dfr[ind2,1:10])  
       #Only do contact analysis if they overlap temporally.
       if (checkTO(tr1,tr2)$TO){
         #Proximity analysis
@@ -66,11 +66,11 @@ dcPlot <- function(mtraj1,mtraj2,tc=0,idcol1='burst',idcol2,histplot=TRUE,dmax){
   
   #Process contact analysis for all pairs of indivudals from group 1 to group 2
   twoGroup <- function(mtraj1,mtraj2,tc,idcol1,idcol2){
-    df <- ld(mtraj1)
+    df1 <- ld(mtraj1)
     df2 <- ld(mtraj2)
-    col1 <- which(names(df)==idcol1)
-    col2 <- which(names(df)==idcol2)
-    id1 <- as.character(unique(df[,col1]))
+    col1 <- which(names(df1)==idcol1)
+    col2 <- which(names(df2)==idcol2)
+    id1 <- as.character(unique(df1[,col1]))
     id2 <- as.character(unique(df2[,col2]))
     #Get all the unique combinations between two groups
     pairs <- expand.grid(id1,id2,stringsAsFactors=F)
@@ -79,9 +79,9 @@ dcPlot <- function(mtraj1,mtraj2,tc=0,idcol1='burst',idcol2,histplot=TRUE,dmax){
     for (i in 1:(dim(pairs)[1])){
       i1 <- pairs$Var1[i]
       i2 <- pairs$Var2[i]
-      ind1 <- which(df[,col1] == i1)
+      ind1 <- which(df1[,col1] == i1)
       ind2 <- which(df2[,col2] == i2)
-      tr1 <- dl(df[ind1,1:10]) 
+      tr1 <- dl(df1[ind1,1:10]) 
       tr2 <- dl(df2[ind2,1:10])  
       #Only do contact analysis if they overlap temporally.
       if (checkTO(tr1,tr2)$TO){
@@ -98,27 +98,27 @@ dcPlot <- function(mtraj1,mtraj2,tc=0,idcol1='burst',idcol2,histplot=TRUE,dmax){
   
   if (missing(mtraj2)){
     mtraj2 <- NULL
-    df <- oneGroup(mtraj1,tc,idcol1)
+    dfr <- oneGroup(mtraj1,tc,idcol1)
   } else {
-    df <- twoGroup(mtraj1,mtraj2,tc,idcol1,idcol2)
+    dfr <- twoGroup(mtraj1,mtraj2,tc,idcol1,idcol2)
   }
   
   if (histplot==TRUE){
     ###make dc plot here
-    if (missing(dmax)) dmax <- max(df$prox)
-    ind <- which(df$prox <= dmax)  
-    df <- df[ind,]
+    if (missing(dmax)) dmax <- max(dfr$prox)
+    ind <- which(dfr$prox <= dmax)  
+    dfr <- dfr[ind,]
     
-    breaks = seq(0, max(df$prox), length.out=100) 
-    cut = cut(df$prox, breaks, right=FALSE) 
+    breaks = seq(0, max(dfr$prox), length.out=100) 
+    cut = cut(dfr$prox, breaks, right=FALSE) 
     freq = table(cut)
     cumfreq0 = c(0, cumsum(freq))
     cumfreq0 <- cumfreq0 / max(cumfreq0)
     
     par(mar=c(4,4,1,4))
     
-    hist <- hist(df$prox, breaks=breaks,col='grey',border='grey',axes=T, ann=T,prob=F,
-                 xlim=c(0,max(df$prox)),xlab='Distance',ylab='Frequency',main='')
+    hist <- hist(dfr$prox, breaks=breaks,col='grey',border='grey',axes=T, ann=T,prob=F,
+                 xlim=c(0,max(dfr$prox)),xlab='Distance',ylab='Frequency',main='')
     par(new=T)
     plot(breaks,cumfreq0,type='l',axes=F,ann=F)
     axis(4, at=c(0, 0.5, 1))
@@ -142,6 +142,6 @@ dcPlot <- function(mtraj1,mtraj2,tc=0,idcol1='burst',idcol2,histplot=TRUE,dmax){
     text(x=pks,pky, labels=pks.,pos=4,offset=0.1)
     return(pks)
   } else {
-    return(df)
+    return(dfr)
   }
 }
