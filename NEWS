@@ -1,3 +1,11 @@
+wildlifeDI 0.4.0
+================
+
+*Jan. 27, 2021 	- Update to contact analysis functions
+		- contact analyssi vignette
+		- added some support for spatial sf objects (need to do more here)
+
+
 wildlifeDI 0.3.0
 ================
 

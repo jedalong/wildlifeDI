@@ -34,8 +34,8 @@
 conTemporal <- function(traj,units='auto'){
   dfr <- ld(traj)
   dfr <- dfr[dfr$contacts>0,]
-  phas <- unique(df$contact_pha)
-  outdf <- data.frame(contact_pha = phas, start_time = df$date[1], end_time = df$date[1])
+  phas <- unique(dfr$contact_pha)
+  outdf <- data.frame(contact_pha = phas, start_time = dfr$date[1], end_time = dfr$date[1])
 
   for (i in 1:length(phas)){
     temp <- dfr[dfr$contact_pha==phas[i],]
