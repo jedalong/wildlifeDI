@@ -29,6 +29,7 @@ knitr::opts_chunk$set(cache = TRUE)
 library(wildlifeDI)
 library(adehabitatLT)
 library(ggplot2)
+library(sf)
 ```
 
 # Contact Analysis - Doe Deer Data
@@ -103,11 +104,12 @@ hist(as.numeric(doetemp$duration)) #figure 2d
 Using the conSpatial function and the parameter choices we can easily make maps of contacts. First plot the distribution of all contact points on top of the distribution of all GPS fixes.
 
 ```{r message=FALSE}
-sf_pt <- ltraj2sf(does)                             # Turn all fixes into sf points
-sp1 <- conSpatial(doephas,type='point')             # Get points of all contacts
+con_sf <- conSpatial(doephas,type='point')             # Get points of all contacts
+
 #Figure 3a
-plot(spall['contact_pha')
-plot(sp1,add=T)
+sf_pt <- ltraj2sf(does)  # Turn all fixes into sf points
+plot(st_geometry(sf_pt),col='grey',pch=20)
+plot(st_geometry(con_sf),col='black',pch=20,add=T)
 ```
 
 We can see that the contacts are clustered around certain locations when compared to all GPS telemetry fixes.
@@ -116,11 +118,11 @@ Next, lets map only the initiation of phases (i.e., the first fix in every phase
 
 ```{r}
 #Figure 3b
-sp2 <- conSpatial(doephas,type='p',def='first')
+con_sf_first <- conSpatial(doephas,type='point',def='first')
 
-plot(spall,col='grey')
-plot(sp1,add=T)
-plot(sp2,add=T,col='red')
+plot(st_geometry(sf_pt),col='grey',pch=20)
+plot(st_geometry(con_sf),col='black',pch=20,add=T)
+plot(st_geometry(con_sf_first),col='red',pch=20,add=T)
 ```
 
 Here we can see a difference in the spatial pattern of the initiation of contact phases the original distribution of GPS fixes, and the locations of all contact points.
@@ -129,10 +131,12 @@ Finally, lets map the contact phases as lines.
 
 ```{r ,message=FALSE, warning=FALSE}
 #Figure 3c
-sp3 <- conSpatial(doephas,type='line')
-plot(spall,col='grey')
-plot(sp1,add=T)
-plot(sp3,add=T,col='red')
+con_sf_ln <- conSpatial(doephas,type='line')
+
+sf_ln <- ltraj2sf(does,type='line')  # Turn all fixes into sf points
+
+plot(st_geometry(sf_ln),col='grey')
+plot(st_geometry(con_sf_ln),col='red',add=T)
 ```
 
 The map of the phases as lines provides different insight into the spatial structure of contact phases throughout the study area.
@@ -169,7 +173,7 @@ There are two useful ways to look at these data:
 
 The lineplot can be used to look at patterns that change over time individually, whereas a boxplot can be used to look at general trends grouping all the individuals together.
 
-If we first look at the line plots for each of the three variables we can get an idea of any changes in behaviour or context before and after contact events. In such a plot, each line reprsents a signle contact event (phase; $n=47$). The x-axis is the time before and after the first fix in the contact phase. The y-axis is any one of the behaviour or contextual variables; here we will first look at step-length.
+If we first look at the line plots for each of the three variables we can get an idea of any changes in behaviour or context before and after contact events. In such a plot, each line represents a single contact event (phase; $n=47$). The x-axis is the time before and after the first fix in the contact phase. The y-axis is any one of the behaviour or contextual variables; here we will first look at step-length.
 
 ```{r}
 ggplot(data=mockhunt, aes(x=dt_lev, y=dist, group=phaid)) +
@@ -178,7 +182,7 @@ ggplot(data=mockhunt, aes(x=dt_lev, y=dist, group=phaid)) +
   scale_x_discrete(labels=c(as.character(seq(-96,96,by=8)),'R'))
 ```
 
-Here we can see evidence of increased moement following contacts with mock-hunters, but a high degree of variation between individuals. It is unclear precisely how long after a contact with a mock-hunters the effect lasts.
+Here we can see evidence of increased moment following contacts with mock-hunters, but a high degree of variation between individuals. It is unclear precisely how long after a contact with a mock-hunters the effect lasts.
 
 We can look at the spatial displacement (e.g., actual geographic distance) a deer makes following a contact as well.
 
