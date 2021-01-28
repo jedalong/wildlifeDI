@@ -78,7 +78,7 @@ doetemp <- conTemporal(doephas,units='mins')
 doepair$hod <- as.POSIXlt(doepair$date)$hour + as.POSIXlt(doepair$date)$min / 60  #convert POSIX to hours
 doetemp$hod <- as.POSIXlt(doetemp$start_time)$hour + as.POSIXlt(doetemp$start_time)$min / 60  #convert POSIX to hours
 doepair$dom <- as.POSIXlt(doepair$date)$mday
-hist(doepair$dom,breaks=0:30)
+hist(doepair$dom,breaks=0:31)
 ```
 
 We can see a clear cluster of contacts occurring near the end of the month, this is likely associated with parturition cycles, and the onset of denning behaviour.

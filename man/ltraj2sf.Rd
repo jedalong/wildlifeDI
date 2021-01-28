@@ -15,10 +15,10 @@ ltraj2sf(traj, type = "point")
 A \code{sf} object either points or lines.
 }
 \description{
-The function \code{ltraj2sf} is a simplee function for converting ltraj to sf objects.
+The function \code{ltraj2sf} is a simple function for converting ltraj to sf objects.
 }
 \details{
-
+The function \code{ltraj2sf} can be used to convert an \code{ltraj} object into an \code{sf} spatial object (either as points or lines).
 }
 \examples{
 data(deer)
