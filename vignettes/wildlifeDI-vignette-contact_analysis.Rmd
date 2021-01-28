@@ -103,8 +103,8 @@ hist(as.numeric(doetemp$duration)) #figure 2d
 Using the conSpatial function and the parameter choices we can easily make maps of contacts. First plot the distribution of all contact points on top of the distribution of all GPS fixes.
 
 ```{r message=FALSE}
-spall <- ltraj2sf(does)                         # Turn all fixes into spatial points
-sp1 <- conSpatial(doephas,type='point')               # Get points of all contacts
+sf_pt <- ltraj2sf(does)                             # Turn all fixes into sf points
+sp1 <- conSpatial(doephas,type='point')             # Get points of all contacts
 #Figure 3a
 plot(spall['contact_pha')
 plot(sp1,add=T)
