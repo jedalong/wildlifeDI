@@ -1,24 +1,14 @@
 ## Test environments
 
-* local Windows install, R 3.5.3
-* ubuntu 14.04.5 (on travis-ci), R 3.5.3
-* win-builder (devel)
+Tested on RHub:
+
+* Windows Server 2008 R2 SP1, R-devel, 32/64 bit
+* Ubuntu Linux 20.04.1 LTS, R-release, GCC
+* Fedora Linux, R-devel, clang, gfortran
 
 ## R CMD check results
 
-There were no ERRORs or WARNINGs. 
-
-There was 1 NOTE:
-
-checking CRAN incoming feasibility ... NOTE
-Maintainer: 'Jed Long <jed.long@uwo.ca>'
-
-New maintainer:
-  Jed Long <jed.long@uwo.ca>
-Old maintainer(s):
-  Jed Long <jed.long@st-andrews.ac.uk>
-
-* New email address due to a position change.
+There were no ERRORs or WARNINGs or NOTES. 
 
 ## Downstream dependencies
 
