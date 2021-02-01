@@ -3,6 +3,8 @@
 
 # wildlifeDI
 
+[![](https://cranlogs.r-pkg.org/badges/wildlifeDI)](https://cran.r-project.org/package=wildlifeDI)
+
 The wildlifeDI package facilitates the calculation of indices of dynamic
 interaction for wildlife telemetry data. There are also functions for
 more advanced contact analysis. For more information on the methods used
@@ -22,7 +24,7 @@ devtools::install_github("jedalong/wildlifeDI")
 ```
 
 The version that can currently be downloaded from CRAN is wildlifeDI
-v0.3:
+v0.4:
 
 ``` r
 install.packages('wildlifeDI')

@@ -28,7 +28,7 @@ You can install the latest (under development version) of wildlifeDI from github
 devtools::install_github("jedalong/wildlifeDI")
 ```
 
-The version that can currently be downloaded from CRAN is wildlifeDI v0.3: 
+The version that can currently be downloaded from CRAN is wildlifeDI v0.4: 
 
 ```{r eval=FALSE}
 install.packages('wildlifeDI')
@@ -38,7 +38,7 @@ install.packages('wildlifeDI')
 
 A small dataset is provided to demonstrate the functionality of the package.
 
-```{r example}
+```{r example, message=FALSE}
 library(wildlifeDI)
 data(deer)
 deer
