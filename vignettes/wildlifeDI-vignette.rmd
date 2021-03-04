@@ -8,7 +8,7 @@ output:
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{wildlifeDI: Analysis of Dynamic Interaction Patterns in Wildlife Tracking Data}
-  %\usepackage[utf8]{inputenc}
+  \usepackage[utf8]{inputenc}
 ---
 
 

@@ -8,7 +8,7 @@ output:
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{wildlifeDI: Contact Analysis Workflow}
-  %\usepackage[utf8]{inputenc}
+  \usepackage[utf8]{inputenc}
 ---
 
 # Background
