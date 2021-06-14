@@ -69,7 +69,7 @@ conDisplacement <- function(ltraj,def='all',idcol='burst'){
     } else {
       for (i in ind){
         j <- cid_ani[which.min(abs(dfr$date[i]-dfr$date[cid_ani]))]
-        df$displacement[i] <-sqrt((dfr$x[i]-dfr$x[j])^2+(dfr$y[i]-dfr$y[j])^2)
+        dfr$displacement[i] <-sqrt((dfr$x[i]-dfr$x[j])^2+(dfr$y[i]-dfr$y[j])^2)
       }
     }
   }

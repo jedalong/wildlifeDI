@@ -47,7 +47,7 @@ conContext <- function(ltraj,var='dist',def='all',idcol='burst',nrand=0,nlag=0,l
   
   #Function to extract minTime and minDist from phases.
   funPhase <- function(phase, dfr, def){
-    ind <- which(df$contact_pha == phase)
+    ind <- which(dfr$contact_pha == phase)
     if (def=='first'){
       i1 <- ind[which.min(dfr$date[ind])]    
     } else if (def=='last'){
@@ -73,7 +73,7 @@ conContext <- function(ltraj,var='dist',def='all',idcol='burst',nrand=0,nlag=0,l
   #Before After analysis
   fun.BefAft <- function(phaid,dfr,var,nlag,lag,gap,idcol,def){
     #subset data to only get individual associated with contact
-    df.sub <- subset(dfr,get(idcol) == df[which(df$contact_pha == phaid),idcol][1])
+    df.sub <- subset(dfr,get(idcol) == dfr[which(dfr$contact_pha == phaid),idcol][1])
     
     #get only the phase
     ind <- which(df.sub$contact_pha == phaid)
@@ -147,7 +147,7 @@ conContext <- function(ltraj,var='dist',def='all',idcol='burst',nrand=0,nlag=0,l
   #Get Random fixes if required
   if (nrand > 0){
     #Get Random fixes that are not 'contacts'
-    ind2 <- which(df$contacts == 0)
+    ind2 <- which(dfr$contacts == 0)
     ind2 <- sample(ind2, nrand)
     rand <- data.frame(dfr[ind2,c('date',var)])
     rand$dt_con <- NA
@@ -159,12 +159,16 @@ conContext <- function(ltraj,var='dist',def='all',idcol='burst',nrand=0,nlag=0,l
   
   #Organize factor levels
   lev <- NULL
-  for (i in nlag:1){
-    lev <- c(lev,paste('B',i,sep=''))
+  if (nlag > 0){
+    for (i in nlag:1){
+      lev <- c(lev,paste('B',i,sep=''))
+    }
   }
   lev <- c(lev,'Con')
-  for (i in 1:nlag){
-    lev <- c(lev,paste('A',i,sep=''))
+  if (nlag > 0){
+    for (i in 1:nlag){
+      lev <- c(lev,paste('A',i,sep=''))
+    } 
   }
   if (nrand > 0) {lev <- c(lev,'Rnd')}
   
