@@ -9,7 +9,7 @@
 #' This function is used to calculate the contact rates between individuals and output them in the form of a matrix.
 #' NOTE: This function is designed to be used only when a single ltraj object is input into the conProcess function. I.e., single-species contact networks.
 
-#' @param traj an object of the class \code{ltraj} which is output from the function \code{conProcess}.
+#' @param mtraj an object of the class \code{ltraj} which is output from the function \code{conProcess}.
 #' @param idcol column id associated with IDs of the individuals, default is the 'burst'
 #' @param output ('count' or 'rate') whether to compute the counts of contacts in the contact matrix (default) or the contact-rate.
 #'

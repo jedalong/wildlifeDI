@@ -1,7 +1,7 @@
 Package: wildlifeDI
 Type: Package
 Title: Calculate Indices of Dynamic Interaction for Wildlife Tracking Data
-Version: 0.4.0
+Version: 0.4.1
 Authors@R: person(given="Jed", 
                   family="Long",
                   role=c("aut","cre"),
@@ -20,7 +20,8 @@ Suggests:
     adehabitatHR,
     ggplot2,
     knitr,
-    rmarkdown
+    rmarkdown,
+    nlme
 Imports:
     adehabitatLT,
     dplyr,
