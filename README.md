@@ -24,7 +24,7 @@ devtools::install_github("jedalong/wildlifeDI")
 ```
 
 The version that can currently be downloaded from CRAN is wildlifeDI
-v0.4:
+v0.4.1:
 
 ``` r
 install.packages('wildlifeDI')

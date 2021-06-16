@@ -19,6 +19,8 @@ Depends: R (>= 3.1.0)
 Suggests:
     adehabitatHR,
     ggplot2,
+    GGally,
+    igraph,
     knitr,
     rmarkdown,
     nlme
