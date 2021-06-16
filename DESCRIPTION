@@ -21,6 +21,7 @@ Suggests:
     ggplot2,
     GGally,
     igraph,
+    network,
     knitr,
     rmarkdown,
     nlme

@@ -31,7 +31,6 @@ library(adehabitatLT)
 library(ggplot2)
 library(sf)
 library(igraph)
-library(GGally)
 library(nlme)
 ```
 # Contact Analysis - Doe Deer Data
@@ -167,14 +166,14 @@ row.names(mat_cnt) <- substr(row.names(mat_cnt),5,6)
 colnames(mat_cnt) <- substr(colnames(mat_cnt),5,6)
 
 gr <- graph_from_adjacency_matrix(mat_cnt,mode='undirected',weighted=TRUE)
-
-ggnet(gr, 
-      mode = "fruchtermanreingold",
-      label = TRUE, 
-      alpha = 1, 
-      color = "white", 
-      segment.color = "black",
-      segment.size = log(E(gr)$weight))
+plot(gr)
+# ggnet(gr, 
+#       mode = "fruchtermanreingold",
+#       label = TRUE, 
+#       alpha = 1, 
+#       color = "white", 
+#       segment.color = "black",
+#       segment.size = log(E(gr)$weight))
 ```
 
 ## Comparing contacts to random fixes
