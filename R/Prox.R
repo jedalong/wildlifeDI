@@ -46,22 +46,26 @@
 # ---- End of roxygen documentation ----
 #================= New Prox function ============================================
 Prox <- function(traj1,traj2,tc=0,dc=50,local=FALSE,GetSimultaneous=TRUE){
+  
   if (GetSimultaneous==TRUE){
+    
     trajs <- GetSimultaneous(traj1, traj2, tc)
-    #convert ltraj objects to dataframes
-    tr1 <- ld(trajs[1])
-    tr2 <- ld(trajs[2])
+    #convert ltraj objects to sf
+    tr1 <- ltraj2sf(trajs[1])
+    tr2 <- ltraj2sf(trajs[2])
+
     #Calculate the observed distances
     prox.df <- data.frame(date1=tr1$date,row1=row.names(tr1),date2=tr2$date,row2=row.names(tr2))
     prox.df$dt <- abs(difftime(prox.df$date2,prox.df$date1,units="secs"))
-    prox.df$prox <- sqrt(((tr1$x - tr2$x)^2) + ((tr1$y - tr2$y)^2))
+    prox.df$prox <- diag(st_distance(tr1,tr2))
   } else {
     ## This is just a subset of the code from GetSimultaneous.
     #store as dataframes
-    tr1 <- ld(traj1)
-    tr2 <- ld(traj2)
-    #get the length of each trajectory
-    n1 <- dim(tr1)[1]
+    #convert ltraj objects to sf
+    tr1 <- ltraj2sf(traj1)
+    tr2 <- ltraj2sf(traj2)
+    n1 <- nrow(tr1)
+    
     #Under this new system the proximity is directional so it is from traj1 to traj2
     # i.e., the order the traj's are input matters.
     # the output dataframe will have the same number of records as traj1
@@ -71,7 +75,7 @@ Prox <- function(traj1,traj2,tc=0,dc=50,local=FALSE,GetSimultaneous=TRUE){
       prox.df$date2[i] <- tr2$date[matched]
       prox.df$row2[i] <- as.numeric(row.names(tr2)[matched])
       prox.df$dt[i] <- abs(difftime(prox.df$date2[i],prox.df$date1[i],units="secs"))
-      prox.df$prox[i] <- sqrt(((tr1$x[i] - tr2$x[matched])^2) + ((tr1$y[i] - tr2$y[matched])^2))
+      prox.df$prox[i] <- st_distance(tr1[i,],tr2[matched,])
     }
   }
   #compute the Prox index

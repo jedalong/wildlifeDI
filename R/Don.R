@@ -49,27 +49,21 @@
 #' @export
 #
 # ---- End of roxygen documentation ----
-Don <- function(traj1,traj2,tc=0,dc=50,plot=TRUE){
+Don <- function(traj1,traj2,tc=0,dc=0,plot=TRUE){
+  
   trajs <- GetSimultaneous(traj1, traj2, tc)
-  #convert ltraj objects to dataframes
-  tr1 <- ld(trajs[1])
-  tr2 <- ld(trajs[2])
   
-  n <- nrow(tr1)
-
-  euc <- function(x1,y1,x2,y2){sqrt(((x1 - x2)^2) + ((y1 - y2)^2))}
+  #convert ltraj objects to sf
+  tr1 <- ltraj2sf(trajs[1])
+  tr2 <- ltraj2sf(trajs[2])
+  n <- nrow(tr1))
   
-  #calculate the observed (Paired) distances
-  Do <- euc(tr1$x,tr1$y,tr2$x,tr2$y)
+  #calculate the observed and expected distances
+  De <- st_distance(tr1,tr2)
+  Do <- diag(De)
+  diag(De) <- NA 
   
-  #calculate the expected distances overall
-  De <- matrix(nrow=n,ncol=n)
-  for (i in 1:n){
-    De[i,] <- euc(tr1$x[i],tr1$y[i],tr2$x,tr2$y)
-    De[i,i] <- NA
-  }
-  
-  #compute the cumulactive frequency plot
+  #compute the cumulative frequency plot
   pd <- seq(0,max(c(Do,De),na.rm=T),length.out=50)
   Co <- rep(0,length(pd))
   Ce <- Co

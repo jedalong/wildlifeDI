@@ -50,16 +50,17 @@
 #
 # ---- End of roxygen documentation ----
 
-Ca <- function(traj1,traj2,tc=0,dc=50){
+Ca <- function(traj1,traj2,tc=0,dc=0){
   #convert ltraj objects to dataframes
   A <- dim(ld(traj1))[1]
   B <- dim(ld(traj2))[1]
   
   trajs <- GetSimultaneous(traj1,traj2,tc)
-  tr1 <- ld(trajs[1])
-  tr2 <- ld(trajs[2])
   
-  trDist <- sqrt(((tr1$x - tr2$x)^2) + ((tr1$y - tr2$y)^2))
+  tr1 = ltraj2sf(trajs[1])
+  tr2 = ltraj2sf(trajs[2])
+
+  trDist = diag(st_distance(tr1,tr2))
   
   AB <- length(which(trDist <= dc))
   

@@ -1,3 +1,10 @@
+wildlifeDI 0.5.0
+================
+*Sep. 29, 2022 	- Removed all dependencies on the 'sp' and 'rgeos' packages.
+		- Replaced all uses of euclidean distance with 'st_distance' to facilitate use of lat/long coordinates
+		- added better coordinate system support
+
+
 wildlifeDI 0.4.1
 ================
 

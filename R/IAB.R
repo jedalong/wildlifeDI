@@ -46,61 +46,66 @@
 
 
 ### Simon Benhamou's IAB method for ST interaction
-IAB <- function(traj1,traj2,tc=0,dc=50,local=FALSE,rand=99){
+IAB <- function(traj1,traj2,tc=0,dc=0,local=FALSE,rand=99){
+  
   trajs <- GetSimultaneous(traj1, traj2, tc)
-  #convert ltraj objects to dataframes
-  tr1 <- ld(trajs[1])
-  tr2 <- ld(trajs[2])
-  n <- nrow(tr1)
-  #Calculate the observed distances
+  
+  #convert ltraj objects to sf
+  tr1 <- ltraj2sf(trajs[1])
+  tr2 <- ltraj2sf(trajs[2])
+  n <- nrow(tr1))
+  
+  #Calculate the observed distances - DO WE NEED
   fIAB <- function(tr1,tr2,dc){
-    dfr <- data.frame(date=tr1$date,Dab=sqrt((tr1$x - tr2$x)^2 + (tr1$y - tr2$y)^2))
+    dfr <- data.frame(date=tr1$date,Dab=diag(st_distance(tr1,tr2)))
     dfr$Iab <- exp((-1/2)*(dfr$Dab/dc)^2)
     return(dfr)
   }
   IAB.df <- fIAB(tr1,tr2,dc=dc)
   
   
+  dM = st_distance(tr1,tr2)
+  IAB.df <- data.frame(date=tr1$date,Dab=diag(dM))
+  IAB.df$Iab <- exp((-1/2)*(IAB.df$Dab/dc)^2)
+  
+  #Significance Testing Stuff
+  #-------------------------
+  dI = row(dM) - col(dM)
+  diags = split(dM,dI)
+  
+  MAB <- function(k,n,diags,dc){
+    De <- c(diags[[k]],diags[[k+n]])
+    Ie <- exp((-1/2)*(De/dc)^2)
+    Ie
+  }
+  kk <- 1:(n-1)
+  EM <-  as.matrix(sapply(kk,MAB,n,diags,dc),nrow=n,by.row=FALSE)
+  
+  #test for local
   if (local == FALSE){
+    
     IAB. <- mean(IAB.df$Iab,na.rm=TRUE)
     
-    #Significance Testing
-    #-------------------------
-    MAB <- NULL
-    for (k in 1:(n-1)){
-      tr2. <- rbind(tr2[(k+1):n,],tr2[1:k,])
-      MAB.df <- data.frame(Dab=sqrt((tr1$x - tr2.$x)^2 + (tr1$y - tr2.$y)^2))
-      MAB.df$Mab <- exp((-1/2)*(MAB.df$Dab/dc)^2)
-      MAB <- c(MAB,mean(MAB.df$Mab,na.rm=TRUE))
-    }
-    ng <- length(which(MAB > IAB.))
-    nb <- length(which(MAB < IAB.))
+    EM. <- colMeans(EM)
+    
+    ng <- length(which(EM. > IAB.))
+    nb <- length(which(EM. < IAB.))
     P.attract <- (ng + 1)/n
     P.avoid <- (nb + 1)/n
     #-------------------------
     
-    return(list(IAB.obs=IAB.,IAB.exp=mean(MAB), P.attract=P.attract,P.avoid=P.avoid))
+    return(list(IAB.obs=IAB.,IAB.exp=mean(Em.), P.attract=P.attract,P.avoid=P.avoid))
     
   } else {
-    #Compute the permutations
-    i <- 1:n             #n fixes
-    df.rand <-expand.grid(i,i)
-    names(df.rand) <- c('i','j')
-    df.rand <- df.rand[which(df.rand$i != df.rand$j),] #remove the fixes with no shift!
 
     #check here to make sure requested number of permutations is not greater than actual number available
-    rr <- dim(df.rand)[1]   #should be n^2 - n
+    rr <- length(EM)  #should be n^2 - n
     if (rand > rr){
       print(paste(rand, ' permutations were requested, but only ',rr,' are possible; rand changed to ',rr,sep=''))
       rand <- rr
     }
-    df.rand <- df.rand[sample(1:rr,rand),]
-    perm1 <- tr1[df.rand$i,]
-    perm2 <- tr2[df.rand$j,]
-    
-    #These are the distributions for testing based on the 'rand' number of permutations
-    IAB. <- fIAB(perm1,perm2,dc=dc)$Iab
-    
+    Iab. = sample(EM,rand)
+
     #function to compute permutation p-value (one-sided attract)
     perm.pa <- function(di,di.){
       k <- length(di.)
@@ -122,12 +127,12 @@ IAB <- function(traj1,traj2,tc=0,dc=50,local=FALSE,rand=99){
       z <- (di - u)/s
       return(z)
     }
-    
-    IAB.df$Iab.pa <- sapply(IAB.df$Iab,perm.pa,IAB.)
-    IAB.df$Iab.pb <- sapply(IAB.df$Iab,perm.pb,IAB.)
-    IAB.df$Iab.z <- sapply(IAB.df$Iab,perm.z,IAB.)
-    IAB.df$pkey1 <- ld(trajs[1])$pkey
-    IAB.df$pkey2 <- ld(trajs[2])$pkey
+
+    IAB.df$Iab.pa <- sapply(IAB.df$Iab,perm.pa,Iab.)
+    IAB.df$Iab.pb <- sapply(IAB.df$Iab,perm.pb,Iab.)
+    IAB.df$Iab.z <- sapply(IAB.df$Iab,perm.z,Iab.)
+    IAB.df$pkey1 <- tr1$pkey
+    IAB.df$pkey2 <- tr2$pkey
     return(IAB.df)
   }
 }

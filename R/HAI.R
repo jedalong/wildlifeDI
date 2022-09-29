@@ -55,30 +55,24 @@
 #
 # ---- End of roxygen documentation ----
 HAI <- function(traj1, traj2, OZ, tc = 0,dc = 50){
+  
   trajs <- GetSimultaneous(traj1, traj2, tc)
-  #convert ltraj objects to dataframes
-  tr1 <- ld(trajs[1])
-  tr2 <- ld(trajs[2])
+  #convert ltraj objects to sf
+  tr1 <- ltraj2sf(trajs[1])
+  tr2 <- ltraj2sf(trajs[2])
   
   n <- nrow(tr1)
 
-  #convert traj to spatial points
-  pts1 <- SpatialPoints(tr1[,1:2])
-  pts2 <- SpatialPoints(tr2[,1:2])
-  #identify only those points in the overlap zone
-  ind1 <- gIntersects(pts1,OZ,byid=T)
-  ind2 <- gIntersects(pts2,OZ,byid=T)
-  tr1 <- tr1[ind1,]
-  tr2 <- tr2[ind2,]
+  #identify only those points in the OZ
+  suppressWarnings(tr1x <- st_intersection(tr1,OZ))
+  suppressWarnings(tr2x <- st_intersection(tr2,OZ))
   
-  #Get only those fixes that are simultaneous
-  tr1.t <- tr1[tr1$date %in% tr2$date,]
-  tr2.t <- tr2[tr2$date %in% tr1$date,]
-  
-  euc <- function(x1,y1,x2,y2){sqrt(((x1 - x2)^2) + ((y1 - y2)^2))}
+  #Get only those fixes that are simultaneously in OZ
+  tr1x <- tr1x[tr1x$date %in% tr2x$date,]
+  tr2x <- tr2x[tr2x$date %in% tr1x$date,]
   
   #calculate the count of distances below threshold
-  Do <- euc(tr1.t$x,tr1.t$y,tr2.t$x,tr2.t$y)
+  Do <- diag(st_distance(tr1x,tr2x))
   n <- length(which(Do < dc))
   #Compute count of all other fixes that are not proximal
   x <- nrow(tr1) - n

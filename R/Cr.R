@@ -12,6 +12,7 @@
 #'   between a pair of simultaneously moving objects. The statistic is sensitive to
 #'   interaction in both movement direction (azimuth) and displacement, but is unable to
 #'   disentangle the effects of these components. 
+#'   NOTE: This function is only appropriate with projected coordinates.
 #'
 #' @param traj1 an object of the class \code{ltraj} which contains the time-stamped
 #'    movement fixes of the first object. Note this object must be a \code{type II

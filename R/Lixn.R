@@ -56,14 +56,14 @@
 #'    the home ranges -- see Details.
 #' @param tc time threshold for determining simultaneous fixes -- see function: \code{GetSimultaneous}.
 #' @param hr1 (-- required if method = 'spatial') home range polygon associated with \code{traj1}. Must
-#'    be an object that coerces to class \code{SpatialPolygons*}.
+#'    be a \code{sf} polygon object.
 #' @param hr2 (-- required if method = 'spatial') same as \code{hr1}, but for \code{traj2}.
 #' @param OZ (-- required if method = 'frequency') shared area polygon associated with spatial use overlap
-#'    between \code{traj1} and \code{traj2}. Must be an object that coerces to class \code{SpatialPolygons*}.
+#'    between \code{traj1} and \code{traj2}. Must be a \code{sf} polygon object.
 #'
 #' @return
-#' This function returns a list of objects representing the calculated values from the
-#' Minta statistic and associated \emph{p}-values from the Chi-squared test.
+#' This function returns a list of objects representing the calculated statistical values 
+#' and associated \emph{p}-values from the Chi-squared test.
 #' \itemize{
 #' \item pTable -- contingency table showing marginal probabilities of expected use 
 #'    based on the selection of the \code{method} parameter.
@@ -89,11 +89,16 @@
 #' data(deer)
 #' deer37 <- deer[1]
 #' deer38 <- deer[2]
-#' library(adehabitatHR)
-#' library(sp)
+#' library(sf)
 #' #use minimum convex polygon for demonstration...
-#' hr37 <- mcp(SpatialPoints(ld(deer37)[,1:2]))
-#' hr38 <- mcp(SpatialPoints(ld(deer38)[,1:2]))
+#' hr37 <- deer37 |>
+#'   ltraj2sf() |>
+#'   st_union () |>
+#'   st_convex_hull()
+#' hr38 <- deer38 |>
+#'   ltraj2sf() |>
+#'   st_union () |>
+#'   st_convex_hull()
 #' #tc = 7.5 minutes, dc = 50 meters
 #' Lixn(deer37, deer38,  method='spatial', tc=7.5*60, hr1=hr37, hr2=hr38)
 #' }
@@ -104,45 +109,45 @@ Lixn <- function(traj1,traj2,method="spatial",tc=0,hr1,hr2,OZ=NULL){
   output <- NULL
   #Get simultaneous fixes
   trajs <- GetSimultaneous(traj1,traj2,tc)
-  tr1 <- ld(trajs[1])
-  tr2 <- ld(trajs[2])
+  #convert ltraj objects to sf
+  tr1 <- ltraj2sf(trajs[1])
+  tr2 <- ltraj2sf(trajs[2])
+
   n <- nrow(tr1)
-  pts1 <- SpatialPoints(tr1[,1:2])
-  pts2 <- SpatialPoints(tr2[,1:2])
   
   #---- method specific computations ----
   if (method == 'spatial'){
 
     #could check that hr1 and hr2 exist and are spatial polygons here.
-    if (gContains(hr1,hr2) == TRUE){output <- list(pTable=NA,nTable=NA,oTable=NA,Laa=NA,p.AA=NA,Lbb=NA,p.BB=NA,Lixn=NA,p.IXN="ContainsA")}
-    else if (gContains(hr2,hr1) == TRUE){output <- list(pTable=NA,nTable=NA,oTable=NA,Laa=NA,p.AA=NA,Lbb=NA,p.BB=NA,Lixn=NA,p.IXN="ContainsB")}
+    if (st_contains(hr1,hr2,sparse=FALSE) == TRUE){output <- list(pTable=NA,nTable=NA,oTable=NA,Laa=NA,p.AA=NA,Lbb=NA,p.BB=NA,Lixn=NA,p.IXN="ContainsA")}
+    else if (st_contains(hr2,hr1,sparse=FALSE) == TRUE){output <- list(pTable=NA,nTable=NA,oTable=NA,Laa=NA,p.AA=NA,Lbb=NA,p.BB=NA,Lixn=NA,p.IXN="ContainsB")}
     else {
-      areaA <- gDifference(hr1,hr2)
-      areaB <- gDifference(hr2,hr1)
-      areaAB <- gIntersection(hr1,hr2)
+      areaA <- st_difference(hr1,hr2)
+      areaB <- st_difference(hr2,hr1)
+      areaAB <- st_intersection(hr1,hr2)
       
       if (is.null(areaAB) == FALSE){
         
         #get intersected polygon for simultaneous fixes
-        A1.int <- gCovers(areaA,pts1,byid=T)
-        AB1.int <- gCovers(areaAB,pts1,byid=T)
-        B2.int <- gCovers(areaB,pts2,byid=T)
-        AB2.int <- gCovers(areaAB,pts2,byid=T)
+        A1 <- st_intersects(tr1,areaA,sparse=FALSE)
+        AB1 <- st_intersects(tr1,areaAB,sparse=FALSE)
+        B2 <- st_intersects(tr2,areaB,sparse=FALSE)
+        AB2 <- st_intersects(tr2,areaAB,sparse=FALSE)
         
         #check that the intersection vectors are same length before computing marginal values
-        l.vec <- c(length(A1.int),length(B2.int),length(AB1.int),length(AB2.int))
+        l.vec <- c(length(A1),length(B2),length(AB1),length(AB2))
         if (diff(range(l.vec)) == 0){
           #compute marginal values for simultaneous fixes
-          n11 <- sum(AB1.int*AB2.int)
-          n22 <- sum(A1.int*B2.int)
-          n12 <- sum(A1.int*AB2.int)
-          n21 <- sum(AB1.int*B2.int)
+          n11 <- sum(AB1*AB2)
+          n22 <- sum(A1*B2)
+          n12 <- sum(A1*AB2)
+          n21 <- sum(AB1*B2)
         } else {n11 <- 0; n12 <- 0; n21 <- 0; n22 <- 0}
         
         #compute expected values -- spatial
-        a <- gArea(hr1)
-        b <- gArea(hr2)
-        ab <- gArea(areaAB)
+        a <- st_area(hr1)
+        b <- st_area(hr2)
+        ab <- st_area(areaAB)
         p11 <- (ab^2)/(a*b)
         p12 <- (1 - (ab/a))*(ab/b)
         p21 <- (ab/a)*(1 - (ab/b))
@@ -155,40 +160,34 @@ Lixn <- function(traj1,traj2,method="spatial",tc=0,hr1,hr2,OZ=NULL){
   } else if (method == 'frequency'){
 
     areaAB <- OZ
-    areaA <- gDifference(gBoundary(pts1),areaAB)
-    areaB <- gDifference(gBoundary(pts2),areaAB)
+    areaA <- st_difference(st_convex_hull(st_union(tr1)),areaAB)
+    areaB <- st_difference(st_convex_hull(st_union(tr2)),areaAB)
 
     if (is.null(areaAB) == FALSE){
       
       #get intersected polygon for simultaneous fixes
-      A1.int <- gCovers(areaA,pts1,byid=T)
-      AB1.int <- gCovers(areaAB,pts1,byid=T)
-      B2.int <- gCovers(areaB,pts2,byid=T)
-      AB2.int <- gCovers(areaAB,pts2,byid=T)
+      A1 <- st_intersects(tr1,areaA,sparse=FALSE)
+      AB1 <- st_intersects(tr1,areaAB,sparse=FALSE)
+      B2 <- st_intersects(tr2,areaB,sparse=FALSE)
+      AB2 <- st_intersects(tr2,areaAB,sparse=FALSE)
     
       #check that the intersection vectors are same length before computing marginal values
-      l.vec <- c(length(A1.int),length(B2.int),length(AB1.int),length(AB2.int))
+      l.vec <- c(length(A1),length(B2),length(AB1),length(AB2))
       if (diff(range(l.vec)) == 0){
         #compute marginal values for simultaneous fixes
-        n11 <- sum(AB1.int*AB2.int)
-        n22 <- sum(A1.int*B2.int)
-        n12 <- sum(A1.int*AB2.int)
-        n21 <- sum(AB1.int*B2.int)
+        n11 <- sum(AB1*AB2)
+        n22 <- sum(A1*B2)
+        n12 <- sum(A1*AB2)
+        n21 <- sum(AB1*B2)
       } else {n11 <- 0; n12 <- 0; n21 <- 0; n22 <- 0}
     
 
       #Compute expected values -- frequency
-      t1 <- ld(traj1)
-      t2 <- ld(traj2)
-      r <- nrow(t1)
-      s <- nrow(t2)
-      p1 <- SpatialPoints(t1[,1:2])
-      p2 <- SpatialPoints(t2[,1:2])
+      r <- nrow(tr1)
+      s <- nrow(tr2)
       #get pts that intersect areaAB for ALL fixes
-      AB1.int <- gCovers(areaAB,p1,byid=T)
-      AB2.int <- gCovers(areaAB,p2,byid=T)
-      rAB <- length(which(AB1.int == T))
-      sAB <- length(which(AB2.int == T))
+      rAB <- sum(AB1)
+      sAB <- sum(AB2)
       p11 <- (rAB*sAB)/(r*s)
       p12 <- (1 - (rAB/r))*(sAB/s)
       p21 <- (rAB/r)*(1-(sAB/s))

@@ -59,22 +59,21 @@
 #
 # ---- End of roxygen documentation ----
 Cs <- function(traj1,traj2, tc=0){
+  
   trajs <- GetSimultaneous(traj1, traj2, tc)
-  #convert ltraj objects to dataframes
-  tr1 <- ld(trajs[1])
-  tr2 <- ld(trajs[2])
+  
+  #convert ltraj objects to sf
+  tr1 <- ltraj2sf(trajs[1])
+  tr2 <- ltraj2sf(trajs[2])
   n <- nrow(tr1)
 
   #calculate the observed distances
-  Do <- sqrt(((tr1$x - tr2$x)^2) + ((tr1$y - tr2$y)^2))
-
+  dM = st_distance(tr1,tr2)
+  Do <- diag(dM)
 
   #calculate the expected distances
-  De <- rep(0,n)
-  for (j in 1:n){
-    De[j] <- sum(sqrt(((tr1$x[j] - tr2$x)^2) + ((tr1$y[j] - tr2$y)^2)))/n
-    }
-
+  De = rowSums(dM)/n
+  
   #calculate the significance of differences b/w Do and De using a Wilcoxon signed rank test
   p.less <- wilcox.test(Do,De,paired=T,alternative="less")$p.value
   p.great <- wilcox.test(Do,De,paired=T,alternative="greater")$p.value
