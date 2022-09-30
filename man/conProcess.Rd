@@ -39,6 +39,10 @@ doecons <- conProcess(does,tc=15*60,dc=50)
 }
 
 }
+\references{
+Long, JA, Webb, SL, Harju, SM, Gee, KL (2022) Analyzing Contacts and Behavior from High Frequency 
+ Tracking Data Using the wildlifeDI R Package. \emph{Geographical Analysis}. \bold{54}, 648--663.
+}
 \seealso{
 GetSimultaneous, dcPlot, conPhase, conSummary
 }

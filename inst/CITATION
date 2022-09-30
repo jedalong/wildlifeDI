@@ -9,11 +9,25 @@ citEntry(entry = "Article",
   journal      = "Journal of Animal Ecology",
   year         = "2014",
   volume       = "83",
-  pages        = "1216--1233"
+  pages        = "1216--1233",
 
   textVersion  =
   paste("Long, JA, Nelson, TA, Webb, SL, Gee, KL (2014).",
         "A critical examination of indices of dynamic interaction",
         "for wildlife telemetry studies. Journal of Animal",
         "Ecology, 83, 1216-1233.")
+)
+
+citEntry(entry = "Article",
+  title        = "Analyzing Contacts and Behavior from High Frequency Tracking Data Using the wildlifeDI R Package",
+  author       = personList(as.person('Jed Long'), 
+                            as.person('Stephen Webb'), 
+			    as.person('Seth Harju'),
+                            as.person('Kenneth Gee')),
+  journal      = "Geographical Analysis",
+  year         = "2022",
+  volume       = "54",
+  pages        = "648--663",
+
+  textVersion  = paste("Long, JA, Webb, SL, Harju, SM, Gee, KL (2022). Analyzing Contacts and Behavior from High Frequency Tracking Data Using the wildlifeDI R Package. Geographical Analysis, 54, 648-663.")
 )

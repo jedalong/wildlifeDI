@@ -14,7 +14,9 @@
 #' @return
 #' An ltraj object with a new 'displacement' column in infolocs.
 #'
-# @references
+#' @references
+#'  Long, JA, Webb, SL, Harju, SM, Gee, KL (2022) Analyzing Contacts and Behavior from High Frequency 
+#'  Tracking Data Using the wildlifeDI R Package. \emph{Geographical Analysis}. \bold{54}, 648--663.
 #'
 #' @keywords contacts
 #' @seealso conPhase, conContext

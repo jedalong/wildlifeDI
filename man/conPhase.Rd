@@ -30,6 +30,10 @@ doephas <- conPhase(doecons,pc=60*60)
 }
 
 }
+\references{
+Long, JA, Webb, SL, Harju, SM, Gee, KL (2022) Analyzing Contacts and Behavior from High Frequency 
+ Tracking Data Using the wildlifeDI R Package. \emph{Geographical Analysis}. \bold{54}, 648--663.
+}
 \seealso{
 conProcess, conSpatial, conTemporal, conSummary
 }

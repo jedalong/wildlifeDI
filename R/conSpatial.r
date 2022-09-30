@@ -21,6 +21,10 @@
 #' @return
 #' An \code{sf} object containing the locations/paths of the contacts. The time of the contact is stored in the attributes of the output object, along with the actual distance between fixes. The lines object contains attributes of the time of contact, and the min, max, and mean distance apart along a line segment.
 #'
+#' @references
+#'  Long, JA, Webb, SL, Harju, SM, Gee, KL (2022) Analyzing Contacts and Behavior from High Frequency 
+#'  Tracking Data Using the wildlifeDI R Package. \emph{Geographical Analysis}. \bold{54}, 648--663.
+#'
 #' @keywords contacts
 #' 
 #' @seealso conProcess, conPhase

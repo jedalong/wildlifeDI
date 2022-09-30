@@ -21,7 +21,10 @@
 #' contact_d - the distance (in the same units as mtraj1) at which the contacts occur.
 #' Note that if more than one contact occurs at a given time, the contact_id and contact_d fields will be a concatenated list of the contact IDs and distances.
 #'
-# @references
+#' @references
+#'  Long, JA, Webb, SL, Harju, SM, Gee, KL (2022) Analyzing Contacts and Behavior from High Frequency 
+#'  Tracking Data Using the wildlifeDI R Package. \emph{Geographical Analysis}. \bold{54}, 648--663.
+#' 
 #'
 #' @keywords contacts
 #' @seealso GetSimultaneous, dcPlot, conPhase, conSummary
