@@ -1,6 +1,6 @@
 # ---- roxygen documentation ----
 #
-#' @title Convert ltraj to sf spatial object
+#' @title Convert sf spatial object to ltraj
 #'
 #' @description
 #' The function \code{sf2ltraj} is a simple function for converting sf objects to ltraj objects. 
@@ -8,7 +8,7 @@
 #' @details
 #' The function \code{sf2ltraj} can be used to convert an \code{sf} object (stored as points) into an \code{ltraj} object.
 #' 
-#' @param sf an object of the class \code{sf} which contains the time-stamped movement fixes of the object(s).
+#' @param sfp an object of the class \code{sf} which contains the time-stamped movement fixes (as points) of the object(s).
 #' @param date the name of the column containing the date-time information of each fix. Must be converted to a POSIXct type.
 #' @param id  either a character string indicating the identity of the animal or the name of the column with the ID of the individuals.
 #' @param cols (optional) character vector specifiying the names of columns to keep as attributes (infolocs) in the ltraj object.
@@ -22,7 +22,7 @@
 #' data(deer)
 #' #points
 #' deer_pt <- ltraj2sf(deer)
-#' deer_tr <- sf2ltraj(deer_pt, date=date, id=id)
+#' deer_tr <- sf2ltraj(deer_pt, date='date', id='id')
 #'
 #' @export
 #

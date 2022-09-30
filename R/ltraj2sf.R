@@ -15,7 +15,7 @@
 #' A \code{sf} object either points or lines.  
 #'
 #' @keywords processing
-#' @seealso conSpatial, sf2ltraj
+#' @seealso conSpatial,sf2ltraj
 #' @examples
 #' data(deer)
 #' #points
@@ -23,15 +23,15 @@
 #' plot(deer_pt['id'])
 #' 
 #' #lines
-#' deer_ln <- ltraj2sf(deer)
+#' deer_ln <- ltraj2sf(deer,type='line')
 #' plot(deer_ln['id'])
 #' @export
 #
 
-ltraj2sf <- function(traj1, type='point'){
-  tr1 <- ld(traj1)
+ltraj2sf <- function(traj, type='point'){
+  tr1 <- ld(traj)
   
-  prj4string <- attr(traj1,'proj4string')
+  prj4string <- attr(traj,'proj4string')
   if (is.null(prj4string)){prj4string = NA}
   spo = st_as_sf(tr1,coords=c('x','y'),crs=prj4string)
   

@@ -56,7 +56,7 @@ Don <- function(traj1,traj2,tc=0,dc=0,plot=TRUE){
   #convert ltraj objects to sf
   tr1 <- ltraj2sf(trajs[1])
   tr2 <- ltraj2sf(trajs[2])
-  n <- nrow(tr1))
+  n <- nrow(tr1)
   
   #calculate the observed and expected distances
   De <- st_distance(tr1,tr2)

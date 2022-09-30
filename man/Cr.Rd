@@ -28,7 +28,8 @@ The function \code{Cr} computes the correlation statistic for movement data as p
 The function \code{Cr} can be used to measure the level of dynamic interaction (termed correlation)
   between a pair of simultaneously moving objects. The statistic is sensitive to
   interaction in both movement direction (azimuth) and displacement, but is unable to
-  disentangle the effects of these components.
+  disentangle the effects of these components. 
+  NOTE: This function is only appropriate with projected coordinates.
 }
 \examples{
 data(deer)

@@ -9,12 +9,11 @@ citEntry(entry = "Article",
   journal      = "Journal of Animal Ecology",
   year         = "2014",
   volume       = "83",
-  pages        = "1216--1233",
-  url          = "https://besjournals.onlinelibrary.wiley.com/doi/pdf/10.1111/1365-2656.12198",
+  pages        = "1216--1233"
 
   textVersion  =
   paste("Long, JA, Nelson, TA, Webb, SL, Gee, KL (2014).",
-        "A critical examination of indices of dynamic interaction.",
+        "A critical examination of indices of dynamic interaction",
         "for wildlife telemetry studies. Journal of Animal",
         "Ecology, 83, 1216-1233.")
 )

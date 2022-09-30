@@ -22,16 +22,16 @@ the home ranges -- see Details.}
 \item{tc}{time threshold for determining simultaneous fixes -- see function: \code{GetSimultaneous}.}
 
 \item{hr1}{(-- required if method = 'spatial') home range polygon associated with \code{traj1}. Must
-be an object that coerces to class \code{SpatialPolygons*}.}
+be a \code{sf} polygon object.}
 
 \item{hr2}{(-- required if method = 'spatial') same as \code{hr1}, but for \code{traj2}.}
 
 \item{OZ}{(-- required if method = 'frequency') shared area polygon associated with spatial use overlap
-between \code{traj1} and \code{traj2}. Must be an object that coerces to class \code{SpatialPolygons*}.}
+between \code{traj1} and \code{traj2}. Must be a \code{sf} polygon object.}
 }
 \value{
-This function returns a list of objects representing the calculated values from the
-Minta statistic and associated \emph{p}-values from the Chi-squared test.
+This function returns a list of objects representing the calculated statistical values 
+and associated \emph{p}-values from the Chi-squared test.
 \itemize{
 \item pTable -- contingency table showing marginal probabilities of expected use 
    based on the selection of the \code{method} parameter.
@@ -94,11 +94,16 @@ suitable marginal areas for areaA, areaB, and areaAB -- see Minta (1992).
 data(deer)
 deer37 <- deer[1]
 deer38 <- deer[2]
-library(adehabitatHR)
-library(sp)
+library(sf)
 #use minimum convex polygon for demonstration...
-hr37 <- mcp(SpatialPoints(ld(deer37)[,1:2]))
-hr38 <- mcp(SpatialPoints(ld(deer38)[,1:2]))
+hr37 <- deer37 |>
+  ltraj2sf() |>
+  st_union () |>
+  st_convex_hull()
+hr38 <- deer38 |>
+  ltraj2sf() |>
+  st_union () |>
+  st_convex_hull()
 #tc = 7.5 minutes, dc = 50 meters
 Lixn(deer37, deer38,  method='spatial', tc=7.5*60, hr1=hr37, hr2=hr38)
 }

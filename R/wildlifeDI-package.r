@@ -29,7 +29,7 @@
 #'
 #' @author Jed Long
 #' 
-#' @import adehabitatLT sf sp stats graphics rgeos
+#' @import adehabitatLT sf sp stats graphics
 #
 #' @docType package
 #' @name wildlifeDI-package

@@ -27,10 +27,10 @@ deer_pt <- ltraj2sf(deer)
 plot(deer_pt['id'])
 
 #lines
-deer_ln <- ltraj2sf(deer)
+deer_ln <- ltraj2sf(deer,type='line')
 plot(deer_ln['id'])
 }
 \seealso{
-conSpatial
+conSpatial,sf2ltraj
 }
 \keyword{processing}

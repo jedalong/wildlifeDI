@@ -51,18 +51,18 @@
 FilterTraj <- function(traj, type='attribute',filter=NA){
   tr1 <- ld(traj)
   if (type == 'temporal'){
-    if (class(filter)[1] %in% c('POSIXct','POSIXlt')){check <- TRUE} else {stop('Parameter Error: filter is not a POSIX object.')}
-    if (length(filter) != 2){stop('Parameter Error: filter is not a POSIX list length=2.')}
+    if (!inherits(filter,c('POSIXct','POSIXlt'))){stop('Parameter Error: temporal filter is not a POSIX object.')}
+    if (length(filter) != 2){stop('Parameter Error: temporal filter is not a POSIX list length=2.')}
     ind <- which(tr1$date > filter[1] & tr1$date <= filter[2])
     tr1 <- tr1[ind,]
   } else if(type == 'tod'){
-    if (class(filter) != 'character'){stop('Parameter Error: filter is not a character object.')}
-    if (length(filter) != 2){stop('Parameter Error: filter is not a character list length=2.')}
+    if (!inherits(filter, 'character')){stop('Parameter Error: tod filter is not a character object.')}
+    if (length(filter) != 2){stop('Parameter Error: tod filter is not a character list length=2.')}
     tr1.time <- strftime(tr1$date, format = '%H:%M:%S')
     ind <- which(tr1.time > filter[1] & tr1.time <= filter[2])
     tr1 <- tr1[ind,]
   } else if (type == 'attribute'){
-    if (class(filter) != 'character'){stop('Parameter Error: filter is not a character object.')}
+    if (!inherits(filter,'character')){stop('Parameter Error: attribute filter is not a character object.')}
     tr1 <- subset(tr1,eval(parse(text=filter)))
   }
   #convert to ltraj object

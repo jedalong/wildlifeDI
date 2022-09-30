@@ -4,7 +4,7 @@
 \alias{Ca}
 \title{Coefficient of Association}
 \usage{
-Ca(traj1, traj2, tc = 0, dc = 50)
+Ca(traj1, traj2, tc = 0, dc = 0)
 }
 \arguments{
 \item{traj1}{an object of the class \code{ltraj} which contains the time-stamped 

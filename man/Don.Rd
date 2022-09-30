@@ -4,7 +4,7 @@
 \alias{Don}
 \title{Doncaster's measure of dynamic interaction}
 \usage{
-Don(traj1, traj2, tc = 0, dc = 50, plot = TRUE)
+Don(traj1, traj2, tc = 0, dc = 0, plot = TRUE)
 }
 \arguments{
 \item{traj1}{an object of the class \code{ltraj} which contains the time-stamped

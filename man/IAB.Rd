@@ -4,7 +4,7 @@
 \alias{IAB}
 \title{Benhamou's IAB Index}
 \usage{
-IAB(traj1, traj2, tc = 0, dc = 50, local = FALSE, rand = 99)
+IAB(traj1, traj2, tc = 0, dc = 0, local = FALSE, rand = 99)
 }
 \arguments{
 \item{traj1}{an object of the class \code{ltraj} which contains the time-stamped

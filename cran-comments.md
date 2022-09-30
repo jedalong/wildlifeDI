@@ -1,9 +1,9 @@
 ## Test environments
 
-* Tested on Local Windows machine with R 4.1.0
+* Tested on Local Windows machine with R 4.2.1
 * There were no ERRORs or WARNINGs or NOTES. 
 
-* RHub: Windows Server 2008 R2 SP1, R-devel, 32/64 bit
+* RHub: Windows Server 2022, R-devel, 64 bit
 * There were no ERRORs or WARNINGs or NOTES. 
 
 * RHub: Ubuntu Linux 20.04.1 LTS, R-release, GCC

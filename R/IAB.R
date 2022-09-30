@@ -53,7 +53,7 @@ IAB <- function(traj1,traj2,tc=0,dc=0,local=FALSE,rand=99){
   #convert ltraj objects to sf
   tr1 <- ltraj2sf(trajs[1])
   tr2 <- ltraj2sf(trajs[2])
-  n <- nrow(tr1))
+  n <- nrow(tr1)
   
   #Calculate the observed distances - DO WE NEED
   fIAB <- function(tr1,tr2,dc){
@@ -94,7 +94,7 @@ IAB <- function(traj1,traj2,tc=0,dc=0,local=FALSE,rand=99){
     P.avoid <- (nb + 1)/n
     #-------------------------
     
-    return(list(IAB.obs=IAB.,IAB.exp=mean(Em.), P.attract=P.attract,P.avoid=P.avoid))
+    return(list(IAB.obs=IAB.,IAB.exp=mean(EM.), P.attract=P.attract,P.avoid=P.avoid))
     
   } else {
 
