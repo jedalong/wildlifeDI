@@ -35,12 +35,12 @@
 #' @keywords indices
 #' @seealso GetSimultaneous, Cr, IAB
 #' @examples
+#' \dontrun{
 #' data(deer)
 #' deer37 <- deer[1]
 #' deer38 <- deer[2]
 #' #tc = 7.5 minutes
 #' DI(deer37, deer38, tc = 7.5*60)
-#' \dontrun{
 #' df <- DI(deer37, deer38, tc = 7.5*60, local = TRUE)
 #' }
 #' 
