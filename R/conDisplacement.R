@@ -35,7 +35,7 @@
 # ---- End of roxygen documentation ----
 
 #ASSUMES PROJECTED COORDINATES
-conDisplacement <- function(ltraj,def='all',idcol='burst'){
+conDisplacement2 <- function(ltraj,def='all',idcol='burst'){
   
   #Get the Fix ID of every Contact based on 'DEF'
   cpdf <- conPairs(ltraj)
@@ -61,9 +61,10 @@ conDisplacement <- function(ltraj,def='all',idcol='burst'){
   n <- dim(dfr)[1]
   
   #Peform Displacement individually for every Animal.
-  anid <- unique(dfr[,idcol])
-  for (ani in anid){
-    ind <- which(dfr[,idcol]==ani)
+  anid <- unique(st_drop_geometry(dfr[,idcol]))
+  for (kk in 1:nrow(anid)){
+    ani <- anid[kk,idcol]
+    ind <- which(st_drop_geometry(dfr[,idcol])==ani)
     cid_ani <- cid[which(cid %in% ind)]
     if (length(cid_ani) == 0) {
       #animal has no contacts so displacement is NA
@@ -77,6 +78,7 @@ conDisplacement <- function(ltraj,def='all',idcol='burst'){
     }
   }
 
-  outtraj <- dl(dfr,proj4string=attr(ltraj,'proj4string'))
+  #outtraj <- dl(dfr,proj4string=attr(ltraj,'proj4string'))
+  outtraj <- sf2ltraj(dfr,date='date',id='id')
   return(outtraj)
 }

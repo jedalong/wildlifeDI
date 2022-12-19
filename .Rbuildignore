@@ -4,3 +4,4 @@
 ^CRAN-RELEASE$
 ^\.github$
 ^\.Rhistory$
+^CRAN-SUBMISSION$

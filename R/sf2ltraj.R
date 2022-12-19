@@ -11,7 +11,7 @@
 #' @param sfp an object of the class \code{sf} which contains the time-stamped movement fixes (as points) of the object(s).
 #' @param date the name of the column containing the date-time information of each fix. Must be converted to a POSIXct type.
 #' @param id  either a character string indicating the identity of the animal or the name of the column with the ID of the individuals.
-#' @param cols (optional) character vector specifiying the names of columns to keep as attributes (infolocs) in the ltraj object.
+#' @param cols (optional) character vector specifying the names of columns to keep as attributes (infolocs) in the ltraj object. Default is to keep ALL.
 #'
 #' @return
 #' A \code{ltraj} object. For more information on objects of this type see \code{help(ltraj)} and \code{?as.ltraj}.
@@ -44,8 +44,13 @@ sf2ltraj <- function(sfp, date, id, cols=NULL){
     id = id
   }
   
-  #get additional columns to append
-  if (!is.null(cols)){df = df[,cols]} else {df = NULL}
+  #get additional columns to append - only keep columns not from ltraj names
+  if (is.null(cols)){
+    cols <- names(df)[!names(df) %in% c('x','y','date','dx','dy','dist',
+                                        'dt','R2n','abs.angle','rel.angle',
+                                        'id','burst','geometry')]
+  }
+  df = df[,cols]
   
   #create ltraj object\
   crs <- st_crs(sfp)
