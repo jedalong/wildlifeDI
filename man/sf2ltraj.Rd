@@ -4,7 +4,7 @@
 \alias{sf2ltraj}
 \title{Convert sf spatial object to ltraj}
 \usage{
-sf2ltraj(sfp, date, id, cols = NULL)
+sf2ltraj(sfp, date, id)
 }
 \arguments{
 \item{sfp}{an object of the class \code{sf} which contains the time-stamped movement fixes (as points) of the object(s).}
@@ -12,8 +12,6 @@ sf2ltraj(sfp, date, id, cols = NULL)
 \item{date}{the name of the column containing the date-time information of each fix. Must be converted to a POSIXct type.}
 
 \item{id}{either a character string indicating the identity of the animal or the name of the column with the ID of the individuals.}
-
-\item{cols}{(optional) character vector specifiying the names of columns to keep as attributes (infolocs) in the ltraj object.}
 }
 \value{
 A \code{ltraj} object. For more information on objects of this type see \code{help(ltraj)} and \code{?as.ltraj}.

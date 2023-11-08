@@ -48,23 +48,57 @@ devtools::install_github("jedalong/wildlifeDI")
 #> 
 #> The downloaded binary packages are in
 #> 	C:\Users\jlong83\AppData\Local\Temp\Rtmp6RfjRK\downloaded_packages
-#>          checking for file 'C:\Users\jlong83\AppData\Local\Temp\Rtmp6RfjRK\remotes4fe01fe44f7e\jedalong-wildlifeDI-af7b5ab/DESCRIPTION' ...     checking for file 'C:\Users\jlong83\AppData\Local\Temp\Rtmp6RfjRK\remotes4fe01fe44f7e\jedalong-wildlifeDI-af7b5ab/DESCRIPTION' ...   ✔  checking for file 'C:\Users\jlong83\AppData\Local\Temp\Rtmp6RfjRK\remotes4fe01fe44f7e\jedalong-wildlifeDI-af7b5ab/DESCRIPTION'
-#>       ─  preparing 'wildlifeDI':
-#>    checking DESCRIPTION meta-information ...     checking DESCRIPTION meta-information ...   ✔  checking DESCRIPTION meta-information
-#>       ─  checking for LF line-endings in source and make files and shell scripts
-#>       ─  checking for empty or unneeded directories
-#>   ─  looking to see if a 'data/datalist' file should be added
-#>      NB: this package now depends on R (>=        NB: this package now depends on R (>= 3.5.0)
-#>        WARNING: Added dependency on R >= 3.5.0 because serialized objects in
+#>   
+  
+  
+   checking for file 'C:\Users\jlong83\AppData\Local\Temp\Rtmp6RfjRK\remotes4fe01fe44f7e\jedalong-wildlifeDI-af7b5ab/DESCRIPTION' ...
+  
+   checking for file 'C:\Users\jlong83\AppData\Local\Temp\Rtmp6RfjRK\remotes4fe01fe44f7e\jedalong-wildlifeDI-af7b5ab/DESCRIPTION' ... 
+  
+✔  checking for file 'C:\Users\jlong83\AppData\Local\Temp\Rtmp6RfjRK\remotes4fe01fe44f7e\jedalong-wildlifeDI-af7b5ab/DESCRIPTION'
+#> 
+  
+  
+  
+─  preparing 'wildlifeDI':
+#>    checking DESCRIPTION meta-information ...
+  
+   checking DESCRIPTION meta-information ... 
+  
+✔  checking DESCRIPTION meta-information
+#> 
+  
+  
+  
+─  checking for LF line-endings in source and make files and shell scripts
+#> 
+  
+  
+  
+─  checking for empty or unneeded directories
+#> 
+  
+─  looking to see if a 'data/datalist' file should be added
+#> 
+  
+   NB: this package now depends on R (>= 
+  
+     NB: this package now depends on R (>= 3.5.0)
+#> 
+  
+     WARNING: Added dependency on R >= 3.5.0 because serialized objects in
 #>      serialize/load version 3 cannot be read in older versions of R.
 #>      File(s) containing such objects:
 #>        'wildlifeDI/data/mockhunt.RData'
 #> ─  building 'wildlifeDI_0.5.0.tar.gz'
-#>      
-#> 
+#> 
+  
+   
+#> 
+
 ```
 
-The version that can currently be downloaded from CRAN is wildlifeDI v0.4.1: 
+The version that can currently be downloaded from CRAN is wildlifeDI v0.5.1: 
 
 
 ```r

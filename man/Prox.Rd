@@ -21,7 +21,7 @@ two fixes are spatially together.}
 \item{local}{logical value indicating whether or not a dataframe, containing the
 distance between each simultaneous fix, should be returned.}
 
-\item{GetSimultaneous}{logical value indicating whether proximity analysis is based on simultaneous fixes (if \code{TRUE} the default) -- see function \code{GetSimultaneous} or (if \code{FALSE}) a one-way mapping from \code{traj1} to {traj2} is used.}
+\item{GetSimultaneous}{logical value indicating whether proximity analysis is based on simultaneous fixes (if \code{TRUE} the default) -- see function \code{GetSimultaneous} or (if \code{FALSE}) a one-way mapping from \code{traj1} to \code{traj2} is used.}
 }
 \value{
 If \code{local=FALSE} (the default) Prox returns the numeric value of the Prox index.

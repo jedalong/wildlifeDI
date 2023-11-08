@@ -1,33 +1,32 @@
-citHeader("To cite wildlifeDI in publications use:")
-citFooter("Please also cite other authors methods as appropriate (see the references within).")
-citEntry(entry = "Article",
+bibentry(
+  bibtype      = "article",
   title        = "A critical examination of indices of dynamic interaction for wildlife telemetry data",
-  author       = personList(as.person('Jed Long'), 
-                            as.person('Trisalyn Nelson'), 
-                            as.person('Stephen Webb'), 
-                            as.person('Kenneth Gee')),
+  author       = c(person("Jed","Long",role=c("aut","cre")), 
+                   person("Trisalyn","Nelson",role="aut"), 
+                   person("Stephen","Webb",role="aut"), 
+                   person("Kenneth", "Gee",role="aut")),
   journal      = "Journal of Animal Ecology",
   year         = "2014",
   volume       = "83",
-  pages        = "1216--1233",
-
-  textVersion  =
-  paste("Long, JA, Nelson, TA, Webb, SL, Gee, KL (2014).",
-        "A critical examination of indices of dynamic interaction",
-        "for wildlife telemetry studies. Journal of Animal",
-        "Ecology, 83, 1216-1233.")
+  pages        = "1216-1233",
+  textVersion  = "Long, JA, Nelson, TA, Webb, SL, Gee, KL (2014). A critical examination of indices of dynamic interaction for wildlife telemetry studies. Journal of Animal Ecology, 83, 1216-1233.",
+  header       = "To cite wildlifeDI in publications use:"
 )
 
-citEntry(entry = "Article",
-  title        = "Analyzing Contacts and Behavior from High Frequency Tracking Data Using the wildlifeDI R Package",
-  author       = personList(as.person('Jed Long'), 
-                            as.person('Stephen Webb'), 
-			    as.person('Seth Harju'),
-                            as.person('Kenneth Gee')),
+bibentry(
+  bibtype      = "article",
+  title        = "Analyzing contacts and behavior from high frequency tracking data using the wildlifeDI R package",
+  author       = c(person("Jed","Long",role=c("aut","cre")), 
+                   person("Stephen","Webb",role="aut"),
+                   person("Seth","Harju",role="aut"),  
+                   person("Kenneth", "Gee",role="aut")),
   journal      = "Geographical Analysis",
   year         = "2022",
   volume       = "54",
-  pages        = "648--663",
-
-  textVersion  = paste("Long, JA, Webb, SL, Harju, SM, Gee, KL (2022). Analyzing Contacts and Behavior from High Frequency Tracking Data Using the wildlifeDI R Package. Geographical Analysis, 54, 648-663.")
+  pages        = "648-663",
+  textVersion  = "Long, JA, Webb, SL, Harju, SM, Gee, KL (2022). Analyzing contacts and behavior from high frequency tracking data using the wildlifeDI R package. Geographical Analysis, 54, 648-663.",
+  footer       = "Please also cite other authors methods as appropriate. See the references within."
 )
+
+
+

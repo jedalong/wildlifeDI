@@ -40,12 +40,14 @@ the local level of dynamic interaction between two moving objects. Specifically,
 it measures dynamic interaction in movement direction and displacement.
 }
 \examples{
+\dontrun{
 data(deer)
 deer37 <- deer[1]
 deer38 <- deer[2]
 #tc = 7.5 minutes
 DI(deer37, deer38, tc = 7.5*60)
 df <- DI(deer37, deer38, tc = 7.5*60, local = TRUE)
+}
 
 }
 \references{
