@@ -19,18 +19,15 @@
 #'  two animals. Note that this function calls \code{GetSimultaneous} to identify the temporal
 #'  component of identifying when fixes together.
 #'
-#' @param traj1 an object of the class \code{ltraj} which contains the time-stamped 
-#'         movement fixes of the first object. Note this object must be a \code{type II 
-#'         ltraj} object. For more information on objects of this type see \code{
-#'         help(ltraj)}.
-#' @param traj2 same as \code{traj1}.
+#' @param traj an object of the class \code{move2} which contains the time-stamped movement fixes of at least two individuals. For more information on objects of this type see \code{help(mt_as_move2)}.
+#' @param traj2 (optional) same as traj, but for the second group of individuals. See \code{checkTO}
 #' @param tc temporal tolerance limit (in seconds) for defining when two fixes
 #'         are simultaneous or together. Parameter passed to function \code{GetSimultaneous}.
 #' @param dc distance tolerance limit (in appropriate units) for defining when 
 #'         two fixes are spatially together.
 #'
 #' @return
-#'  This function returns a numeric result of the Ca statistic.
+#'  This function returns a numeric result of the Ca statistic for each pair in the dataset.
 #'
 #' @references
 #'  Bauman, P.J. (1998) The Wind Cave National Park elk herd: home ranges, seasonal movements, and alternative control methods.
@@ -41,31 +38,52 @@
 #' @seealso GetSimultaneous, Prox, HAI
 #' @examples
 #' data(deer)
-#' deer37 <- deer[1]
-#' deer38 <- deer[2]
 #' #tc = 7.5 minutes, dc = 50 meters
-#' Ca(deer37, deer38, tc = 7.5*60, dc = 50)
+#' Ca(deer, tc = 7.5*60, dc = 50)
 #' 
 #' @export
 #
 # ---- End of roxygen documentation ----
 
-Ca <- function(traj1,traj2,tc=0,dc=0){
-  #convert ltraj objects to dataframes
-  A <- dim(ld(traj1))[1]
-  B <- dim(ld(traj2))[1]
+Ca <- function(traj,traj2,tc=0,dc=0){
   
-  trajs <- GetSimultaneous(traj1,traj2,tc)
+  #Time Units set to seconds
+  units(tc) <- as_units("s")
   
-  tr1 = ltraj2sf(trajs[1])
-  tr2 = ltraj2sf(trajs[2])
+  if (missing(traj2)){
+    pairs <- checkTO(traj)
+    pairs <- pairs[pairs$TO==TRUE,]
+  } else {
+    pairs <- checkTO(traj,traj2)
+    pairs <- pairs[pairs$TO==TRUE,]
+    traj <- rbind(traj,traj2)
+  }
+  
+  n.pairs <- nrow(pairs)
+  pairs$Ca <- NA
+  
+  for (i in 1:n.pairs){
+    traj1 <- traj[mt_track_id(traj)==pairs$ID1[i],]
+    traj2 <- traj[mt_track_id(traj)==pairs$ID2[i],]
+    A <- nrow(traj1)
+    B <- nrow(traj2)
+    
+    trajs <- GetSimultaneous(traj1,traj2,tc)
+    
+    traj1 <- trajs[mt_track_id(trajs)==pairs$ID1[i],]
+    traj2 <- trajs[mt_track_id(trajs)==pairs$ID2[i],]
+    
+    trDist = st_distance(traj1,traj2,by_element=TRUE)
+    
+    #Unit control
+    units(dc) <- units(trDist)
 
-  trDist = diag(st_distance(tr1,tr2))
+    AB <- length(which(trDist <= dc))
+    
+    #Compute coefficent of association
+    pairs$Ca[i] <- 2*AB/(A+B)
+  }
   
-  AB <- length(which(trDist <= dc))
-  
-  #Compute coefficent of association
-  Ca <- 2*AB/(A+B)
-  return(Ca)
+  return(pairs)
 }
 #=============== End of Ca Function =======================================

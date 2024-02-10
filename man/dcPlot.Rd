@@ -4,18 +4,14 @@
 \alias{dcPlot}
 \title{Contact distance plot}
 \usage{
-dcPlot(mtraj1, mtraj2, tc = 0, idcol1 = "burst", idcol2, histplot = TRUE, dmax)
+dcPlot(traj, traj2, tc = 0, histplot = TRUE, dmax)
 }
 \arguments{
-\item{mtraj1}{an object of the class \code{ltraj} which contains the time-stamped movement fixes of the first group of individuals. Each individual should be stored with a unique 'id'. (see \code{?as.ltraj})}
+\item{traj}{an object of the class \code{move2} which contains the time-stamped movement fixes of at least two individuals. For more information on objects of this type see \code{help(mt_as_move2)}.}
 
-\item{mtraj2}{(optional) same as \code{mtraj1}, but for the second group of individuals.}
+\item{traj2}{(optional) same as traj, but for the second group of individuals. See \code{checkTO}.}
 
 \item{tc}{time threshold for determining simultaneous fixes -- see function: \code{GetSimultaneous}.}
-
-\item{idcol1}{column id associated with IDs of the first group of individuals, default is the 'burst'.}
-
-\item{idcol2}{(optional) column id associated with IDs of the second group of individuals.}
 
 \item{histplot}{(logical) whether to output a histogram, along with a list of the natural breaks in the histogram (\code{histplot = TRUE}) or the dataframe of all paired distances used to construct the histogram (\code{histplot=FALSE}) to be used for further analysis.}
 

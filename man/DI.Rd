@@ -4,20 +4,16 @@
 \alias{DI}
 \title{Dynamic interaction index}
 \usage{
-DI(traj1, traj2, tc = 0, local = FALSE, rand = 99, alpha = 1)
+DI(traj, traj2, tc = 0, local = FALSE, rand = 0, alpha = 1)
 }
 \arguments{
-\item{traj1}{an object of the class \code{ltraj} which contains the time-stamped 
-movement fixes of the first object. Note this object must be a \code{type II 
-traj} object. For more information on objects of this type see \code{help(ltraj)}.}
+\item{traj}{an object of the class \code{move2} which contains the time-stamped movement fixes of at least two individuals. For more information on objects of this type see \code{help(mt_as_move2)}.}
 
-\item{traj2}{same as \code{traj1}.}
+\item{traj2}{(optional) same as traj, but for the second group of individuals. See \code{checkTO}}
 
 \item{tc}{time threshold for determining simultaneous fixes -- see function: \code{GetSimultaneous}.}
 
-\item{local}{logical value indicating whether a dataframe (\code{local = TRUE}) containing the IAB 
-index for each simultaneous fix should be returned (with a local permutation test), or (if \code{local = FALSE} - the default) 
-the global index along with associated global permutation test.}
+\item{local}{logical value indicating whether a dataframe (\code{local = TRUE}) containing the DI index for each simultaneous fix should be returned (with a local permutation test), or (if \code{local = FALSE} - the default) the global index along with associated global permutation test.}
 
 \item{rand}{number of permutations to use in the local permutation test.}
 
@@ -25,7 +21,7 @@ the global index along with associated global permutation test.}
 }
 \value{
 If \code{local=FALSE} (the default) DI returns the numeric value of the DI index (along with DI\eqn{_{theta}}{_theta} and DI\eqn{_d}), and the associated p-value from a permutation test (see \code{IAB}).
-If \code{local=TRUE} DI returns a dataframe that contains the localized \code{di} values (see Long and Nelson 2013). The columns for \code{di}, \code{di.theta}, and \code{di.d} represent dynamic interaction overall, in direction (azimuth), and in displacement, respectively for each segment. A localized p-value for a one sided test for positive interaction (and z-score) is computed based on \code{rand} permutations of the segments. The pkey columns can be used to match the simultaneous segments to the original trajectory (see \code{IAB}).
+If \code{local=TRUE} DI returns a large dataframe that contains the localized \code{di} values as a column (see Long and Nelson 2013). The columns for \code{di}, \code{di.theta}, and \code{di.d} represent dynamic interaction overall, in direction (azimuth), and in displacement, respectively for each segment. A localized p-value for a one sided test for positive interaction (and z-score) is computed based on \code{rand} permutations of the segments. The row.name columns can be used to match the simultaneous segments to the original trajectory (see \code{IAB}).
 }
 \description{
 The function \code{DI} measures dynamic interaction between two moving objects. It
@@ -42,11 +38,9 @@ it measures dynamic interaction in movement direction and displacement.
 \examples{
 \dontrun{
 data(deer)
-deer37 <- deer[1]
-deer38 <- deer[2]
 #tc = 7.5 minutes
-DI(deer37, deer38, tc = 7.5*60)
-df <- DI(deer37, deer38, tc = 7.5*60, local = TRUE)
+DI(deer, tc = 7.5*60)
+df <- DI(deer, tc = 7.5*60, local = TRUE)
 }
 
 }

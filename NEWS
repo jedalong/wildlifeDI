@@ -1,3 +1,10 @@
+wildlifeDI 1.0.0
+================
+*Feb. 09, 2024 	- Major release
+		- overhaul functionality to work with 'move2' class of objects
+		- several functions removed as they were helper functions that are now replaceable 
+			by base level operations.
+
 wildlifeDI 0.5.1
 ================
 *Nov. 06, 2023 	- Fixed lingering rgeos issues.

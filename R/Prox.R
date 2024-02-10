@@ -9,22 +9,15 @@
 #' @details
 #' The function \code{Prox} can be used to test for the presence of attraction (via proximity) in wildlife telemetry data. Prox is simply the proportion of simultaneous fixes within the threshold distance -- \code{dc}. The local output (dataframe) can be useful for examining variation in proximity through time.
 #'
-#' @param traj1 an object of the class \code{ltraj} which contains the time-stamped
-#'    movement fixes of the first object. Note this object must be a \code{type II
-#'    ltraj} object. For more information on objects of this type see \code{help(ltraj)}.
-#' @param traj2 same as \code{traj1}.
+#' @param traj an object of the class \code{move2} which contains the time-stamped movement fixes of at least two individuals. For more information on objects of this type see \code{help(mt_as_move2)}.
+#' @param traj2 (optional) same as traj, but for the second group of individuals. See \code{checkTO}
 #' @param tc time threshold for determining simultaneous fixes -- see function: \code{GetSimultaneous}.
-#' @param dc distance tolerance limit (in appropriate units) for defining when 
-#'    two fixes are spatially together.
-#' @param local logical value indicating whether or not a dataframe, containing the
-#'    distance between each simultaneous fix, should be returned.
-#' @param GetSimultaneous logical value indicating whether proximity analysis is based on simultaneous fixes (if \code{TRUE} the default) -- see function \code{GetSimultaneous} or (if \code{FALSE}) a one-way mapping from \code{traj1} to \code{traj2} is used. 
+#' @param dc distance tolerance limit (in appropriate units) for defining when two fixes are spatially together.
+#' @param local logical value indicating. When local = FALSE (the default) prox returns a data.frame with the global proximity ratio (proportion of all fixes below dc and tc) for each pair of individuals. When local = TRUE, prox returns the input move2 object with the distance to the most proximal fix, and the number of fixes that are considered proximal for each fix in the dataset.
 #'
 #' @return
-#' If \code{local=FALSE} (the default) Prox returns the numeric value of the Prox index.
-#' If \code{local=TRUE} Prox returns a dataframe containing the date/times of \emph{all} simultaneous fixes from \code{traj1}, 
-#' and in the case of \code{GetSimultaneous = FALSE} the time of the fixes that were deemed simultaneous in \code{traj2}.
-#' If \code{GetSimultaneous = TRUE} (the default) the Prox considers only the simultaneous fixes, as defined in \code{GetSimultaneous}. If \code{FALSE} Prox considers all the fixes in \code{traj1} relative to \code{traj2}. The latter functionality is useful when the time between fixes for one trajectory (\code{traj1}) is  much shorter than the second trajectory. 
+#' If \code{local=FALSE} (the default) Prox returns the numeric value of the Prox index for each pair of individuals.
+#' If \code{local=TRUE} Prox returns a \code{move2} containing the original trajectory (or both trajectories) with three additional columns prox (the distance to the nearest proximal fix), prox.id (the id of the nearest proximal fix) and prox.n (the number of individuals with proximal fixes)
 #'
 #' @references
 #' Bertrand, M.R., DeNicola, A.J., Beissinger, S.R, Swihart, R.K. (1996) Effects of parturition
@@ -35,57 +28,81 @@
 #' @seealso GetSimultaneous, contacts
 #' @examples
 #' data(deer)
-#' deer37 <- deer[1]
-#' deer38 <- deer[2]
 #' #tc = 7.5 minutes, dc = 50 meters
-#' Prox(deer37, deer38, tc=7.5*60, dc=50)
-#' df <- Prox(deer37, deer38, tc=7.5*60, dc=50, local=TRUE)
+#' Prox(deer, tc=7.5*60, dc=50)
+#' deer <- Prox(deer, tc=7.5*60, dc=50, local=TRUE)
 #' 
 #' @export
 #
 # ---- End of roxygen documentation ----
-#================= New Prox function ============================================
-Prox <- function(traj1,traj2,tc=0,dc=50,local=FALSE,GetSimultaneous=TRUE){
-  
-  if (GetSimultaneous==TRUE){
-    
-    trajs <- GetSimultaneous(traj1, traj2, tc)
-    #convert ltraj objects to sf
-    tr1 <- ltraj2sf(trajs[1])
-    tr2 <- ltraj2sf(trajs[2])
 
-    #Calculate the observed distances
-    prox.df <- data.frame(date1=tr1$date,row1=row.names(tr1),date2=tr2$date,row2=row.names(tr2))
-    prox.df$dt <- abs(difftime(prox.df$date2,prox.df$date1,units="secs"))
-    prox.df$prox <- diag(st_distance(tr1,tr2))
+#================= New Prox function ============================================
+Prox <- function(traj,traj2,tc=0,dc=50,local=FALSE){
+  
+  if (missing(traj2)){
+    pairs <- checkTO(traj)
+    pairs <- pairs[pairs$TO==TRUE,]
   } else {
-    ## This is just a subset of the code from GetSimultaneous.
-    #store as dataframes
-    #convert ltraj objects to sf
-    tr1 <- ltraj2sf(traj1)
-    tr2 <- ltraj2sf(traj2)
-    n1 <- nrow(tr1)
+    pairs <- checkTO(traj,traj2)
+    pairs <- pairs[pairs$TO==TRUE,]
+    traj <- rbind(traj,traj2)
+  }
+  
+  n.pairs <- nrow(pairs)
+  pairs$prox <- NA
+  
+  if (local) {
+    local.df <- NULL
+    traj$prox <- NA
+    traj$prox.id <- NA
+    traj$prox.n <- 0
+  }
+  
+  for (i in 1:n.pairs){
+    traj1 <- traj[mt_track_id(traj)==pairs$ID1[i],]
+    traj2 <- traj[mt_track_id(traj)==pairs$ID2[i],]
     
-    #Under this new system the proximity is directional so it is from traj1 to traj2
-    # i.e., the order the traj's are input matters.
-    # the output dataframe will have the same number of records as traj1
-    prox.df <- data.frame(date1=tr1$date,row1=as.numeric(row.names(tr1)),date2=tr1$date,row2=NA,dt=NA,prox=NA)
-    for (i in 1:n1){
-      matched <- which.min(abs(difftime(tr1$date[i],tr2$date,units="secs")))
-      prox.df$date2[i] <- tr2$date[matched]
-      prox.df$row2[i] <- as.numeric(row.names(tr2)[matched])
-      prox.df$dt[i] <- abs(difftime(prox.df$date2[i],prox.df$date1[i],units="secs"))
-      prox.df$prox[i] <- st_distance(tr1[i,],tr2[matched,])
+    trajs <- GetSimultaneous(traj1,traj2,tc)
+    
+    traj1 <- trajs[mt_track_id(trajs)==pairs$ID1[i],]
+    traj2 <- trajs[mt_track_id(trajs)==pairs$ID2[i],]
+    n <- nrow(traj1)
+    
+    prox.dist <- as.numeric(st_distance(traj1,traj2,by_element=TRUE))
+    
+    #compute the Prox index
+    nprox <- length(which(prox.dist < dc))
+    pairs$prox[i] <- nprox/n
+    
+    if (local){
+      #add proximity values for each individual
+      df1 <- data.frame(id1=pairs$ID1[i],id2=pairs$ID2[i],prox=prox.dist,row.name = row.names(traj1))
+      df2 <- data.frame(id1=pairs$ID2[i],id2=pairs$ID1[i],prox=prox.dist,row.name = row.names(traj2))
+      df3 <- rbind(df1,df2)
+      df3 <- df3[df3$prox < dc,]
+      
+      if (is.null(local.df)){
+        local.df <- df3
+      } else {
+        local.df <- rbind(local.df,df3)
+      }
     }
   }
-  #compute the Prox index
-  n <- nrow(prox.df)
-  nprox <- length(which(prox.df$prox < dc))
-  val <- nprox/n
-  #Return a list of the Prox index value, and a dataframe for plotting if set to true
-  if (local == TRUE){
-    return(prox.df)
+  
+  #organize outputs
+  if (local){
+    for (j in 1:nrow(traj)){
+      pdf <- local.df[local.df$row.name == row.names(traj)[j],]
+      if (nrow(pdf) > 0){
+        traj$prox[j] <- min(pdf$prox)
+        traj$prox.id[j] <- pdf$id2[which.min(pdf$prox)]
+        traj$prox.n[j] <- nrow(pdf)
+      } 
+    }
+    return(traj)
+  } else {
+    return(pairs)
   }
-  else {return(val)}
 }
-#================= end of Prox2 function ========================================
+  
+#================= end of Prox function ========================================

@@ -4,23 +4,21 @@
 \alias{conDisplacement}
 \title{Calculate net displacement from contacts}
 \usage{
-conDisplacement(ltraj, def = "all", idcol = "burst")
+conDisplacement(traj, def = "all")
 }
 \arguments{
-\item{ltraj}{an object of the class \code{ltraj} which should be output from the function \code{conPhase}.}
+\item{traj}{an object of the class \code{move2} which should be output from the function \code{conPhase}.}
 
 \item{def}{how to define the point-of-contact. The default is to define it as all fixes in a phase \code{type = 'all'}, alternatively contacts can be defined as a single point along the phase defined as one of: \code{'first','last','minDist','minTime'}, which corresponds to the first fix int he contact phase, the last fix in the contact phase, the fix with the minimum time difference and the fix with the closest contact distance.}
-
-\item{idcol}{column id associated with IDs of individuals, default is the 'burst'}
 }
 \value{
-An ltraj object with a new 'displacement' column in infolocs.
+An move2 object with a new 'contact_displacement' column indicating the straight-line distance to the nearest (in time) contact phase (defined using parameter def). If there are no contacts associated with an individual the contact displacement is NA.
 }
 \description{
-Calculate the net-displacement (distance) of fixes before and after a contact from that contact point.
+Calculate the net-displacement (distance) of fixes before and after a contact phase from the nearest contact pahse in time.
 }
 \details{
-This function is used to compute the net displacement away from contacts by an animal before and after a contact phase. Net displacement represents an important contextual variable, related to the mobility of the individual.
+This function is used to compute the net displacement away from contacts by an animal before and after a contact phase. Net displacement represents an important variable related to the movement of the individual.
 }
 \examples{
 \dontrun{
@@ -37,6 +35,6 @@ Long, JA, Webb, SL, Harju, SM, Gee, KL (2022) Analyzing Contacts and Behavior fr
  Tracking Data Using the wildlifeDI R Package. \emph{Geographical Analysis}. \bold{54}, 648--663.
 }
 \seealso{
-conPhase, conContext
+conProcess, conPhase, conTimelag
 }
 \keyword{contacts}

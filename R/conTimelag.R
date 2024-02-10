@@ -1,47 +1,48 @@
 # ---- roxygen documentation ----
 #
-#' @title Calculate net displacement from contacts
+#' @title Compute time-lags from contact phases
+#'
 #' @description
-#' Calculate the net-displacement (distance) of fixes before and after a contact phase from the nearest contact pahse in time.
+#' Computes the time-lag from the nearest contact phase.
 #'
 #' @details
-#' This function is used to compute the net displacement away from contacts by an animal before and after a contact phase. Net displacement represents an important variable related to the movement of the individual.  
+#' This function is used following the \code{conphase} function. One should choose how to define the contact point (i.e., the parameter \code{contact}) depending on the research question. 
 
 #' @param traj an object of the class \code{move2} which should be output from the function \code{conPhase}.
-#' @param def how to define the point-of-contact. The default is to define it as all fixes in a phase \code{type = 'all'}, alternatively contacts can be defined as a single point along the phase defined as one of: \code{'first','last','minDist','minTime'}, which corresponds to the first fix int he contact phase, the last fix in the contact phase, the fix with the minimum time difference and the fix with the closest contact distance.
+#' @param def how to define the point-of-contact. The default is to define it as all fixes in a phase \code{def = 'all'}, alternatively contacts can be defined as a single point along the phase defined as one of: \code{'first','last','minDist','minTime'}, which corresponds to the first fix int he contact phase, the last fix in the contact phase, the fix with the minimum time difference and the fix with the closest contact distance.
 #'
 #' @return
-#' An move2 object with a new 'contact_displacement' column indicating the straight-line distance to the nearest (in time) contact phase (defined using parameter def). If there are no contacts associated with an individual the contact displacement is NA.
+#' A move2 object with an additional column contact_timelag with the time to the nearest (in time) contact phase. Negative values indicate times prior to the nearest contact phase and postive values indicate times after the nearest contact phase. If an individual has no contacts, the contact time-lag is NA.
 #'
 #' @references
 #'  Long, JA, Webb, SL, Harju, SM, Gee, KL (2022) Analyzing Contacts and Behavior from High Frequency 
 #'  Tracking Data Using the wildlifeDI R Package. \emph{Geographical Analysis}. \bold{54}, 648--663.
 #'
 #' @keywords contacts
-#' @seealso conProcess, conPhase, conTimelag
+#' @seealso conPhase, conProcess, conDisplacement
+#' @examples
 #' 
-#' @examples 
 #' \dontrun{
 #' data(does)
 #' doecons <- conProcess(does,tc=15*60,dc=50)
 #' doephas <- conPhase(doecons,pc=60*60)
-#' disp_f <- conDisplacement(doephas,def='first')
-#' disp_l <- conDisplacement(doephas,def='last')
+#' conTL_first <- conTimelag(doephas,def='first')
+#' conTL_all <- conTimelag(doephas,def='all')
 #' }
 #' 
 #' @export
 #
 # ---- End of roxygen documentation ----
 
-#ASSUMES PROJECTED COORDINATES
-conDisplacement <- function(traj,def='all'){
+### JED STILL TO FIX
+conTimelag <- function(traj,def='all'){
   
-  # Set up displacement analysis
-  traj$contact_displacement <- NA
+  # Set up contact timelag column
+  traj$contact_timelag <- NA
   
-  #Peform Displacement individually for every Animal.
+  #Peform timelag to contact individually for every Animal.
   anid <- unique(mt_track_id(traj))
-
+  
   for (i in anid){
     trj <- traj[mt_track_id(traj)==i,]
     phas <- unique(trj$contact_pha)
@@ -73,8 +74,8 @@ conDisplacement <- function(traj,def='all'){
     j <-  sapply(mt_time(trj), function(x,refTimes,cid) {cid[which.min(abs(x-refTimes))]}, refTimes, cid)
     
     #compute distance from each fix to reference fix
-    traj$contact_displacement[row.names(traj) %in% row.names(trj)] <- st_distance(trj,trj[j,],by_element=TRUE)
+    traj$contact_timelag[row.names(traj) %in% row.names(trj)] <- mt_time(trj) - mt_time(trj[j,])
   }
-  
   return(traj)
+  
 }

@@ -5,21 +5,16 @@
 #' This function performs basic contact analysis between individuals in a group of tracked animals, or between two different groups of tracked animals.
 #'
 #' @details
-#' This function can be used to identify the nature of contacts in space and time between individuals in one or two groups.
+#' This function can be used to identify all fixes defined as contacts in space and time between individuals in one or two groups.
 
-#' @param mtraj1 an object of the class ltraj which contains the time-stamped movement fixes of the first group of individuals. Each individual should be stored with a unique 'id'. (see ?as.ltraj)
-#' @param mtraj2 (optional) same as mtraj1, but for the second group of individuals.
+#' @param traj an object of the class \code{move2} which contains the time-stamped movement fixes of at least two individuals. For more information on objects of this type see \code{help(mt_as_move2)}. If traj2 is specified traj may have only one individual.
+#' @param traj2 (optional) same as traj, but for the second group of individuals. See \code{checkTO}
 #' @param tc time threshold for determining simultaneous fixes -- see function: GetSimultaneous.
 #' @param dc distance tolerance limit (in appropriate units) for defining when two fixes are spatially together.
-#' @param idcol1 column id associated with IDs of the first group of individuals, default is the 'burst'.
-#' @param idcol2 (optional) column id associated with IDs of the second group of individuals.
-#'
-#' @return
-#' This function returns the object mtraj1 with three additional fields:
-#' contact - the number of contacts associated with each given fix.
-#' contact_id - the id(s) of the individual(s) associated with those contacts.
-#' contact_d - the distance (in the same units as mtraj1) at which the contacts occur.
-#' Note that if more than one contact occurs at a given time, the contact_id and contact_d fields will be a concatenated list of the contact IDs and distances.
+#' @param GetSim (logical) whether or not to use GetSimultaneous to time match fixes between pairs of individuals. Default = TRUE.
+#' @param return What to return (one of 'move2' (default) or 'contacts'). See Return below.
+#' 
+#' @return If return = 'move2' (the default) this function returns the input traj move2 object with additional columns: contact - (binary) whtether or not a fix is a contact, contact_id - the id of the individual with which a contact occurs, contact_d - the proximity distance of the contact, contact_dt - the difference in time between the two fixes in the contact, contact_n - the number of contacts at that time. In the event that there is more than one contact for a given fix, the contact_id, contact_d, and contact_dt values are all associated with the most proximal (in geographical space) contact. If return = 'contacts' this function returns a data.frame with the columns: (id1,id2) the id's of the individuals involved in a contact, (row1,row2) the rownames from the original data associated with each of the fixes involved in a contact, (dist) the distance between the two fixes associated with the contact, and (difftime) the difference in time between the two fixes involved in the contact. 
 #'
 #' @references
 #'  Long, JA, Webb, SL, Harju, SM, Gee, KL (2022) Analyzing Contacts and Behavior from High Frequency 
@@ -27,7 +22,7 @@
 #' 
 #'
 #' @keywords contacts
-#' @seealso GetSimultaneous, dcPlot, conPhase, conSummary
+#' @seealso GetSimultaneous, dcPlot, conPhase
 #' 
 #' @examples 
 #' \dontrun{
@@ -39,131 +34,223 @@
 #
 # ---- End of roxygen documentation ----
 
-conProcess <- function(mtraj1,mtraj2,dc=0,tc=0,idcol1='burst',idcol2){
+conProcess <- function(traj,traj2,dc=0,tc=0,GetSim=TRUE,return='move2'){
   
-  #Process contact analysis for all pairs of individuals in one group
-  oneGroup <- function(mtraj1,dc,tc,idcol1){
-    #no mtraj2 specified, get all unique pairs of individuals
-    dfr <- ld(mtraj1)
-    col1 <- which(names(dfr)==idcol1)
-    id1 <- as.character(unique(dfr[,col1]))
-    #Get all the unique combinations between one group
-    pairs <- expand.grid(id1,id1,stringsAsFactors=F)
-    pairs <- pairs[-which(pairs$Var1 == pairs$Var2),]
-    pairs <- pairs[order(pairs$Var1),]
-    #pairs <- pairs[!duplicated(t(apply(pairs, 1, sort))),]
-    
-    #make new columns
-    dfr$contacts <- 0
-    dfr$contact_id <- NA
-    dfr$contact_rowid <- NA
-    dfr$contact_d <- NA
-    dfr$contact_dt <- NA
-    
-    for (i in 1:(dim(pairs)[1])){
-      i1 <- pairs$Var1[i]
-      i2 <- pairs$Var2[i]
-      ind1 <- which(dfr[,col1] == i1)
-      ind2 <- which(dfr[,col1] == i2)
-      tr1 <- dl(dfr[ind1,1:10])
-      tr2 <- dl(dfr[ind2,1:10])  
-      #Only do contact analysis if they overlap temporally.
-      if (checkTO(tr1,tr2)$TO){
-        #Proximity analysis - Use GetSimultaneous = FALSE to apply only to Focal Individual 
-        p1 <- Prox(tr1,tr2,tc=tc,dc=dc,local=TRUE,GetSimultaneous=FALSE)
-        #Get which fixes are deemed an contact
-        pind1 <- which(p1$prox <= dc & p1$dt <= tc)
-        indc1 <- ind1[pind1]
-        indc2 <- ind2[which(row.names(ld(tr2)) %in% p1$row2[pind1])]
-        #update count of contacts at a time (count is >1 if an animal has a contact with multiple animals at the same time)
-        #Uses as.character to access row.names slot
-        dfr[indc1,'contacts'] <- dfr[indc1,'contacts'] + 1
-        #update contact id lists
-        dfr$contact_id[indc1] <- sapply(dfr$contact_id[indc1],con,i2)
-        #update contact distance
-        dfr$contact_d[indc1] <- mapply(con,dfr$contact_d[indc1],p1$prox[pind1])
-        #add contact time difference
-        dfr$contact_dt[indc1] <- mapply(con,dfr$contact_dt[indc1],p1$dt[pind1])
-        #add contact rowid
-        if (length(indc1) != length(indc2)) {print(c(i1,i2))}
-        dfr$contact_rowid[indc1] <- mapply(con,dfr$contact_rowid[indc1],indc2)
-      }
-    }
-    return(dfr)
-  }
+  #global variables in group_by hack
+  id1 <- NULL
+  dist <- NULL
+  row1 <- NULL
   
-  #Process contact analysis for all pairs of indivudals from group 1 to group 2
-  twoGroup <- function(mtraj1,mtraj2,dc,tc,idcol1,idcol2){
-    df1 <- ld(mtraj1)
-    df2 <- ld(mtraj2)
-    col1 <- which(names(df1)==idcol1)
-    col2 <- which(names(df2)==idcol2)
-    id1 <- as.character(unique(df1[,col1]))
-    id2 <- as.character(unique(df2[,col2]))
-    #Get all the unique combinations between two groups
-    pairs <- expand.grid(id1,id2,stringsAsFactors=F)
-    
-    #make new columns
-    df1$contacts <- 0
-    df1$contact_id <- NA
-    df1$contact_rowid <- NA
-    df1$contact_d <- NA
-    df1$contact_dt <- NA
-    
-    for (i in 1:(dim(pairs)[1])){
-      i1 <- pairs$Var1[i]
-      i2 <- pairs$Var2[i]
-      ind1 <- which(df1[,col1] == i1)
-      ind2 <- which(df2[,col2] == i2)
-      tr1 <- dl(df1[ind1,1:10]) 
-      tr2 <- dl(df2[ind2,1:10])  
-      #Only do contact analysis if they overlap temporally.
-      if (checkTO(tr1,tr2)$TO){
-        #Proximity analysis - both ways
-        p1 <- Prox(tr1,tr2,tc=tc,dc=dc,local=TRUE,GetSimultaneous=FALSE)
-        #p2 <- Prox(tr2,tr1,tc=tc,dc=dc,local=TRUE,GetSimultaneous=FALSE)
-        #Get which fixes are deemed an contact
-        pind1 <- which(p1$prox <= dc & p1$dt <= tc)
-        indc1 <- ind1[pind1]
-        indc2 <- ind2[which(row.names(ld(tr2)) %in% p1$row2[pind1])]
-        #pind2 <- which(p2$prox <= dc & p2$dt <= tc)
-        #indc2 <- ind2[pind2]
-        #update count of contacts at a time (count is >1 if an animal has a contact with multiple animals at the same time)
-        df1$contacts[indc1] <- df1$contacts[indc1] + 1
-        #update contact id lists
-        df1$contact_id[indc1] <- sapply(df1$contact_id[indc1],con,i2)
-        #update contact distance
-        df1$contact_d[indc1] <- mapply(con,df1$contact_d[indc1],p1$prox[pind1])
-        #add contact time difference
-        df1$contact_dt[indc1] <- mapply(con,df1$contact_dt[indc1],p1$dt[pind1])
-        #add contact rowid
-        df1$contact_rowid[indc1] <- mapply(con,df1$contact_rowid[indc1],indc2)
-      }
-    }
-    return(df1)
-  }
+  #Unit control
+  units(tc) <- as_units("s")
   
-  #concatenate data frame function
-  con <- function(a,b){
-    if (is.na(a)){
-      o <- b
-    } else {
-      o <- paste(a,b,sep=',')
-    }
-    o
-  }
-  
-  #no idcol2 specified, use idcol1 for both.
-  if (missing(idcol2)){ idcol2 <- idcol1 }
 
-  if (missing(mtraj2)){
-    mtraj2 <- NULL
-    dfr <- oneGroup(mtraj1,dc,tc,idcol1)
+  if (missing(traj2)){
+    pairs <- checkTO(traj)
+    pairs <- pairs[pairs$TO==TRUE,]
+    mtraj <- traj
   } else {
-    dfr <- twoGroup(mtraj1,mtraj2,dc,tc,idcol1,idcol2)
+    pairs <- checkTO(traj,traj2)
+    pairs <- pairs[pairs$TO==TRUE,]
+    mtraj <- rbind(traj,traj2)
   }
   
-  outtraj <- dl(dfr,proj4string = attr(mtraj1,'proj4string'))
-  return(outtraj)
+  n.pairs <- nrow(pairs)
+  condf <- NULL
+  for (i in 1:n.pairs){
+    traja <- mtraj[mt_track_id(mtraj)==pairs$ID1[i],]
+    trajb <- mtraj[mt_track_id(mtraj)==pairs$ID2[i],]
+    
+    if (GetSim){
+      trajs <- GetSimultaneous(traja,trajb,tc)
+      tr1 <- trajs[mt_track_id(trajs)==pairs$ID1[i],]
+      tr2 <- trajs[mt_track_id(trajs)==pairs$ID2[i],]
+      proxdf <- data.frame(id1=pairs$ID1[i],id2=pairs$ID2[i],
+                           row1=row.names(tr1),row2=row.names(tr2),
+                           dist=st_distance(tr1,tr2,by_element=TRUE),
+                           difftime=as.numeric(abs(mt_time(tr1)-mt_time(tr2))))
+      #Unit control
+      units(proxdf$difftime) <- as_units('s')
+      units(dc) <- units(proxdf$dist)
+      proxdf <- proxdf[ proxdf$dist < dc & proxdf$difftime < tc, ]
+      
+    } else { #If we don' use GetSim We can have multiple contacts from different sources.
+      dM <- st_distance(traja,trajb)
+      tM <- abs(-outer(as.numeric(mt_time(traja)),as.numeric(mt_time(trajb)),'-'))
+      
+      units(tM) <- as_units('s')
+      units(dc) <- units(dM)
+      
+      rownames(tM) <- rownames(traja)
+      colnames(tM) <- rownames(trajb)
+      
+      ind <- which(dM < dc & tM < tc, arr.ind=TRUE)
+      
+      if (length(ind) > 0){
+        rnm1 <- rownames(tM)[which(dM < dc & tM < tc, arr.ind = TRUE)[, 1]]
+        rnm2 <- colnames(tM)[which(dM < dc & tM < tc, arr.ind = TRUE)[, 2]]
+        proxdf <- data.frame(id1=pairs$ID1[i],id2=pairs$ID2[i],row1=rnm1,row2=rnm2,dist=dM[ind],difftime=tM[ind])
+      } else {
+        proxdf <- NULL
+      }
+      
+    }
+    if (is.null(condf)) {condf <- proxdf} else {condf <- rbind(condf,proxdf)}
+  }
+  
+  
+  
+  #arrange return object
+  if (return=='contact'){
+    return(condf)
+  } else {
+    #Create contact list for both pair directions in case of 1 group
+    if (missing(traj2)){
+      dfr <- rbind(condf, 
+                   data.frame(id1=condf$id2,id2=condf$id1,row1=condf$row2,row2=condf$row1,dist=condf$dist,difftime=condf$difftime))
+    } else {
+      dfr <- condf
+    }
+    
+    dfr.d <- dfr |>
+      dplyr::group_by(id1,row1) |>
+      dplyr::slice_min(dist)
+    
+    dfr.n <- dfr |>
+      dplyr::group_by(id1,row1) |>
+      dplyr::summarise(ncon=dplyr::n(),
+                       .groups='drop')
+    
+    traj$contact <- 0
+    traj$contact_id <- NA
+    traj$contact_d <- NA
+    traj$contact_dt <- NA
+    traj$contact_n <- NA
+    
+    ind.con <- match(dfr.d$row1, row.names(traj))
+    
+    traj$contact[ind.con] <- 1
+    traj$contact_id[ind.con] <- dfr.d$id2
+    traj$contact_d[ind.con] <- dfr.d$dist
+    traj$contact_dt[ind.con] <- dfr.d$difftime
+    traj$contact_n[ind.con] <- dfr.n$ncon
+    
+    return(traj)
+  }
+
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 
+# 
+# 
+# ### TO DELETE
+# #Process contact analysis for all pairs of individuals in one group
+# oneGroup <- function(traj,dc,tc,GetSim){
+#   #Get Pairs
+#   pairs <- checkTO(traj)
+#   n.pairs <- nrow(pairs)
+#   condf <- NULL
+#   for (i in 1:n.pairs){
+#     traj1 <- traj[mt_track_id(mtraj1)==pairs$ID1[i],]
+#     traj2 <- traj[mt_track_id(mtraj1)==pairs$ID2[i],]
+#     
+#     if (GetSim){
+#       trajs <- GetSimultaneous(traj1,traj2,tc)
+#       tr1 <- trajs[mt_track_id(trajs)==pairs$ID1[i],]
+#       tr2 <- trajs[mt_track_id(trajs)==pairs$ID2[i],]
+#       proxdf <- data.frame(id1=pairs$ID1[i],id2=pairs$ID2[i],row1=row.names(tr1),row2=row.names(tr2),dist=st_distance(tr1,tr2,by_element=TRUE),difftime=as.numeric(abs(mt_time(tr1)-mt_time(tr2))))
+#       #Unit control
+#       units(proxdf$difftime) <- as_units('s')
+#       units(dc) <- units(proxdf$dist)
+#       proxdf <- subset(proxdf,dist < dc & difftime < tc)
+#       
+#       ##### NEED TO FIX WHEN GET SIM IS FALSE
+#     } else {
+#       dM <- st_distance(traj1,traj2)
+#       tM <- abs(-outer(as.numeric(mt_time(traj1)),as.numeric(mt_time(traj2)),'-'))
+#       
+#       units(tM) <- as_units('s')
+#       units(dc) <- units(dM)
+#       
+#       rownames(tM) <- rownames(traj1)
+#       colnames(tM) <- rownames(traj2)
+#       
+#       ind <- which(dM < dc & tM < tc, arr.ind=TRUE)
+#       
+#       if (length(ind) > 0){
+#         rnm1 <- rownames(tM)[which(dM < dc & tM < tc, arr.ind = TRUE)[, 1]]
+#         rnm2 <- colnames(tM)[which(dM < dc & tM < tc, arr.ind = TRUE)[, 2]]
+#         proxdf <- data.frame(id1=pairs$ID1[i],id2=pairs$ID2[i],row1=rnm1,row2=rnm2,dist=dM[ind],difftime=tM[ind])
+#       } else {
+#         proxdf <- NULL
+#       }
+#       
+#     }
+#     if (is.null(condf)) {condf <- proxdf} else {condf <- rbind(condf,proxdf)}
+#   }
+#   return(condf)
+# }
+# 
+# #Process contact analysis for all pairs of individuals from group 1 to group 2
+# twoGroup <- function(traj,traj2,dc,tc,GetSim)
+#   #Get Pairs
+#   pairs <- checkTO(traj,traj2)
+# n.pairs <- nrow(pairs)
+# condf <- NULL
+# for (i in 1:n.pairs){
+#   traj1 <- mtraj1[mt_track_id(traj)==pairs$ID1[i],]
+#   traj2 <- mtraj2[mt_track_id(traj2)==pairs$ID2[i],]
+#   
+#   if (GetSim){
+#     trajs <- GetSimultaneous(traj1,traj2,tc)
+#     tr1 <- trajs[mt_track_id(trajs)==pairs$ID1[i],]
+#     tr2 <- trajs[mt_track_id(trajs)==pairs$ID2[i],]
+#     proxdf <- data.frame(id1=pairs$ID1[i],id2=pairs$ID2[i],row1=row.names(tr1),row2=row.names(tr2),dist=st_distance(tr1,tr2,by_element=TRUE),difftime=as.numeric(abs(mt_time(tr1)-mt_time(tr2))))
+#     units(proxdf$difftime) <- as_units('s')
+#     proxdf <- subset(proxdf,dist < dc & difftime < tc)
+#   } else {
+#     dM <- st_distance(traj1,traj2)
+#     tM <- abs(-outer(as.numeric(mt_time(traj1)),as.numeric(mt_time(traj2)),'-'))
+#     
+#     units(tM) <- as_units('s')
+#     units(dc) <- units(dM)
+#     
+#     rownames(tM) <- rownames(traj1)
+#     colnames(tM) <- rownames(traj2)
+#     
+#     ind <- which(dM < dc & tM < tc, arr.ind=TRUE)
+#     
+#     if (length(ind) > 0){
+#       rnm1 <- rownames(tM)[which(dM < dc & tM < tc, arr.ind = TRUE)[, 1]]
+#       rnm2 <- colnames(tM)[which(dM < dc & tM < tc, arr.ind = TRUE)[, 2]]
+#       proxdf <- data.frame(id1=pairs$ID1[i],id2=pairs$ID2[i],row1=rnm1,row2=rnm2,dist=dM[ind],difftime=tM[ind])
+#     } else {
+#       proxdf <- NULL
+#     }
+#   }
+#   if (is.null(condf)) {condf <- proxdf} else {condf <- rbind(condf,proxdf)}
+# }
+# return(condf)
+# }

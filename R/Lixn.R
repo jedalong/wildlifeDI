@@ -32,7 +32,8 @@
 #' NOTEs: 
 #' \cr
 #' 1. With modern telemetry datasets, where home ranges are readily estimated, choosing \code{method = 'spatial'}
-#' is most appropriate. 
+#' is most appropriate. If parmater \code{hr} is not specified, the code uses the minimum convex hull method to calculate individual 
+#' home ranges.
 #' \cr
 #' 2. When the home ranges do not overlap the Lixn statistic is not defined and the function returns a 
 #' string of NA's.
@@ -42,28 +43,23 @@
 #' \cr
 #' 4. Further to points 2 and 3, the Lixn statistic is not appropriate in situations where the overlap area is 
 #' either very large or very small relative to either home range (i.e., a situation with almost complete enclosure 
-#' or virtually no overlap). Thus, it is advised that \code{Lixn} be used only in situations where there are 
-#' suitable marginal areas for areaA, areaB, and areaAB -- see Minta (1992).
+#' or virtually no overlap). The example data (deer) is an exampl of a near complete enclosure. Thus, it is advised 
+#' that \code{Lixn} be used only in situations where there are suitable marginal areas for areaA, areaB, and areaAB 
+#' -- see Minta (1992). 
 #'
-#' @param traj1 an object of the class \code{ltraj} which contains the time-stamped
-#'    movement fixes of the first object. Note this object must be a \code{type II
-#'    ltraj} object. For more information on objects of this type see \code{help(ltraj)}.
-#' @param traj2 same as \code{traj1}.
+#' @param traj an object of the class \code{move2} which contains the time-stamped movement fixes of at least two individuals. For more information on objects of this type see \code{help(mt_as_move2)}.
+#' @param traj2 (optional) same as traj, but for the second group of individuals. See \code{checkTO}
 #' @param method method for computing the marginal distribution from which expected
 #'    values are computed. If \code{method = "spatial"}, the marginal values are calculated based on areas
 #'    of the shared and unshared portions of the home ranges. If \code{method = "frequency"}, the marginal 
 #'    values are calculated based on the number of all fixes within the shared and unshared portions of 
 #'    the home ranges -- see Details.
 #' @param tc time threshold for determining simultaneous fixes -- see function: \code{GetSimultaneous}.
-#' @param hr1 (-- required if method = 'spatial') home range polygon associated with \code{traj1}. Must
-#'    be a \code{sf} polygon object.
-#' @param hr2 (-- required if method = 'spatial') same as \code{hr1}, but for \code{traj2}.
-#' @param OZ (-- required if method = 'frequency') shared area polygon associated with spatial use overlap
-#'    between \code{traj1} and \code{traj2}. Must be a \code{sf} polygon object.
+#' @param hr (optional) spatial polygon \code{sf} object associated with the home range (or some other form of) spatial range estimate for each individual in \code{traj}. The hr polygon should have a corresponding ID column with the same column name as in \code{traj}. If NULL (the default) the MCP home range estimate will be used for each individual.
+#' @param OZ (-- required if method = 'frequency') A \code{sf} object representing the shared area polygon associated with spatial use overlap each pair of individuals in \code{traj}. Must be a \code{sf} polygon object and contain two columns id1 and id2 indicating the polygon associated with each pair.
 #'
 #' @return
-#' This function returns a list of objects representing the calculated statistical values 
-#' and associated \emph{p}-values from the Chi-squared test.
+#' This function returns a data.frame with values representing the calculated statistical values and associated \emph{p}-values from the Chi-squared test for each dyad.
 #' \itemize{
 #' \item pTable -- contingency table showing marginal probabilities of expected use 
 #'    based on the selection of the \code{method} parameter.
@@ -84,93 +80,122 @@
 #'
 #' @keywords indices
 #' @seealso GetSimultaneous
+
 #' @examples
 #' \dontrun{
 #' data(deer)
-#' deer37 <- deer[1]
-#' deer38 <- deer[2]
-#' library(sf)
-#' #use minimum convex polygon for demonstration...
-#' hr37 <- deer37 |>
-#'   ltraj2sf() |>
-#'   st_union () |>
-#'   st_convex_hull()
-#' hr38 <- deer38 |>
-#'   ltraj2sf() |>
-#'   st_union () |>
-#'   st_convex_hull()
 #' #tc = 7.5 minutes, dc = 50 meters
-#' Lixn(deer37, deer38,  method='spatial', tc=7.5*60, hr1=hr37, hr2=hr38)
+#' Lixn(deer,  method='spatial', tc=7.5*60)
+#' 
+#' #use internal buffer 500m of MCP for demonstration of frequency method
+#' # NOTE: This is just an example, this is not an appropriate way to define overlap zone.
+#' idcol <- mt_track_id_column(deer)
+#' deercore <- deer |>
+#'   st_union() |>
+#'   st_convex_hull() |>
+#'   st_buffer(-500)
+#' Lixn(deer,  method='frequency', tc=7.5*60, OZ=deercore)
 #' }
 #' @export
 #
 # ---- End of roxygen documentation ----
-Lixn <- function(traj1,traj2,method="spatial",tc=0,hr1,hr2,OZ=NULL){
-  output <- NULL
-  #Get simultaneous fixes
-  trajs <- GetSimultaneous(traj1,traj2,tc)
-  #convert ltraj objects to sf
-  tr1 <- ltraj2sf(trajs[1])
-  tr2 <- ltraj2sf(trajs[2])
-
-  n <- nrow(tr1)
+Lixn <- function(traj,traj2,method="spatial",tc=0,hr=NULL,OZ=NULL){
   
-  #---- method specific computations ----
+  if (missing(traj2)){
+    pairs <- checkTO(traj)
+    pairs <- pairs[pairs$TO==TRUE,]
+  } else {
+    pairs <- checkTO(traj,traj2)
+    pairs <- pairs[pairs$TO==TRUE,]
+    traj <- rbind(traj,traj2)
+  }
+  n.pairs <- nrow(pairs)
+  
+  pairs$Laa <- NA
+  pairs$p.aa <- NA
+  pairs$Lbb <- NA
+  pairs$p.bb <- NA
+  pairs$Lixn <- NA
+  pairs$p.ixn <- NA
+  pairs$notes <- NA
+  
+  #get column name of ID column
+  idcol <- mt_track_id_column(traj)
+  
+  #---- home range checks for SPATIAL method  ----
   if (method == 'spatial'){
-
-    #could check that hr1 and hr2 exist and are spatial polygons here.
-    if (st_contains(hr1,hr2,sparse=FALSE) == TRUE){output <- list(pTable=NA,nTable=NA,oTable=NA,Laa=NA,p.AA=NA,Lbb=NA,p.BB=NA,Lixn=NA,p.IXN="ContainsA")}
-    else if (st_contains(hr2,hr1,sparse=FALSE) == TRUE){output <- list(pTable=NA,nTable=NA,oTable=NA,Laa=NA,p.AA=NA,Lbb=NA,p.BB=NA,Lixn=NA,p.IXN="ContainsB")}
-    else {
-      areaA <- st_difference(hr1,hr2)
-      areaB <- st_difference(hr2,hr1)
-      areaAB <- st_intersection(hr1,hr2)
-      
-      if (is.null(areaAB) == FALSE){
-        
-        #get intersected polygon for simultaneous fixes
-        A1 <- st_intersects(tr1,areaA,sparse=FALSE)
-        AB1 <- st_intersects(tr1,areaAB,sparse=FALSE)
-        B2 <- st_intersects(tr2,areaB,sparse=FALSE)
-        AB2 <- st_intersects(tr2,areaAB,sparse=FALSE)
-        
-        #check that the intersection vectors are same length before computing marginal values
-        l.vec <- c(length(A1),length(B2),length(AB1),length(AB2))
-        if (diff(range(l.vec)) == 0){
-          #compute marginal values for simultaneous fixes
-          n11 <- sum(AB1*AB2)
-          n22 <- sum(A1*B2)
-          n12 <- sum(A1*AB2)
-          n21 <- sum(AB1*B2)
-        } else {n11 <- 0; n12 <- 0; n21 <- 0; n22 <- 0}
-        
-        #compute expected values -- spatial
-        a <- st_area(hr1)
-        b <- st_area(hr2)
-        ab <- st_area(areaAB)
-        p11 <- (ab^2)/(a*b)
-        p12 <- (1 - (ab/a))*(ab/b)
-        p21 <- (ab/a)*(1 - (ab/b))
-        p22 <- (1-(ab/a))*(1-(ab/b))
- 
-      } else {output <- list(pTable=NA,nTable=NA,oTable=NA,Laa=NA,p.AA=NA,Lbb=NA,p.BB=NA,Lixn=NA,p.IXN=NA)}
-    
+    #IF no hr is specified
+    if (is.null(hr)){
+      hr <- traj |>
+        dplyr::group_by_at(idcol) |>
+        dplyr::summarise() |>
+        st_convex_hull()
+    } else {
+      #Check if the polygon has a column with the correct name
+      if (any(idcol %in% names(hr))==FALSE){
+        print(paste0("hr object does not have correctly named id column: ",idcol))
+        return(NULL)
+      }
     }
-
-  } else if (method == 'frequency'){
-
-    areaAB <- OZ
-    areaA <- st_difference(st_convex_hull(st_union(tr1)),areaAB)
-    areaB <- st_difference(st_convex_hull(st_union(tr2)),areaAB)
-
-    if (is.null(areaAB) == FALSE){
+  }
+  
+  #---- method specific computations for frequency method  ----
+  if (method == 'frequency'){
+    
+    #check overlap zone
+    chk3 <-'id1' %in% names(OZ)
+    chk4 <-'id2' %in% names(OZ)
+    if (chk3 == FALSE || chk4== FALSE) {
+      print('There are no columns named id1 and id2 in the OZ. This is required for method = frequency.')
+      return(NULL)
+    }
+  }
+  
+  #Loop through the pairs
+  for (i in 1:n.pairs){
+    traj1 <- traj[mt_track_id(traj)==pairs$ID1[i],]
+    traj2 <- traj[mt_track_id(traj)==pairs$ID2[i],]
+    
+    trajs <- GetSimultaneous(traj1,traj2,tc)
+    
+    tr1 <- trajs[mt_track_id(trajs)==pairs$ID1[i],]
+    tr2 <- trajs[mt_track_id(trajs)==pairs$ID2[i],]
+    
+    n1 <- nrow(traj1)
+    n2 <- nrow(traj2)
+    n <- nrow(tr1)
+    
+    #Method specific Calculations
+    if (method == 'spatial'){
       
+      hr1 <- hr[ hr[[idcol]] == pairs$ID1[i], ]
+      hr2 <- hr[ hr[[idcol]] == pairs$ID2[i], ]
+      
+      #could check that hr1 and hr2 exist and are spatial polygons here.
+      chk1 <- st_contains(hr1,hr2,sparse=FALSE)
+      chk2 <- st_contains(hr2,hr1,sparse=FALSE)
+      
+      if (chk1 == TRUE){
+        pairs$notes[i]<- 'ContainsA'
+        next()
+      } else if (chk2 == TRUE){
+        pairs$notes[i]<- 'ContainsB'
+        next()
+      }
+      areaA <- suppressWarnings(st_difference(hr1,hr2))
+      areaB <- suppressWarnings(st_difference(hr2,hr1))
+      areaAB <- suppressWarnings(st_intersection(hr1,hr2))
+      
+      if (is.null(areaAB)){ 
+        pairs$notes[i] <- 'No overlap'
+        next() 
+      }
       #get intersected polygon for simultaneous fixes
       A1 <- st_intersects(tr1,areaA,sparse=FALSE)
       AB1 <- st_intersects(tr1,areaAB,sparse=FALSE)
       B2 <- st_intersects(tr2,areaB,sparse=FALSE)
       AB2 <- st_intersects(tr2,areaAB,sparse=FALSE)
-    
+      
       #check that the intersection vectors are same length before computing marginal values
       l.vec <- c(length(A1),length(B2),length(AB1),length(AB2))
       if (diff(range(l.vec)) == 0){
@@ -180,28 +205,55 @@ Lixn <- function(traj1,traj2,method="spatial",tc=0,hr1,hr2,OZ=NULL){
         n12 <- sum(A1*AB2)
         n21 <- sum(AB1*B2)
       } else {n11 <- 0; n12 <- 0; n21 <- 0; n22 <- 0}
-    
-
-      #Compute expected values -- frequency
-      r <- nrow(tr1)
-      s <- nrow(tr2)
+      
+      #compute expected values -- spatial
+      a <- st_area(hr1)
+      b <- st_area(hr2)
+      ab <- st_area(areaAB)
+      
+      units(a) <- NULL
+      units(b) <- NULL
+      units(ab) <- NULL
+      
+      p11 <- (ab^2)/(a*b)
+      p12 <- (1 - (ab/a))*(ab/b)
+      p21 <- (ab/a)*(1 - (ab/b))
+      p22 <- (1-(ab/a))*(1-(ab/b))
+      
+    } else if (method == 'frequency'){
+      
+      areaAB <- OZ[ OZ$id1 == pairs$ID1[i] & OZ$id2 == pairs$ID2[i] , ]
+      areaA <- suppressWarnings(st_difference(st_convex_hull(st_union(tr1)),areaAB))
+      areaB <- suppressWarnings(st_difference(st_convex_hull(st_union(tr2)),areaAB))
+      
+      #get intersected polygon for simultaneous fixes
+      A1 <- st_intersects(tr1,areaA,sparse=FALSE)
+      AB1 <- st_intersects(tr1,areaAB,sparse=FALSE)
+      B2 <- st_intersects(tr2,areaB,sparse=FALSE)
+      AB2 <- st_intersects(tr2,areaAB,sparse=FALSE)
+      
+      #check that the intersection vectors are same length before computing marginal values
+      l.vec <- c(length(A1),length(B2),length(AB1),length(AB2))
+      if (diff(range(l.vec)) == 0){
+        #compute marginal values for simultaneous fixes
+        n11 <- sum(AB1*AB2)
+        n22 <- sum(A1*B2)
+        n12 <- sum(A1*AB2)
+        n21 <- sum(AB1*B2)
+      } else {n11 <- 0; n12 <- 0; n21 <- 0; n22 <- 0}
+      
       #get pts that intersect areaAB for ALL fixes
       rAB <- sum(AB1)
       sAB <- sum(AB2)
-      p11 <- (rAB*sAB)/(r*s)
-      p12 <- (1 - (rAB/r))*(sAB/s)
-      p21 <- (rAB/r)*(1-(sAB/s))
-      p22 <- (1 - (rAB/r))*(1 - (sAB/s))
+      p11 <- (rAB*sAB)/(n1*n2)
+      p12 <- (1 - (rAB/n1))*(sAB/n2)
+      p21 <- (rAB/n1)*(1-(sAB/n2))
+      p22 <- (1 - (rAB/n1))*(1 - (sAB/n2))
+      
+    } # END OF METHOD SPECIFIC CALCULATIONS
     
-    } else {output <- list(pTable=NA,nTable=NA,oTable=NA,Laa=NA,p.AA=NA,Lbb=NA,p.BB=NA,Lixn=NA,p.IXN=NA)}  
-
-  } else {stop(paste("The method - ",method,", is not recognized. Please try again.",sep=""))}
-
-  #---- end of method specific computations ---
-  
-  #Compute chi-square results if appropriate
-  if (is.null(output)){
-    #compute summary statistics 
+    #Compute chi-square results 
+    #compute summary statistics
     w <- (n11*n22)/(n12*n21)
     L <- log(w)
     se.L <- sqrt((1/n11) + (1/n12) + (1/n21) + (1/n22))
@@ -209,19 +261,19 @@ Lixn <- function(traj1,traj2,method="spatial",tc=0,hr1,hr2,OZ=NULL){
     n.1 <- n11 + n21
     n.2 <- n12 + n22
     n1. <- n11 + n12
-    n2. <- n21 + n22
-    
-    # Intrinsic Hypothesis
-    #------------ NOT RETURNED -----------------------
-    #chiINT <- (n*((n11*n22 - n12*n21)^2))/(as.numeric(n1.)*as.numeric(n2.)*as.numeric(n.1)*as.numeric(n.2))
-    #phiINT <- sqrt(chiINT/n)
-    #--------------------------------------------------------------------
-    
+    n2. <- n21 + n22 
     #compute summary and chi-values for Extrinsic Hypothesis.
     p.1 <- p11+p21
     p.2 <- p12+p22
     p1. <- p11+p12
     p2. <- p21+p22
+
+    # Intrinsic Hypothesis
+    #------------ NOT RETURNED -----------------------
+    #chiINT <- (n*((n11*n22 - n12*n21)^2))/(as.numeric(n1.)*as.numeric(n2.)*as.numeric(n.1)*as.numeric(n.2))
+    #phiINT <- sqrt(chiINT/n)
+    #--------------------------------------------------------------------
+
     #see email from Eric Howe
     #Not returned, not sure value of Chi.tot
     chi.tot <- (((n11-p11*n)^2)/p11*n) + (((n12-p12*n)^2)/p12*n) + (((n21-p21*n)^2)/(p21*n)) + (((n22-p22*n)^2)/(p22*n))
@@ -246,7 +298,7 @@ Lixn <- function(traj1,traj2,method="spatial",tc=0,hr1,hr2,OZ=NULL){
     p.AA <- 1 - pchisq(chiAA,df=1)
     p.BB <- 1 - pchisq(chiBB,df=1)
     p.IXN <- 1 - pchisq(chiIXN,df=1)      #Fixed Typo Here...
-    #create an output data-frame
+    #contingency matrices not returned, but could be useful for something
     pTable <- matrix(c(p11,p12,p21,p22),ncol=2,byrow=T,dimnames=list(c("B","b"),c("A","b")))
     nTable <- matrix(c(n11,n12,n21,n22),ncol=2,byrow=T,dimnames=list(c("B","b"),c("A","b")))
     oTable <- matrix(c(o11,o12,o21,o22),ncol=2,byrow=T,dimnames=list(c("B","b"),c("A","b")))
@@ -254,9 +306,16 @@ Lixn <- function(traj1,traj2,method="spatial",tc=0,hr1,hr2,OZ=NULL){
     #Not Returning IntHyp as not easily interpreted and ExtHyp is better
     #IntHyp <- list(n=n,L=L,se.L=se.L,p.INT=p.INT,phi.INT=phiINT)
     #ExtHyp <- list(Laa=Laa,p.AA=p.AA,Lbb=Lbb,p.BB=p.BB,Lixn=Lixn,p.IXN=p.IXN)
-    output <- list(pTable=pTable,nTable=nTable,oTable=oTable,Laa=Laa,p.AA=p.AA,Lbb=Lbb,p.BB=p.BB,Lixn=Lixn,p.IXN=p.IXN) 
+    
+    pairs$Laa[i] <- Laa
+    pairs$p.aa[i] <- p.AA
+    pairs$Lbb[i] <- Lbb
+    pairs$p.bb[i] <- p.BB
+    pairs$Lixn[i] <- Lixn
+    pairs$p.ixn[i] <- p.IXN
+     
   }
 
-  return(output)
+  return(pairs)
 }
 #====================End of Minta Function =====================================

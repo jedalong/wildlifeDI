@@ -4,33 +4,29 @@
 \alias{conProcess}
 \title{Process contacts}
 \usage{
-conProcess(mtraj1, mtraj2, dc = 0, tc = 0, idcol1 = "burst", idcol2)
+conProcess(traj, traj2, dc = 0, tc = 0, GetSim = TRUE, return = "move2")
 }
 \arguments{
-\item{mtraj1}{an object of the class ltraj which contains the time-stamped movement fixes of the first group of individuals. Each individual should be stored with a unique 'id'. (see ?as.ltraj)}
+\item{traj}{an object of the class \code{move2} which contains the time-stamped movement fixes of at least two individuals. For more information on objects of this type see \code{help(mt_as_move2)}. If traj2 is specified traj may have only one individual.}
 
-\item{mtraj2}{(optional) same as mtraj1, but for the second group of individuals.}
+\item{traj2}{(optional) same as traj, but for the second group of individuals. See \code{checkTO}}
 
 \item{dc}{distance tolerance limit (in appropriate units) for defining when two fixes are spatially together.}
 
 \item{tc}{time threshold for determining simultaneous fixes -- see function: GetSimultaneous.}
 
-\item{idcol1}{column id associated with IDs of the first group of individuals, default is the 'burst'.}
+\item{GetSim}{(logical) whether or not to use GetSimultaneous to time match fixes between pairs of individuals. Default = TRUE.}
 
-\item{idcol2}{(optional) column id associated with IDs of the second group of individuals.}
+\item{return}{What to return (one of 'move2' (default) or 'contacts'). See Return below.}
 }
 \value{
-This function returns the object mtraj1 with three additional fields:
-contact - the number of contacts associated with each given fix.
-contact_id - the id(s) of the individual(s) associated with those contacts.
-contact_d - the distance (in the same units as mtraj1) at which the contacts occur.
-Note that if more than one contact occurs at a given time, the contact_id and contact_d fields will be a concatenated list of the contact IDs and distances.
+If return = 'move2' (the default) this function returns the input traj move2 object with additional columns: contact - (binary) whtether or not a fix is a contact, contact_id - the id of the individual with which a contact occurs, contact_d - the proximity distance of the contact, contact_dt - the difference in time between the two fixes in the contact, contact_n - the number of contacts at that time. In the event that there is more than one contact for a given fix, the contact_id, contact_d, and contact_dt values are all associated with the most proximal (in geographical space) contact. If return = 'contacts' this function returns a data.frame with the columns: (id1,id2) the id's of the individuals involved in a contact, (row1,row2) the rownames from the original data associated with each of the fixes involved in a contact, (dist) the distance between the two fixes associated with the contact, and (difftime) the difference in time between the two fixes involved in the contact.
 }
 \description{
 This function performs basic contact analysis between individuals in a group of tracked animals, or between two different groups of tracked animals.
 }
 \details{
-This function can be used to identify the nature of contacts in space and time between individuals in one or two groups.
+This function can be used to identify all fixes defined as contacts in space and time between individuals in one or two groups.
 }
 \examples{
 \dontrun{
@@ -44,6 +40,6 @@ Long, JA, Webb, SL, Harju, SM, Gee, KL (2022) Analyzing Contacts and Behavior fr
  Tracking Data Using the wildlifeDI R Package. \emph{Geographical Analysis}. \bold{54}, 648--663.
 }
 \seealso{
-GetSimultaneous, dcPlot, conPhase, conSummary
+GetSimultaneous, dcPlot, conPhase
 }
 \keyword{contacts}

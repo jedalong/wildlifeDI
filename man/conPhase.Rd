@@ -4,17 +4,15 @@
 \alias{conPhase}
 \title{Process contact phases}
 \usage{
-conPhase(ltraj, pc = 0, idcol = "burst")
+conPhase(traj, pc = 0)
 }
 \arguments{
-\item{ltraj}{an object of the class \code{ltraj} which is output from the function \code{conProcess}.}
+\item{traj}{an object of the class \code{move2} which contains the time-stamped movement fixes of at least two individuals. For more information on objects of this type see \code{help(mt_as_move2)}. This will be output from the function \code{conProcess}.}
 
 \item{pc}{time (in seconds) to allow for which to combine contact events (see details).}
-
-\item{idcol}{column used to identify individuals (default is the burst)}
 }
 \value{
-An \code{ltraj} object with new column \code{contact_pha}.
+An \code{move2} object with new column \code{contact_pha}.
 }
 \description{
 Computes phases where contacts occur based on a temporal tolerance.

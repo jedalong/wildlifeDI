@@ -4,29 +4,23 @@
 \alias{IAB}
 \title{Benhamou's IAB Index}
 \usage{
-IAB(traj1, traj2, tc = 0, dc = 0, local = FALSE, rand = 99)
+IAB(traj, traj2, tc = 0, dc = 0, local = FALSE, rand = 99)
 }
 \arguments{
-\item{traj1}{an object of the class \code{ltraj} which contains the time-stamped
-movement fixes of the first object. Note this object must be a \code{type II
-ltraj} object. For more information on objects of this type see \code{help(ltraj)}.}
+\item{traj}{an object of the class \code{move2} which contains the time-stamped movement fixes of at least two individuals. For more information on objects of this type see \code{help(mt_as_move2)}.}
 
-\item{traj2}{same as \code{traj1}.}
+\item{traj2}{(optional) same as traj, but for the second group of individuals. See \code{checkTO}}
 
 \item{tc}{time threshold for determining simultaneous fixes -- see function: \code{GetSimultaneous}.}
 
-\item{dc}{critical distance where the IAB function will show maximum slope -- see Benhamou et al. (2014) 
-for more advice on selecting this parameter.}
+\item{dc}{critical distance where the IAB function will show maximum slope -- see Benhamou et al. (2014) for more advice on selecting this parameter.}
 
-\item{local}{logical value indicating whether a dataframe (\code{local = TRUE}) containing the IAB 
-index for each simultaneous fix should be returned (with a local permutation test), or (if \code{local = FALSE} - the default) 
-the global index along with associated global permutation test.}
+\item{local}{logical value indicating whether a dataframe (\code{local = TRUE}) containing the IAB index for each simultaneous fix should be returned (with a local permutation test), or (if \code{local = FALSE} - the default) the global index along with associated global permutation test.}
 
 \item{rand}{number of permutations to use in the local permutation test.}
 }
 \value{
-If \code{local=FALSE} (the default) IAB returns the numeric value of the IAB index and the associated p-values for one-sided tests for attraction or avoidance.
-If \code{local=TRUE} IAB returns a dataframe (containing the date/times of \emph{all} simultaneous fixes (NOTE: times are associated with traj1), along with the distance between fixes at each time , and the IAB index value for each simultaneous fix. A localized p-value (.pa signifies the test for attraction and pb the test for avoidance) and z-score is computed based on \code{rand} permutations of the fixes. The pkey columns can be used to match the simultaneous fixes to the original trajectory.
+If \code{local=FALSE} (the default) IAB returns a dataframe with the values of the IAB index and the associated p-values for one-sided tests for attraction or avoidance. If \code{local=TRUE} IAB returns a dataframe (containing the date/times of \emph{all} simultaneous fixes (NOTE: times are associated with traj1), along with the distance between fixes at each time , and the IAB index value for each simultaneous fix. A localized p-value (.pa signifies the test for attraction and pb the test for avoidance) and z-score is computed based on \code{rand} permutations of the fixes. The row.name columns can be used to match the simultaneous fixes to the original trajectory.
 }
 \description{
 The function \code{IAB} computes the IAB index following the methods described in the paper by 
@@ -40,11 +34,9 @@ The significance testing procedure uses a wrapped shifting method in order to ma
 }
 \examples{
 data(deer)
-deer37 <- deer[1]
-deer38 <- deer[2]
 #tc = 7.5 minutes, dc = 50 meters
-IAB(deer37, deer38, tc=7.5*60, dc=50)
-df <- IAB(deer37, deer38, tc=7.5*60, dc=50, local=TRUE)
+IAB(deer, tc=7.5*60, dc=50)
+df <- IAB(deer, tc=7.5*60, dc=50, local=TRUE)
 
 }
 \references{

@@ -5,6 +5,9 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
   rmarkdown::html_vignette:
     toc: true
+    fig_width: 7
+    fig_height: 5
+    fig_align: 'center'
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{wildlifeDI: Contact Analysis Workflow}
@@ -27,12 +30,14 @@ knitr::opts_chunk$set(cache = TRUE)
 
 ```{r,message=FALSE,warning=FALSE,results='hide'}
 library(wildlifeDI)
+library(move2)
 library(adehabitatLT)
 library(ggplot2)
 library(sf)
 library(igraph)
-library(nlme)
+library(dplyr)
 ```
+
 # Contact Analysis - Doe Deer Data
 
 First let's take a look at the doe deer data.
@@ -40,7 +45,13 @@ First let's take a look at the doe deer data.
 ```{r}
 data(does)
 does
-plot(does)
+```
+
+Next, we can make a quick plot of the deer does data to see it on a map. We will color each individual a seperate color.
+
+```{r}
+ggplot(does) + 
+  geom_sf(aes(color=mt_track_id(does)))
 ```
 
 ## Processing contacts
@@ -48,69 +59,72 @@ plot(does)
 We use the conProcess function to identify contacts first. We use a temporal threshold of $t_c$ = 15 minutes (based on the 30 minute tracking data) to define simultaneous fixes. A distance threshold of $d_c$ = 50 m (based on biologically relevant signals between deer and previous literature) was used to define contacts. The parameter dc must be specified in the correct units (i.e., those associated with the tracking dataset). The parameter tc needs to be specified in seconds. We can look at the distribution of all paired fixes (based on tc) to further explore whether our choice for dc makes sense.
 
 ```{r}
-plt <- dcPlot(does,tc=15*60,dmax=1000)
-plt
+dcPlot(does,tc=15*60,dmax=1000)
 ```
 
 The red lines in the dcPlot are automatically generated using a natural breaks algorithm to find local minima. They are more for reference, and not to be used for empirical assessment. That being said, it appears that a choice of $d_c$=50 corresponds to the first local minima. 
 
 
 ```{r,warning=F,message=F}
-doecons <- conProcess(does,dc=50,tc=15*60)  
+doecons <- conProcess(does,dc=50,tc=15*60)
+table(doecons$contact)
 ```
+
+We can see that a total of 493 contacts have been identified in the dataset.
 
 Next we can arrange contacts between does into phases of continuous interaction using the function conPhase. A parameter $p_c$ is used to group contacts as belonging to the same phases separated by $p_c$ units in time. The parameter $p_c$ must be specified in seconds. The function conSummary can be used to summarize contacts and phases within the entire dataset to get some basic statistics. It computes how many contacts are observed, and in how many unique segments these occur in, as well as some other values regarding contact phase duration. Here $p_c$ = 60 minutes.
 
 ```{r}
 doephas <- conPhase(doecons, pc=60*60)
-conSummary(doephas)
+
+consum <- doephas |>
+    st_drop_geometry() |>
+    filter(!is.na(contact_pha)) |>
+    dplyr::group_by(contact_pha) |>
+    dplyr::summarise(
+      nfix = n(),
+      t1 = min(date),
+      t2 = max(date),
+      duration = max(date)-min(date),
+      avg_d = mean(contact_d,na.rm=T),
+      min_d = min(contact_d,na.rm=T),
+      max_d = max(contact_d,na.rm=T)
+    ) 
+consum
 ```
 
-The summary stats suggest contacts between does are often over short bursts, but in some cases can be continuous over much longer periods of time. 
+From the phase analysis we can see that there are 98 contact phases (or periods) in the dataset, some contacts are fleeting lasting only a single fix, some are lengthy bouts of interactive behaviour, the longest lasting for `r round(as.numeric(max(consum$duration)/3600),digits=1)` hours. These summary stats can be customized and queried to answer specific questions related to contact phases.
 
-## Temporal Analysis of Contacts
-
-The conPairs and conTemporal functions can be used to extract more detailed information about the timing and duration of phases within the dataset. We plot the frequency histogram of contacts throughout the day (by hour), then the histogram of contacts throughout the month of May (by day), and the histogram of the duration of all contact phases. 
+For example, we can extract more detailed information about the timing and duration of phases within the dataset. We plot the frequency histogram of the initiation of contact phases (by hour) throughout the day and compare that to the frequency histogram of all contacts. 
 
 ```{r}
-doepair <- conPairs(doephas)
-doetemp <- conTemporal(doephas,units='mins')
+#contact phase initiaition tod
+consum$tod <- as.numeric(as.POSIXlt(consum$t1)$hour + as.POSIXlt(consum$t1)$min / 60)  #convert POSIX to hours
 
-doepair$hod <- as.POSIXlt(doepair$date)$hour + as.POSIXlt(doepair$date)$min / 60  #convert POSIX to hours
-doetemp$hod <- as.POSIXlt(doetemp$start_time)$hour + as.POSIXlt(doetemp$start_time)$min / 60  #convert POSIX to hours
-doepair$dom <- as.POSIXlt(doepair$date)$mday
-hist(doepair$dom,breaks=0:31)
+conall <- doecons |>
+  subset(contact == 1)
+conall$tod <- as.numeric(as.POSIXlt(conall$date)$hour + as.POSIXlt(conall$date)$min / 60)  #convert POSIX to hours
+
+
+h1 <- ggplot(consum,aes(tod)) + 
+  geom_histogram(binwidth=1)
+h2 <- ggplot(conall,aes(tod)) + 
+  geom_histogram(binwidth=1)
+h1
+h2
 ```
 
-We can see a clear cluster of contacts occurring near the end of the month, this is likely associated with parturition cycles, and the onset of denning behaviour.
 
-```{r}
-hist(doepair$hod,breaks=0:24) #Figure 2b
-```
-
-We can see the clear diurnal pattern in when contacts occur, which corresponds to known activity peaks in deer. There is a curious minimum occurrig at approximately 4-5 am right before the morning activity peak.
-
-```{r}
-hist(doetemp$hod,breaks=0:24) #Figure 2c
-```
-
-Again a similar pattern emerges when we only look at the timing of the initiation of contact phases. Finally, we can look at the distribution of the duration of the contact phases.
-
-```{r}
-hist(as.numeric(doetemp$duration)) #figure 2d
-```
+We can see the clear diurnal pattern in when contacts occur, which corresponds to known activity peaks in deer. 
 
 ### Mapping Contacts
 
-Using the conSpatial function and the parameter choices we can easily make maps of contacts. First plot the distribution of all contact points on top of the distribution of all GPS fixes.
+Using the built in functionality of 'move2' objects we can easily make maps of contacts. First plot the distribution of all contact points on top of the distribution of all GPS fixes.
 
 ```{r message=FALSE}
-con_sf <- conSpatial(doephas,type='point')             # Get points of all contacts
-
-#Figure 3a
-sf_pt <- ltraj2sf(does)  # Turn all fixes into sf points
-plot(st_geometry(sf_pt),col='grey',pch=20)
-plot(st_geometry(con_sf),col='black',pch=20,add=T)
+ggplot() + 
+  geom_sf(data=does,aes(color=mt_track_id(does))) +
+  geom_sf(data=conall)
 ```
 
 We can see that the contacts are clustered around certain locations when compared to all GPS telemetry fixes.
@@ -118,254 +132,96 @@ We can see that the contacts are clustered around certain locations when compare
 Next, lets map only the initiation of phases (i.e., the first fix in every phase).
 
 ```{r}
-#Figure 3b
-con_sf_first <- conSpatial(doephas,type='point',def='first')
+pha_fir <- doephas |>
+  filter(!is.na(contact_pha)) |>
+  group_by(contact_pha) |>
+  filter(row_number()==1)
 
-plot(st_geometry(sf_pt),col='grey',pch=20)
-plot(st_geometry(con_sf),col='black',pch=20,add=T)
-plot(st_geometry(con_sf_first),col='red',pch=20,add=T)
+
+ggplot() + 
+  geom_sf(data=does,aes(color=mt_track_id(does))) +
+  geom_sf(data=pha_fir)
 ```
 
-Here we can see a difference in the spatial pattern of the initiation of contact phases the original distribution of GPS fixes, and the locations of all contact points.
+Here we can see a small difference in the spatial pattern of the initiation of contact phases the original distribution of GPS fixes, and the locations of all contact points.
 
 Finally, lets map the contact phases as lines.
 
 ```{r ,message=FALSE, warning=FALSE}
-#Figure 3c
-con_sf_ln <- conSpatial(doephas,type='line')
+pha_lin <- doephas |>
+  filter(!is.na(contact_pha)) |>
+  group_by(contact_pha) |>
+  summarise(n = dplyr::n(),do_union=FALSE) |>
+  filter(n > 1) |>
+  st_cast("LINESTRING")
 
-sf_ln <- ltraj2sf(does,type='line')  # Turn all fixes into sf points
+ggplot() + 
+  geom_sf(data=does,aes(color=mt_track_id(does))) +
+  geom_sf(data=pha_lin)
 
-plot(st_geometry(sf_ln),col='grey')
-plot(st_geometry(con_sf_ln),col='red',add=T)
 ```
 
-The map of the phases as lines provides different insight into the spatial structure of contact phases throughout the study area.
+The map of the phases as lines can be used to provide different insight into the spatial structure of contact phases throughout the study area.
 
 ## Derive the Contact Network
 
-The conMatrix function can be used to create a social network. There are essentially two options as to what is produced:
+From a contact list it is relatively straightforward to derive the contact network. We are usually interested in one of two parameters:
 
 - counts - the number of contact fixes between individual $i$ and $j$
 - rates - the number of contact fixes divided by the total number of fixes associated with individual $i$
 
 The contact matrix can be asymmetric for counts in the case of irregular fixes and/or depending on how the $t_c$ parameter is chosen, but in many (or most) cases it should be symmetric. The contact matrix for rates is typically assymetric because individuals typically have different numbers of overall fixes in a given tracking dataset.
 
-The input into the conMatrix function is simply the output from the conProcess function - in this case doecons.
+The input into this analysis is simply the output from the conProcess function which can produce a table of all contacts by setting return = 'contact'.
 
 ```{r}
-mat_cnt <- conMatrix(doecons)
-#mat_rat <- conMatrix(doecons,output='rate')
-mat_cnt
-```
+cons <- conProcess(does,dc=50,tc=15*60,return='contact')
 
-The above matrix shows the contact counts between the different individuals. Next we will visualize the social network using the iGraph package.
-```{r}
-#shorten ID names
-row.names(mat_cnt) <- substr(row.names(mat_cnt),5,6)
-colnames(mat_cnt) <- substr(colnames(mat_cnt),5,6)
 
-gr <- graph_from_adjacency_matrix(mat_cnt,mode='undirected',weighted=TRUE)
+tab_cnt <- cons |>
+  count(id1,id2)
+gr <- graph_from_data_frame(tab_cnt,directed=FALSE)
+E(gr)$weight <- tab_cnt$n
+
 plot(gr)
-# ggnet(gr, 
-#       mode = "fruchtermanreingold",
-#       label = TRUE, 
-#       alpha = 1, 
-#       color = "white", 
-#       segment.color = "black",
-#       segment.size = log(E(gr)$weight))
 ```
 
-## Comparing contacts to random fixes
 
-We can statistically test if the does behaved differently during contacts compared to other times. To do this we can compare contact fixes to random (non-contact) fixes. Here we show two variables: percent forest cover (related to habitat) and movement step-length (related to behaviour).
+## Comparing contacts to non-contact fixes
+
+We can study if the does behaved differently during contacts compared to other times. To do this we can compare contact fixes to non-contact fixes. Here we show two variables: percent forest cover (related to habitat) which was already present in the data and movement step-length (related to behaviour). We will look at fixes immediately before and after contacts and compare to all other fixes. The function conTimelag is a useful tool for calculating the time from any given fix to the nearest contact fix, which can then be used in subsequent analysis as shown below.
 
 ```{r}
-#Use ConContext for randomization Analysis 
-doe_rand <- conContext(doephas,var=c('pForest','dist'),nrand=1000)
+doephas$stepLength <- as.numeric(mt_distance(doephas))
 
-g1 = ggplot(doe_rand, aes(x=dt_lev, y=pForest)) + 
+# Calculate time to any contact fix
+doephas <- conTimelag(doephas,def='all')
+
+#categorize time to contact as immediately before, contact, after, or non contact (NA) 
+#Should be tailored to individual dataset
+doephas$dt_lev <-  cut(doephas$contact_timelag, breaks = c(-Inf,-45*60,-15*60,15*60,45*60,Inf), labels = c("Other","Before","Contact","After","Other"))
+table(doephas$dt_lev)
+
+
+ggplot(doephas, aes(x=dt_lev, y=pForest)) + 
   geom_boxplot() +
   labs(x='',y='Forest Cover (%)') 
+```
 
-g2 = ggplot(doe_rand, aes(x=dt_lev, y=dist)) + 
+The boxplots show a visible difference for percent forest cover between contacts and non-contact (other) fixes. Note there is an additional NA boxplot. In this case these refer to an individual that had no contacts with any other individual, and therefore, the function conTimelag returns NA values associated with all fixes for the time to nearest contact. These could be reclassified as 'other' but here it is interesting to at least consider them differently, as this individual seems to be more associated with high forest cover than the other individuals which have higher contact levels.
+
+```{r}
+ggplot(doephas, aes(x=dt_lev, y=stepLength)) + 
   geom_boxplot() +
-  labs(x='',y='Step-Length (m)')
-
-g1
-g2
-
+  labs(x='',y='Step-Length (m)') + 
+  scale_y_continuous(trans='log10')
 ```
 
-The boxplots show a visible difference for percent forest cover between contacts and randomly chosen non-contact fixes. However, for step-length we see no evidence of a visible difference in behaviour.
-
-The summary statistics show a similar picture.
-
-```{r}
-tapply(doe_rand$dist, doe_rand$dt_lev, mean)
-tapply(doe_rand$dist, doe_rand$dt_lev, sd) 
-tapply(doe_rand$pForest, doe_rand$dt_lev, mean)
-tapply(doe_rand$pForest, doe_rand$dt_lev, sd)
-```
-
-We fit generalized linear mixed models with the random vs contact indicator as a covariate and percent forest and step-length as different dependent variables. We specified the individual ID as a random effect. The models were fit using the package 'nlme'.
-
-```{r}
-m1 = lme(pForest ~ dt_lev,random = ~1|ID, data = doe_rand)
-summary(m1)
-```
-
-```{r}
-m2 = lme(dist ~ dt_lev, random= ~1|ID, data = doe_rand ,na.action=na.exclude)
-summary(m2)
-```
-
-
-#  Contact Analysis - Mock Hunters and Deer Bucks
-
-The initial steps of contact analysis are very similar to the contact analysis for the does. Here, instead of providing the raw data (which was too large) we provide the data processed after running the function conContext. The steps are shown below but not run. The parameters are defined as specified in the manuscript, and finally we chose three contextual/behavioural variables to explore: step length (termed dist), displacement from contact, and percent forest cover.
-
-The parameters of the conContext function can be chosen to evaluate before and after contact events in a systematic way. Here we look at each fix-segment (8 minute interval) up to 96 minutes before and after a contact to study how behaviour changes during these periods.
-
-```{r eval=FALSE}
-# NOT RUN
-mca <- conProcess(deer,hunters,dc=150,tc=4*60) # process contacts, tc=4 min, dc=150m
-mcp <- conPhase(mca,pc=16*60)                  # group into phases pc=16 min
-
-mcp <- conDisplacement(mcp,def='first')    # calculate displacement
-
-#Context Analysis 
-mockhunt <- conContext(mcp,var=c('dist','displacement','Forest_Perc'),def='first',nlag=12,lag=8*60,gap=4*60,idcol='burst',nrand=NA)
-```
-
-We can load in these data, to take a look at the structure of this dataframe.
-
-```{r}
-data(mockhunt)
-head(mockhunt)
-```
-
-The output from conContext can be easily used to study before and after contact events by looking at the dt_con and dt_level columns which provide the time (in seconds) before or after the contact, and a factor 'level' based on the lags that were input into the conContext function. Here we define a contact as occurring at the first fix in a contact phase. Other definitions are of course possible. Then we look at 12 x 8 minute lags before and after each contact. The gap argument is useful to center the lags at the regular fix recording times so small deviations in the GPS times recorded are kept within the correct lag. To do this set the gap argument to 1/2 the fix interval. 
-
-There are two useful ways to look at these data:
-
-1. a lineplot
-2. a boxplot
-
-The lineplot can be used to look at patterns that change over time individually, whereas a boxplot can be used to look at general trends grouping all the individuals together.
-
-If we first look at the line plots for each of the three variables we can get an idea of any changes in behaviour or context before and after contact events. In such a plot, each line represents a single contact event (phase; $n=47$). The x-axis is the time before and after the first fix in the contact phase. The y-axis is any one of the behaviour or contextual variables; here we will first look at step-length.
-
-```{r}
-ggplot(data=mockhunt, aes(x=dt_lev, y=dist, group=phaid)) +
-  geom_line(col='grey32') + 
-  labs(x='Time to contact (min)',y='Step-length (m)') + 
-  scale_x_discrete(labels=c(as.character(seq(-96,96,by=8))))
-```
-
-Here we can see evidence of increased moment following contacts with mock-hunters, but a high degree of variation between individuals. It is unclear precisely how long after a contact with a mock-hunters the effect lasts.
-
-We can look at the spatial displacement (e.g., actual geographic distance) a deer makes following a contact as well.
-
-```{r}
-ggplot(data=mockhunt, aes(x=dt_lev, y=displacement, group=phaid)) +
-  geom_line(col='grey32') + 
-  labs(x='Time to contact (min)',y='Displacement (m)') + 
-  scale_x_discrete(labels=c(as.character(seq(-96,96,by=8))))
-```
-
-In the above plot we can see some unusually high movement behaviour by one or two individuals, but also that there is clearly larger displacement away from contact locations after contacts compared to before.
-
-Last, we can look at how animals use forest cover before and after contacts.
-
-```{r}
-ggplot(data=mockhunt, aes(x=dt_lev, y=Forest_Perc, group=phaid)) +
-  geom_line(col='grey32') + 
-  labs(x='Time to contact (min)',y='Forest Cover (%)') + 
-  scale_x_discrete(labels=c(as.character(seq(-96,96,by=8))))
-```
-
-From this analysis it is less clear how forest coverage is used by deer before and after contacts. It appears that the increased movement behaviour shown through step-length and displacement may result in changes in forest coverage levels. However, it does not appear that deer prefer or avoid forest coverage in response to contacts from hunters based on these data.
-
-A perhaps cleaner way to look at these same patterns is to use boxplots.
-
-```{r}
-ggplot(mockhunt, aes(x=dt_lev, y=dist)) + 
-  geom_boxplot() +
-  coord_cartesian(ylim=c(0,1000)) +
-  labs(x='Time to contact (min)',y='Step length (m)') +
-  scale_x_discrete(labels=c(as.character(seq(-96,96,by=8))))
-```
-
-From this boxplot we can see the clear pattern of increased movement after contact events. It appears based on this boxplot that the effect of the contact manifests in increased movement (step lengths) for about $6 \times 8 = 48$ minutes post contact.
-
-Next, we will look at the displacement (distance-to-contact) effect using the box plots.
-
-```{r}
-ggplot(mockhunt, aes(x=dt_lev, y=displacement)) + 
-  geom_boxplot() +
-  coord_cartesian(ylim=c(0,2000)) +
-  labs(x='Time to contact (min)',y='Distance to contact (m)') +
-  scale_x_discrete(labels=c(as.character(seq(-96,96,by=8))))
-```
-
-
-In this graph, it can be clearly seen that contacts result in a spatial displacament by white-tailed deer on average about 500 m displacement from their pre-contact position. This is important information to consider, as it means that white-tailed deer typically move ~500m following contact with a human hunter. 
-
-Of interest is whether there are any environmental changes in the habitats chosen following contacts, here we will look at the percent forest cover as one such example.
-
-```{r}
-ggplot(mockhunt, aes(x=dt_lev, y=Forest_Perc)) + 
-  geom_boxplot() +
-  labs(x='Time to contact (min)',y='Forest Cover (%)') +
-  scale_x_discrete(labels=c(as.character(seq(-96,96,by=8))))
-```
-
-The visual evidence here suggests (as noted with the line graph) that deer do not preferentially select or avoid forest habitat before, during, or after contacts. The distribution of forest habitat found before, during, and after contacts is comparable at all times. 
-
-### Longitudinal models for Before-After contact analysis
-
-We fit longitudinal regression models with an intervention dummy term (associated with the contact event) to test how the contact influenced three outcome variables: Step-length, displacement from contact, and percent forest cover, as shown in the above box-plots. We again include the individual ID as a random effect. The models were fit using the 'nlme' package.
-
-These models can be interpreted as follows:
-
-- The intercept term refers to the pre-contact intercept.
-- The con coefficient is added to the pre-contact intercept to represent the post-contact intercept term.
-- The t coefficient represents the slope of the relationship with time prior to the contact
-- the t:con coefficient represents how that original time relationship slope changes after the contact (i.e., it is additive).
-
-```{r}
-mockhunt$t = as.integer(mockhunt$dt_lev)
-mockhunt$con = 0
-mockhunt$con[which(mockhunt$t > 12)] = 1
-mh = mockhunt[!is.na(mockhunt$dist),]
-```
-
-GLMM for step-length shows significant increase in step-length post contact. It also shows that their was no significant time trend pre-contact, but a negative time trend post contact, which aligns with the visual description of the data.
-
-```{r}
-distlme <- lme(dist ~ t*con , random = ~ 1|ID, correlation=corAR1(),data = mh)
-summary(distlme)
-```
-
-GLMM for displacement shows that the contact has a significant impact on the displacement intercept and slope, suggesting a change in directionality of the relationship again observed in the box-plots. The magnitude of this relationship increases after the contact as well. 
-
-```{r}
-displme <- lme(displacement ~ t*con , random = ~ 1|ID, correlation=corAR1(),data = mh)
-summary(displme)
-```
-
-Finally, the GLMM for percent forest cover effectively shows that there was no significant impact of the contact event in the percent forest cover variable. 
-
-```{r}
-pForlme <- lme(Forest_Perc ~ t*con , random = ~ 1|ID, correlation=corAR1(),data = mh)
-summary(pForlme)
-```
+With step-length it is a little different. Visually it appears that the step lengths before contacts are a little bit higher than at other times (during contacts, after contacts, and during non-contacts).
 
 # Summary
 
 The wildlifeDI package can be used to tackle a wide range of problems when performing contact analysis using wildlife tracking data. Specifically, it provides tools to process, manage, and analyze contacts spatially and temporally. It provides output data structures that are useful for integration in R's well established statistical modelling packages facilitating further statistical analyses.  
-
 
 ## Session Information
 

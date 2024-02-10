@@ -4,15 +4,12 @@
 \alias{Ca}
 \title{Coefficient of Association}
 \usage{
-Ca(traj1, traj2, tc = 0, dc = 0)
+Ca(traj, traj2, tc = 0, dc = 0)
 }
 \arguments{
-\item{traj1}{an object of the class \code{ltraj} which contains the time-stamped 
-movement fixes of the first object. Note this object must be a \code{type II 
-ltraj} object. For more information on objects of this type see \code{
-help(ltraj)}.}
+\item{traj}{an object of the class \code{move2} which contains the time-stamped movement fixes of at least two individuals. For more information on objects of this type see \code{help(mt_as_move2)}.}
 
-\item{traj2}{same as \code{traj1}.}
+\item{traj2}{(optional) same as traj, but for the second group of individuals. See \code{checkTO}}
 
 \item{tc}{temporal tolerance limit (in seconds) for defining when two fixes
 are simultaneous or together. Parameter passed to function \code{GetSimultaneous}.}
@@ -21,7 +18,7 @@ are simultaneous or together. Parameter passed to function \code{GetSimultaneous
 two fixes are spatially together.}
 }
 \value{
-This function returns a numeric result of the Ca statistic.
+This function returns a numeric result of the Ca statistic for each pair in the dataset.
 }
 \description{
 This function measures the dynamic interaction between two moving objects following
@@ -42,10 +39,8 @@ This function can be used to calculate the Cole (1949) measure of dynamic
 }
 \examples{
 data(deer)
-deer37 <- deer[1]
-deer38 <- deer[2]
 #tc = 7.5 minutes, dc = 50 meters
-Ca(deer37, deer38, tc = 7.5*60, dc = 50)
+Ca(deer, tc = 7.5*60, dc = 50)
 
 }
 \references{

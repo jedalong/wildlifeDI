@@ -7,9 +7,7 @@
 GetSimultaneous(traj1, traj2, tc = 0)
 }
 \arguments{
-\item{traj1}{an object of the class \code{ltraj} which contains the time-stamped
-movement fixes of the first object. Note this object must be a \code{type II
-ltraj} object. For more information on objects of this type see \code{help(ltraj)}.}
+\item{traj1}{an object of the class \code{move2} which contains the time-stamped movement fixes of EXACTLY 1 individual. For more information on objects of this type see \code{help(mt_as_move2)}.}
 
 \item{traj2}{same as \code{traj1}.}
 
@@ -17,25 +15,25 @@ ltraj} object. For more information on objects of this type see \code{help(ltraj
 is always taken in seconds.}
 }
 \value{
-A single ltraj object containing two bursts, representing the two original \code{ltraj} 
+A \code{move2} object containing two individuals, representing the two original \code{move2} 
 objects, each containing only those fixes that are deemed simultaneous.
 }
 \description{
 The function \code{GetSimultaneous} identifies and extracts simultaneous fixes, 
-  within a given tolerance limit, between two movement datasets.
+  within a given tolerance limit, between two movement trajectories.
 }
 \details{
 This function is used to determine the simultaneous fixes between two movement 
   datasets facilitating further analysis.
 }
 \examples{
+library(move2)
 data(deer)
-deer37 <- deer[1]
-deer38 <- deer[2]
-#tc = 7.5 minutes
-trajs <- GetSimultaneous(deer37, deer38, tc = 7.5*60)
-deer37 <- trajs[1]
-deer38 <- trajs[2]
+deer37 <- deer[mt_track_id(deer) == '37',]
+deer38 <- deer[mt_track_id(deer) == '38',]
+deer_sim <- GetSimultaneous(deer37, deer38, tc = 7.5*60)
+table(deer$id)
+table(deer_sim$id)
 
 }
 \seealso{

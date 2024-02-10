@@ -25,8 +25,8 @@
 #'  or avoidance). See the function \code{GetSimultaneous} for details on how
 #'  simultaneous fixes are determined from two trajectories.
 #'
-#' @param traj1 an object of the class \code{ltraj} which contains the time-stamped movement fixes of the first object. Note this object must be a \code{type II ltraj} object. For more information on objects of this type see \code{help(ltraj)}.
-#' @param traj2 same as \code{traj1}.
+#' @param traj an object of the class \code{move2} which contains the time-stamped movement fixes of at least two individuals. For more information on objects of this type see \code{help(mt_as_move2)}.
+#' @param traj2 (optional) same as traj, but for the second group of individuals. See \code{checkTO}
 #' @param tc time threshold for determining simultaneous fixes -- see function: \code{GetSimultaneous}.
 #'
 #' @return
@@ -50,42 +50,66 @@
 #' @seealso GetSimultaneous
 #' @examples
 #' data(deer)
-#' deer37 <- deer[1]
-#' deer38 <- deer[2]
 #' #tc = 7.5 minutes
-#' Cs(deer37, deer38, tc = 7.5*60) 
+#' Cs(deer, tc = 7.5*60) 
 #' 
 #' @export
 #
 # ---- End of roxygen documentation ----
-Cs <- function(traj1,traj2, tc=0){
+Cs <- function(traj, traj2, tc=0){
   
-  trajs <- GetSimultaneous(traj1, traj2, tc)
-  
-  #convert ltraj objects to sf
-  tr1 <- ltraj2sf(trajs[1])
-  tr2 <- ltraj2sf(trajs[2])
-  n <- nrow(tr1)
-
-  #calculate the observed distances
-  dM = st_distance(tr1,tr2)
-  Do <- diag(dM)
-
-  #calculate the expected distances
-  De = rowSums(dM)/n
-  
-  #calculate the significance of differences b/w Do and De using a Wilcoxon signed rank test
-  p.less <- wilcox.test(Do,De,paired=T,alternative="less")$p.value
-  p.great <- wilcox.test(Do,De,paired=T,alternative="greater")$p.value
-
-  #Compute the Coefficient of sociality (Kenward et al. 1993)
-  DO <- sum(Do)/n
-  DE <- sum(De)/n
-  Cs <- (DE - DO) / (DO + DE)
-
-  #return output
-  output <- list(Do=DO, De=DE, Cs=Cs,p.Attract=p.less,p.Avoid=p.great)
-  return(output)
+  if (missing(traj2)){
+    pairs <- checkTO(traj)
+    pairs <- pairs[pairs$TO==TRUE,]
+  } else {
+    pairs <- checkTO(traj,traj2)
+    pairs <- pairs[pairs$TO==TRUE,]
+    traj <- rbind(traj,traj2)
   }
+  
+  n.pairs <- nrow(pairs)
+  pairs$Do <- NA
+  pairs$De <- NA
+  pairs$Cs <- NA
+  pairs$p.attract <- NA
+  pairs$p.avoid <- NA
+  
+  for (i in 1:n.pairs){
+    traj1 <- traj[mt_track_id(traj)==pairs$ID1[i],]
+    traj2 <- traj[mt_track_id(traj)==pairs$ID2[i],]
+  
+    trajs <- GetSimultaneous(traj1, traj2, tc)
+  
+    traj1 <- trajs[mt_track_id(trajs)==pairs$ID1[i],]
+    traj2 <- trajs[mt_track_id(trajs)==pairs$ID2[i],]
+    n <- nrow(traj1)
+
+    #calculate the observed distances
+    dM = st_distance(traj1,traj2)
+    
+    Do <- as.numeric(diag(dM))
+
+    #calculate the expected distances
+    De = rowSums(dM)/n
+  
+    #calculate the significance of differences b/w Do and De using a Wilcoxon signed rank test
+    p.less <- wilcox.test(Do,De,paired=T,alternative="less")$p.value
+    p.great <- wilcox.test(Do,De,paired=T,alternative="greater")$p.value
+
+    #Compute the Coefficient of sociality (Kenward et al. 1993)
+    DO <- sum(Do)/n
+    DE <- sum(De)/n
+    Cs <- (DE - DO) / (DO + DE)
+
+    #return output
+    pairs$Do[i] <- DO
+    pairs$De[i] <- DE
+    pairs$Cs[i] <- Cs
+    pairs$p.attract[i] <- p.less
+    pairs$p.avoid[i] <- p.great
+    
+  }
+  return(pairs)
+}
 
 
