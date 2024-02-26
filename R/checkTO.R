@@ -77,7 +77,16 @@ checkTO <- function(traj,traj2){
     
   }
   
-  pairs$t.min <- as.POSIXct(pairs$t.min)
-  pairs$t.max <- as.POSIXct(pairs$t.max)
+  if (class(pairs$t.min) == "POSIXct") {
+    break
+  } else {
+    pairs$t.min <- as.POSIXct(pairs$t.min)
+  }
+  if (class(pairs$t.max) == "POSIXct") {
+    break
+  } else {
+    pairs$t.max <- as.POSIXct(pairs$t.max)
+  }
+  
   return(pairs)
 }
