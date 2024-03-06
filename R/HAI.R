@@ -40,12 +40,19 @@ HAI <- function(traj, traj2, hr=NULL, tc = 0,dc = 50){
   if (missing(traj2)){
     pairs <- checkTO(traj)
     pairs <- pairs[pairs$TO==TRUE,]
+    mtraj <- traj
   } else {
     pairs <- checkTO(traj,traj2)
     pairs <- pairs[pairs$TO==TRUE,]
-    traj <- rbind(traj,traj2)
+    if (st_crs(traj2) != st_crs(traj)){
+      traj2 <- st_transform(traj2,crs=st_crs(traj))
+    }
+    mtraj <- data.frame(id = c(mt_track_id(traj),mt_track_id(traj2)),
+                        time = c(mt_time(traj),mt_time(traj2)),
+                        geometry = c(traj[[attr(traj,'sf_column')]],traj2[[attr(traj2,'sf_column')]])) |>
+      st_as_sf(sf_column_name = "geometry", crs=st_crs(traj)) |>
+      mt_as_move2(time_column='time',track_id_column='id')
   }
-  
   
   n.pairs <- nrow(pairs)
   pairs$hai <- NA
@@ -68,8 +75,8 @@ HAI <- function(traj, traj2, hr=NULL, tc = 0,dc = 50){
   }
   
   for (i in 1:n.pairs){
-    traj1 <- traj[mt_track_id(traj)==pairs$ID1[i],]
-    traj2 <- traj[mt_track_id(traj)==pairs$ID2[i],]
+    traj1 <- mtraj[mt_track_id(traj)==pairs$ID1[i],]
+    traj2 <- mtraj[mt_track_id(traj)==pairs$ID2[i],]
     
     trajs <- GetSimultaneous(traj1,traj2,tc)
     
