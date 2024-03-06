@@ -77,7 +77,19 @@ checkTO <- function(traj,traj2){
     
   }
   
-  pairs$t.min <- as.POSIXct(pairs$t.min)
-  pairs$t.max <- as.POSIXct(pairs$t.max)
+  #origin of numerical dates
+  origin = "1970-01-01"
+  
+  if (is.numeric.POSIXt(pairs$t.min)) {
+    #do nothing
+  } else {
+    pairs$t.min <- as.POSIXct(pairs$t.min, origin = origin)
+  }
+  if (is.numeric.POSIXt(pairs$t.max)) {
+    #do nothing
+  } else {
+    pairs$t.max <- as.POSIXct(pairs$t.max, origin = origin)
+  }
+  
   return(pairs)
 }
