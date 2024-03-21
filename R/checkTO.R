@@ -37,7 +37,7 @@ checkTO <- function(traj,traj2){
     id.list1 <- unique(mt_track_id(traj))
     id.list2 <- unique(mt_track_id(traj2))
     pairs <- expand.grid(id.list1,id.list2,stringsAsFactors=F)
-    traj <- rbind(traj,traj2)
+    traj <- mt_stack(traj,traj2)
   }
   
   #Get all the unique combinations between one group
@@ -46,6 +46,11 @@ checkTO <- function(traj,traj2){
   pairs <- pairs[order(pairs$ID1),]
   pairs <- pairs[!duplicated(t(apply(pairs, 1, sort))),]   #Do we always want to get rid of duplicated pairs, i think so...
   n.pairs <- nrow(pairs)
+  
+  if (n.pairs == 0){
+    print('No pairs with temporal overlap found.')
+    return(NULL)
+  }
   
   pairs$TO <- FALSE
   pairs$t.min <- NA

@@ -41,6 +41,7 @@
 IAB <- function(traj,traj2,tc=0,dc=0,local=FALSE,rand=99){
   
   
+  #Combine trajectories and identify overlap pairs
   if (missing(traj2)){
     pairs <- checkTO(traj)
     pairs <- pairs[pairs$TO==TRUE,]
@@ -51,11 +52,7 @@ IAB <- function(traj,traj2,tc=0,dc=0,local=FALSE,rand=99){
     if (st_crs(traj2) != st_crs(traj)){
       traj2 <- st_transform(traj2,crs=st_crs(traj))
     }
-    mtraj <- data.frame(id = c(mt_track_id(traj),mt_track_id(traj2)),
-                        time = c(mt_time(traj),mt_time(traj2)),
-                        geometry = c(traj[[attr(traj,'sf_column')]],traj2[[attr(traj2,'sf_column')]])) |>
-      st_as_sf(sf_column_name = "geometry", crs=st_crs(traj)) |>
-      mt_as_move2(time_column='time',track_id_column='id')
+    mtraj <- mt_stack(traj,traj2,track_combine='check_unique')
   }
   
   n.pairs <- nrow(pairs)
