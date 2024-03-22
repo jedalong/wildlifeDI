@@ -15,7 +15,7 @@
 #' @param fixid (optional) a column providing unique fix ID's or if not specified one is created by combining the track ID with the fix number for that individual (e.g., "Leroy_107").
 #' @param return What to return (one of 'move2' (default) or 'contacts'). See Return below.
 #' 
-#' @return If return = 'move2' (the default) this function returns the input traj move2 object with additional columns: contact - (binary) whether or not a fix is a contact, contact_id - the id of the individual with which a contact occurs, contact_d - the proximity distance of the contact, contact_dt - the difference in time between the two fixes in the contact, contact_n - the number of contacts at that time. In the event that there is more than one contact for a given fix, the contact_id, contact_d, and contact_dt values are all associated with the most proximal (in geographical space) contact. If return = 'contacts' this function returns a data.frame with the columns: (id1,id2) the id's of the individuals involved in a contact, the unique fix id's from the original data associated with each of the fixes involved in a contact (see parameter fixid), (dist) the distance between the two fixes associated with the contact, and (difftime) the difference in time between the two fixes involved in the contact. 
+#' @return If return = 'move2' (the default) this function returns the input traj move2 object with additional columns: contact - (binary) whether or not a fix is a contact, contact_id - the id of the individual with which a contact occurs, contact_d - the proximity distance of the contact, contact_dt - the difference in time between the two fixes in the contact, contact_n - the number of contacts at that time. In the event that there is more than one contact for a given fix, the contact_id, contact_d, and contact_dt values are all associated with the most proximal (in geographical space) contact. If return = 'contacts' this function returns a data.frame with the columns: (id1,id2) the id's of the individuals involved in a contact, the unique fix id's from the original data associated with each of the fixes involved in a contact (see parameter fixid), the times of the contact fixes, (dist) the distance between the two fixes associated with the contact, and (difftime) the difference in time between the two fixes involved in the contact. 
 #'
 #' @references
 #'  Long, JA, Webb, SL, Harju, SM, Gee, KL (2022) Analyzing Contacts and Behavior from High Frequency 
@@ -40,7 +40,7 @@ conProcess <- function(traj,traj2,dc=0,tc=0,GetSim=TRUE,fixid,return='move2'){
   #global variables in group_by hack
   id1 <- NULL
   dist <- NULL
-  row1 <- NULL
+  fixid1 <- NULL
   
   #Unit control
   units(tc) <- as_units("s")
@@ -61,8 +61,8 @@ conProcess <- function(traj,traj2,dc=0,tc=0,GetSim=TRUE,fixid,return='move2'){
   
   #Set up rownames to be more useful.
   if (missing(fixid)){
-    rowcnt <- ave(mt_track_id(mtraj), mt_track_id(mtraj), FUN = seq_along)
-    row.names(mtraj) <- paste0(mt_track_id(mtraj), '_', rowcnt)
+    row.names(mtraj) <- paste0(mt_track_id(mtraj), '_', stats::ave(mt_track_id(mtraj), mt_track_id(mtraj), FUN = seq_along))
+    row.names(traj) <- paste0(mt_track_id(traj), '_',  stats::ave(mt_track_id(traj), mt_track_id(traj), FUN = seq_along))
   } else {
     row.names(mtraj) <- mtraj[[fixid]]
   }
@@ -82,8 +82,12 @@ conProcess <- function(traj,traj2,dc=0,tc=0,GetSim=TRUE,fixid,return='move2'){
       trajs <- GetSimultaneous(traja,trajb,tc)
       tr1 <- trajs[mt_track_id(trajs)==pairs$ID1[i],]
       tr2 <- trajs[mt_track_id(trajs)==pairs$ID2[i],]
-      proxdf <- data.frame(id1=pairs$ID1[i],id2=pairs$ID2[i],
-                           row1=row.names(tr1),row2=row.names(tr2),
+      proxdf <- data.frame(id1=pairs$ID1[i],
+                           id2=pairs$ID2[i],
+                           fixid1=row.names(tr1),
+                           fixid2=row.names(tr2),
+                           t1 = mt_time(tr1),
+                           t2 = mt_time(tr2),
                            dist=st_distance(tr1,tr2,by_element=TRUE),
                            difftime=as.numeric(abs(mt_time(tr1)-mt_time(tr2))))
       #Unit control
@@ -104,9 +108,16 @@ conProcess <- function(traj,traj2,dc=0,tc=0,GetSim=TRUE,fixid,return='move2'){
       ind <- which(dM < dc & tM < tc, arr.ind=TRUE)
       
       if (length(ind) > 0){
-        rnm1 <- rownames(tM)[which(dM < dc & tM < tc, arr.ind = TRUE)[, 1]]
-        rnm2 <- colnames(tM)[which(dM < dc & tM < tc, arr.ind = TRUE)[, 2]]
-        proxdf <- data.frame(id1=pairs$ID1[i],id2=pairs$ID2[i],fixid1=rnm1,fixid2=rnm2,dist=dM[ind],difftime=tM[ind])
+        rnm1 <- rownames(tM)[ind[, 1]]
+        rnm2 <- colnames(tM)[ind[, 2]]
+        proxdf <- data.frame(id1=pairs$ID1[i],
+                             id2=pairs$ID2[i],
+                             fixid1=rnm1,
+                             fixid2=rnm2,
+                             t1 = mt_time(traja)[ind[,1]],
+                             t2 = mt_time(trajb)[ind[,2]],
+                             dist=dM[ind],
+                             difftime=tM[ind])
       } else {
         proxdf <- NULL
       }
@@ -118,13 +129,20 @@ conProcess <- function(traj,traj2,dc=0,tc=0,GetSim=TRUE,fixid,return='move2'){
   
   
   #arrange return object
-  if (return=='contact'){
+  if (return=='contacts'){
     return(condf)
   } else {
     #Create contact list for both pair directions in case of 1 group
     if (missing(traj2)){
       dfr <- rbind(condf, 
-                   data.frame(id1=condf$id2,id2=condf$id1,fixid1=condf$row2,fixid2=condf$row1,dist=condf$dist,difftime=condf$difftime))
+                   data.frame(id1=condf$id2,
+                              id2=condf$id1,
+                              fixid1=condf$fixid2,
+                              fixid2=condf$fixid1,
+                              t1 = condf$t2,
+                              t2 = condf$t1,
+                              dist=condf$dist,
+                              difftime=condf$difftime))
     } else {
       dfr <- condf
     }

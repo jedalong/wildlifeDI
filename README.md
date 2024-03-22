@@ -94,7 +94,7 @@ removed. These are summarized below:
 | conSpatial       | move2::mt_segments, move2::mt_track_lines |
 | conTemporal      | see contact analysis vignette             |
 | conSummary       | see contact analysis vignette             |
-| conPairs         | conProcess(return=‘contact’)              |
+| conPairs         | conProcess(return=‘contacts’)             |
 | conMatrix        | see contact analysis vignette             |
 
 — END —

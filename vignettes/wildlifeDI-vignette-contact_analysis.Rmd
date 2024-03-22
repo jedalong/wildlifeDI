@@ -175,7 +175,7 @@ The contact matrix can be asymmetric for counts in the case of irregular fixes a
 The input into this analysis is simply the output from the conProcess function which can produce a table of all contacts by setting return = 'contact'.
 
 ```{r}
-cons <- conProcess(does,dc=50,tc=15*60,return='contact')
+cons <- conProcess(does,dc=50,tc=15*60,return='contacts')
 
 
 tab_cnt <- cons |>

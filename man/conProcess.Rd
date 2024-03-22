@@ -4,7 +4,7 @@
 \alias{conProcess}
 \title{Process contacts}
 \usage{
-conProcess(traj, traj2, dc = 0, tc = 0, GetSim = TRUE, return = "move2")
+conProcess(traj, traj2, dc = 0, tc = 0, GetSim = TRUE, fixid, return = "move2")
 }
 \arguments{
 \item{traj}{an object of the class \code{move2} which contains the time-stamped movement fixes of at least two individuals. For more information on objects of this type see \code{help(mt_as_move2)}. If traj2 is specified traj may have only one individual.}
@@ -17,10 +17,12 @@ conProcess(traj, traj2, dc = 0, tc = 0, GetSim = TRUE, return = "move2")
 
 \item{GetSim}{(logical) whether or not to use GetSimultaneous to time match fixes between pairs of individuals. Default = TRUE.}
 
+\item{fixid}{(optional) a column providing unique fix ID's or if not specified one is created by combining the track ID with the fix number for that individual (e.g., "Leroy_107").}
+
 \item{return}{What to return (one of 'move2' (default) or 'contacts'). See Return below.}
 }
 \value{
-If return = 'move2' (the default) this function returns the input traj move2 object with additional columns: contact - (binary) whtether or not a fix is a contact, contact_id - the id of the individual with which a contact occurs, contact_d - the proximity distance of the contact, contact_dt - the difference in time between the two fixes in the contact, contact_n - the number of contacts at that time. In the event that there is more than one contact for a given fix, the contact_id, contact_d, and contact_dt values are all associated with the most proximal (in geographical space) contact. If return = 'contacts' this function returns a data.frame with the columns: (id1,id2) the id's of the individuals involved in a contact, (row1,row2) the rownames from the original data associated with each of the fixes involved in a contact, (dist) the distance between the two fixes associated with the contact, and (difftime) the difference in time between the two fixes involved in the contact.
+If return = 'move2' (the default) this function returns the input traj move2 object with additional columns: contact - (binary) whether or not a fix is a contact, contact_id - the id of the individual with which a contact occurs, contact_d - the proximity distance of the contact, contact_dt - the difference in time between the two fixes in the contact, contact_n - the number of contacts at that time. In the event that there is more than one contact for a given fix, the contact_id, contact_d, and contact_dt values are all associated with the most proximal (in geographical space) contact. If return = 'contacts' this function returns a data.frame with the columns: (id1,id2) the id's of the individuals involved in a contact, the unique fix id's from the original data associated with each of the fixes involved in a contact (see parameter fixid), the times of the contact fixes, (dist) the distance between the two fixes associated with the contact, and (difftime) the difference in time between the two fixes involved in the contact.
 }
 \description{
 This function performs basic contact analysis between individuals in a group of tracked animals, or between two different groups of tracked animals.

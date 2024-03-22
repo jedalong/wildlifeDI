@@ -37,7 +37,7 @@
 #' @importFrom adehabitatLT as.ltraj ld
 #' @importFrom sp CRS
 #' @importFrom lwgeom st_geod_azimuth
-#' @importFrom stats chisq.test embed pchisq wilcox.test sd
+#' @importFrom stats chisq.test embed pchisq wilcox.test sd ave
 #' 
 #' @docType package
 #' @name wildlifeDI-package
