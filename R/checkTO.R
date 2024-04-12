@@ -42,7 +42,7 @@ checkTO <- function(traj,traj2){
   
   #Get all the unique combinations between one group
   names(pairs) <- c('ID1','ID2')
-  pairs <- pairs[-which(pairs$ID1 == pairs$ID2),]
+  pairs <- pairs[which(pairs$ID1 != pairs$ID2),]
   pairs <- pairs[order(pairs$ID1),]
   pairs <- pairs[!duplicated(t(apply(pairs, 1, sort))),]   #Do we always want to get rid of duplicated pairs, i think so...
   n.pairs <- nrow(pairs)
