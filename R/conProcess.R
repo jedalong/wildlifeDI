@@ -61,8 +61,10 @@ conProcess <- function(traj,traj2,dc=0,tc=0,GetSim=TRUE,fixid,return='move2'){
   
   #Set up rownames to be more useful.
   if (missing(fixid)){
-    row.names(mtraj) <- paste0(mt_track_id(mtraj), '_', stats::ave(mt_track_id(mtraj), mt_track_id(mtraj), FUN = seq_along))
-    row.names(traj) <- paste0(mt_track_id(traj), '_',  stats::ave(mt_track_id(traj), mt_track_id(traj), FUN = seq_along))
+    id_mtraj <- as.character(mt_track_id(mtraj))
+    row.names(mtraj) <- paste0(id_mtraj, '_', stats::ave(id_mtraj, id_mtraj, FUN = seq_along))
+    id_traj <- as.character(mt_track_id(traj))
+    row.names(traj) <- paste0(id_traj, '_',  stats::ave(id_traj,id_traj, FUN = seq_along))
   } else {
     row.names(mtraj) <- mtraj[[fixid]]
   }
