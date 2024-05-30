@@ -1,6 +1,6 @@
 ## Test environments
 
-* Tested on Local Windows machine with R 4.3.2
+* Tested on Local Windows machine with R 4.4.4
 * There were no ERRORs or WARNINGs or NOTES. 
 
 * RHub: Windows Server 2022, R-devel, 64 bit

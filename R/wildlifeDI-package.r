@@ -39,6 +39,7 @@
 #' @importFrom lwgeom st_geod_azimuth
 #' @importFrom stats chisq.test embed pchisq wilcox.test sd ave
 #' 
-#' @docType package
+#' @keywords internal 
+"_PACKAGE"
 #' @name wildlifeDI-package
 NULL

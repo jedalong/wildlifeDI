@@ -2,6 +2,7 @@
 % Please edit documentation in R/wildlifeDI-package.r
 \docType{package}
 \name{wildlifeDI-package}
+\alias{wildlifeDI}
 \alias{wildlifeDI-package}
 \title{wildlifeDI: Calculate Indices of Dynamic Interaction for Wildlife Tracking Data}
 \description{
@@ -31,6 +32,14 @@ As of version 1.0 the package has completely switched to use the more modern \co
 
 The functions in \code{wildlifeDI} utilize the \code{move2} objects from the package \code{move2}. For more information on objects of this type see \code{help(mt_as_move2)}.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/jedalong/wildlifeDI}
+}
+
+}
 \author{
 Jed Long
 }
+\keyword{internal}
