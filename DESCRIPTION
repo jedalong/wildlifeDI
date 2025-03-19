@@ -4,12 +4,12 @@ Title: Calculate Indices of Dynamic Interaction for Wildlife Tracking Data
 Version: 1.0.1
 Authors@R: person(given="Jed", 
                   family="Long",
-                  role=c("aut","cre"),
+                  role=c("aut","cre","cph"),
                   email="jed.long@uwo.ca", 
                   comment = c(ORCID = "0000-0002-2815-0399"))
 Description: Dynamic interaction refers to spatial-temporal associations in the movements of two (or more) animals. This package provides tools for calculating a suite of indices used for quantifying dynamic interaction with wildlife telemetry data. For more information on each of the methods employed see the references within. The package (as of version >= 0.3) also has new tools for automating contact analysis in large tracking datasets. The package (as of version 1.0) uses the 'move2' class of objects for working with tracking dataset.
 URL: https://github.com/jedalong/wildlifeDI
-Depends: R (>= 3.5.0)
+Depends: R (>= 4.1.0)
 Suggests:
     ggplot2,
     knitr,
