@@ -50,7 +50,7 @@ Prox <- function(traj,traj2,tc=0,dc=50,local=FALSE){
     if (st_crs(traj2) != st_crs(traj)){
       traj2 <- st_transform(traj2,crs=st_crs(traj))
     }
-    mtraj <- mt_stack(traj,traj2,track_combine='check_unique')
+    mtraj <- mt_stack(traj,traj2,.track_combine='check_unique')
   }
   
   n.pairs <- nrow(pairs)
